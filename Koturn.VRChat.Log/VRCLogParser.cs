@@ -196,12 +196,10 @@ namespace Koturn.VRChat.Log
         /// Log line stack.
         /// </summary>
         private List<string> _lineStack;
-        // private LogLevel _prevLogLevel = default;
-        // private DateTime _logAt = default;
         /// <summary>
-        /// Previous parsed log line.
+        /// Empty line count.
         /// </summary>
-        private LogLine _prevParsed = default;
+        private int _emptyLineCount;
         /// <summary>
         /// Indicate next log line is ToN save data.
         /// </summary>
@@ -218,7 +216,6 @@ namespace Koturn.VRChat.Log
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
             _lineStack = new List<string>();
-            _prevParsed = default;
             _isTonSaveData = false;
         }
 
@@ -265,20 +262,22 @@ namespace Koturn.VRChat.Log
         {
             foreach (var kv in _userJoinTimeDict)
             {
-                UserLeft?.Invoke(this, new UserJoinLeaveEventArgs(DateTime.Now, kv.Key, kv.Value, null, _instanceInfo));
+                UserLeft?.Invoke(this, new UserJoinLeaveEventArgs(LogUntil, kv.Key, kv.Value, null, _instanceInfo));
             }
             _userJoinTimeDict.Clear();
 
-            if (!_instanceInfo.IsEmitted)
+            if (!_instanceInfo.IsEmitted && _instanceInfo.StayFrom != default)
             {
-                LeftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(DateTime.Now, _instanceInfo));
+                LeftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(LogUntil, _instanceInfo));
                 _instanceInfo.IsEmitted = true;
             }
 
+            _instanceInfo = new InstanceInfo(default);
+
+            _emptyLineCount = 0;
             LineCount = 0;
             LogFrom = default;
             LogUntil = default;
-            _instanceInfo = new InstanceInfo(default);
         }
 
         /// <summary>
@@ -289,19 +288,25 @@ namespace Koturn.VRChat.Log
         public void LoadLine(string line)
         {
             LineCount++;
-            if (line == string.Empty)
+            if (line != string.Empty)
             {
-                EmitLineStack();
-                return;
-            }
-
-            var parsed = ParseLogLine(line);
-            if (parsed.Message == string.Empty)
-            {
+                if (_emptyLineCount == 1)
+                {
+                    _lineStack.Add(string.Empty);
+                }
+                _emptyLineCount = 0;
                 _lineStack.Add(line);
                 return;
             }
 
+            _emptyLineCount++;
+            if (_emptyLineCount < 2 || _lineStack.Count == 0)
+            {
+                return;
+            }
+
+            var parsed = ParseLogLine(_lineStack[0]);
+            _lineStack[0] = parsed.Message;
             if (LogFrom == default)
             {
                 LogFrom = parsed.DateTime;
@@ -313,8 +318,7 @@ namespace Koturn.VRChat.Log
                 case LogLevel.Warning:
                 case LogLevel.Error:
                 case LogLevel.Exception:
-                    _prevParsed = parsed;
-                    _lineStack.Add(parsed.Message);
+                    EmitLineStack(parsed);
                     return;
                 default:
                     break;
@@ -495,34 +499,30 @@ namespace Koturn.VRChat.Log
                 _isTonSaveData = false;
                 TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(parsed.DateTime, match.Groups[1].Value));
             }
+
+            _lineStack.Clear();
         }
 
         /// <summary>
         /// Clear line stack and fire <see cref="WarningDetected"/>, <see cref="ErrorDetected"/> or <see cref="ExceptionDetected"/>.
         /// </summary>
-        private void EmitLineStack()
+        private void EmitLineStack(LogLine parsed)
         {
-            if (_lineStack.Count == 0)
-            {
-                return;
-            }
-
-            switch (_prevParsed.Level)
+            switch (parsed.Level)
             {
                 case LogLevel.Warning:
-                    WarningDetected?.Invoke(this, new ErrorLogEventArgs(_prevParsed.DateTime, _prevParsed.Level, _lineStack));
+                    WarningDetected?.Invoke(this, new ErrorLogEventArgs(parsed.DateTime, parsed.Level, _lineStack));
                     break;
                 case LogLevel.Error:
-                    ErrorDetected?.Invoke(this, new ErrorLogEventArgs(_prevParsed.DateTime, _prevParsed.Level, _lineStack));
+                    ErrorDetected?.Invoke(this, new ErrorLogEventArgs(parsed.DateTime, parsed.Level, _lineStack));
                     break;
                 case LogLevel.Exception:
-                    ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(_prevParsed.DateTime, _prevParsed.Level, _lineStack));
+                    ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(parsed.DateTime, parsed.Level, _lineStack));
                     break;
                 default:
                     break;
             }
 
-            _prevParsed = default;
             _lineStack.Clear();
         }
 
