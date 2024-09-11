@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using System.Threading;
 
 
@@ -90,7 +91,7 @@ namespace Koturn.VRChat.Log
             {
                 var pos = 0L;
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
-                using (var sr = new StreamReader(fs))
+                using (var sr = new StreamReader(fs, Encoding.UTF8, false, 65536, true))
                 {
                     Parse(sr);
                     pos = fs.Position;
@@ -172,7 +173,7 @@ namespace Koturn.VRChat.Log
                 {
                     Position = pos
                 })
-                using (var sr = new StreamReader(fs))
+                using (var sr = new StreamReader(fs, Encoding.UTF8, false, 65536, true))
                 {
                     CurrentFilePath = filePath;
                     FileOpened?.Invoke(this, new FileEventArgs(filePath));

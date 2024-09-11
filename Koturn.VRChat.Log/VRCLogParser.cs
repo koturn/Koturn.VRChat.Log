@@ -215,7 +215,7 @@ namespace Koturn.VRChat.Log
             LogUntil = default;
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
-            _lineStack = new List<string>();
+            _lineStack = new List<string>(128);
             _isTonSaveData = false;
         }
 
@@ -225,7 +225,7 @@ namespace Koturn.VRChat.Log
         /// <param name="filePath">File path.</param>
         public void Parse(string filePath)
         {
-            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
             {
                 Parse(fs);
             }
@@ -237,7 +237,7 @@ namespace Koturn.VRChat.Log
         /// <param name="fs">A <see cref="FileStream"/> of log file.</param>
         public void Parse(FileStream fs)
         {
-            using (var sr = new StreamReader(fs, Encoding.UTF8, true, -1, true))
+            using (var sr = new StreamReader(fs, Encoding.UTF8, false, 65536, true))
             {
                 Parse(sr);
             }
