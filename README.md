@@ -8,32 +8,33 @@ Simple VRChat Log Parser and Watcher library.
 ### Log Parser
 
 ```cs
-namespace VRCLogParser
+using System;
+using System.Text;
+using Koturn.VRChat.Log;
+
+
+namespace VRCLogParserSample
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
 
             var logParser = new VRCLogParser();
             logParser.UserJoined += (sender, e) =>
             {
-                Console.WriteLine($"Joined user: {e.UserName}");
+                Console.WriteLine($"[{e.LogAt:yyyy-MM-dd HH\\:mm\\:ss}] Joined user: {e.UserName}");
             };
             logParser.UserLeft += (sender, e) =>
             {
-                Console.WriteLine($"Left user: {e.UserName}");
+                Console.WriteLine($"[{e.LogAt:yyyy-MM-dd HH\\:mm\\:ss}] Left user: {e.UserName}");
             };
 
             foreach (var filePath in VRCLogParser.GetLogFilePaths())
             {
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var sr = new StreamReader(fs))
-                {
-                    logParser.Parse(sr);
-                }
-                logParser.ClearState();
+                logParser.Parse(filePath);
+                logParser.Terminate();
             }
         }
     }
@@ -43,7 +44,12 @@ namespace VRCLogParser
 ### Log Watcher
 
 ```cs
-namespace VRCLogWatcher
+using System;
+using System.Text;
+using Koturn.VRChat.Log;
+
+
+namespace VRCLogWatcherSample
 {
     internal class Program
     {
@@ -59,11 +65,11 @@ namespace VRCLogWatcher
 
                 logWatcher.UserJoined += (sender, e) =>
                 {
-                    Console.WriteLine($"Joined user: {e.UserName}");
+                    Console.WriteLine($"[{e.LogAt:yyyy-MM-dd HH\\:mm\\:ss}] Joined user: {e.UserName}");
                 };
                 logWatcher.UserLeft += (sender, e) =>
                 {
-                    Console.WriteLine($"Left user: {e.UserName}");
+                    Console.WriteLine($"[{e.LogAt:yyyy-MM-dd HH\\:mm\\:ss}] Left user: {e.UserName}");
                 };
 
                 string? read;

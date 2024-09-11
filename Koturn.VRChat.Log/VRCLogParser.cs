@@ -559,7 +559,8 @@ namespace Koturn.VRChat.Log
             var groups = match.Groups;
             if (!match.Success || groups.Count < 9)
             {
-                return new LogLine(default, LogLevel.Other, string.Empty);
+                // return new LogLine(default, LogLevel.Other, string.Empty);
+                throw new Exception("Invalid log line: " + line);
             }
 
             var logLevel = groups[7].Value switch
