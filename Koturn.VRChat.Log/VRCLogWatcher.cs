@@ -1,12 +1,15 @@
 #define USE_WIN32_API
 
-using Koturn.VRChat.Log.Events;
 using System;
 using System.IO;
+using System.Collections.Generic;
+#if USE_WIN32_API
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
+#endif
 using System.Threading;
+using Koturn.VRChat.Log.Enums;
+using Koturn.VRChat.Log.Events;
 
 
 namespace Koturn.VRChat.Log
@@ -14,12 +17,8 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-    public class VRCLogWatcher : VRCLogParser, IDisposable
+    public class VRCLogWatcher : IDisposable
     {
-        /// <summary>
-        /// True if disposed, otherwise false.
-        /// </summary>
-        public bool IsDisposed { get; private set; }
         /// <summary>
         /// File watch cycle.
         /// </summary>
@@ -29,13 +28,75 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public string? CurrentFilePath { get; private set; }
         /// <summary>
+        /// True if disposed, otherwise false.
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Notify when new log file opended.
         /// </summary>
-        public event EventHandler<FileEventArgs>? FileOpened;
+        public event EventHandler<FileOpenEventArgs>? FileOpened;
         /// <summary>
         /// Notify when a log file closed.
         /// </summary>
-        public event EventHandler<FileEventArgs>? FileClosed;
+        public event EventHandler<FileCloseEventArgs>? FileClosed;
+
+        /// <summary>
+        /// Occurs when detect a log that you joined to instance.
+        /// </summary>
+        public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
+        /// <summary>
+        /// Occurs when detect a log that you left from instance.
+        /// </summary>
+        public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
+        /// <summary>
+        /// Occurs when detect a log that any player joined to your instance.
+        /// </summary>
+        public event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        /// <summary>
+        /// Occurs when detect a log that any player left from your instance.
+        /// </summary>
+        public event EventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        /// <summary>
+        /// Occurs when detect a log that any player unregistering from your instance.
+        /// </summary>
+        public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        /// <summary>
+        /// Occurs when detect a log that you take a screenshot.
+        /// </summary>
+        public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
+        /// <summary>
+        /// Occurs when detect a log that video URL resolving.
+        /// </summary>
+        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
+        /// <summary>
+        /// Occurs when detect a log that video URL resolved.
+        /// </summary>
+        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
+        /// <summary>
+        /// Occurs when detect a log that string or image is downloaded.
+        /// </summary>
+        public event EventHandler<DownloadEventArgs>? Downloaded;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Idle Home is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? IdleHomeSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
+        /// <summary>
+        /// Occurs when detect a warning log.
+        /// </summary>
+        public event EventHandler<ErrorLogEventArgs>? WarningDetected;
+        /// <summary>
+        /// Occurs when detect a error log.
+        /// </summary>
+        public event EventHandler<ErrorLogEventArgs>? ErrorDetected;
+        /// <summary>
+        /// Occurs when detect a exception log.
+        /// </summary>
+        public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
 
         /// <summary>
         /// <see cref="FileSystemWatcher"/> for VRChat log directory.
@@ -72,7 +133,7 @@ namespace Koturn.VRChat.Log
         /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
         public void StartWatching(int watchCycle = 1000)
         {
-            StartWatching(DefaultVRChatLogDirectory, watchCycle);
+            StartWatching(VRCBaseLogParser.DefaultVRChatLogDirectory, watchCycle);
         }
 
         /// <summary>
@@ -89,16 +150,20 @@ namespace Koturn.VRChat.Log
             var filePath = GetLatestLogFile(dirPath);
             if (filePath != null)
             {
-                var pos = 0L;
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
-                using (var sr = new StreamReader(fs, Encoding.UTF8, false, 65536, true))
+                VRCWatcherLogParser? logParser = null;
+                try
                 {
-                    Parse(sr);
-                    pos = fs.Position;
+                    logParser = new VRCWatcherLogParser(filePath, this);
+                    logParser.Parse();
+                    StartFileWatchingThread(logParser);
                 }
-                StartFileWatchingThread(filePath, pos);
+                catch (Exception)
+                {
+                    logParser?.Dispose();
+                    throw;
+                }
             }
-            var watcher = new FileSystemWatcher(dirPath, VRChatLogFileFilter)
+            var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.VRChatLogFileFilter)
             {
                 InternalBufferSize = 1024 * 64,
                 NotifyFilter =
@@ -160,27 +225,44 @@ namespace Koturn.VRChat.Log
             // GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Start flush log file thread.
+        /// </summary>
+        /// <param name="filePath">Target file path.</param>
+        /// <returns>Started thread.</returns>
+        private Thread StartFileWatchingThread(string filePath)
+        {
+            VRCWatcherLogParser? logParser = null;
+            try
+            {
+                logParser = new VRCWatcherLogParser(filePath, this);
+                return StartFileWatchingThread(logParser);
+            }
+            catch (Exception)
+            {
+                logParser?.Dispose();
+                throw;
+            }
+        }
 
         /// <summary>
         /// Start flush log file thread.
         /// </summary>
         /// <returns>Started thread.</returns>
-        private Thread StartFileWatchingThread(string filePath, long pos = 0)
+        private Thread StartFileWatchingThread(VRCWatcherLogParser logParser)
         {
-            var thread = new Thread(() =>
+            var thread = new Thread(param =>
             {
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan)
+                using (var logParser = (VRCWatcherLogParser)param)
                 {
-                    Position = pos
-                })
-                using (var sr = new StreamReader(fs, Encoding.UTF8, false, 65536, true))
-                {
+                    var fs = (FileStream)((StreamReader)logParser.Reader).BaseStream;
+                    var filePath = fs.Name;
                     CurrentFilePath = filePath;
-                    FileOpened?.Invoke(this, new FileEventArgs(filePath));
+                    FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
                     try
                     {
-                        var prevFileSize = pos;
+                        var prevFileSize = fs.Position;
 #if !USE_WIN32_API
                         var fi = new FileInfo(filePath);
 #endif
@@ -195,13 +277,13 @@ namespace Koturn.VRChat.Log
                             {
                                 continue;
                             }
-                            var fileSize = (ulong)fi.Length;
+                            var fileSize = fi.Length;
 #endif  // USE_WIN32_API
                             if (fileSize == prevFileSize)
                             {
                                 continue;
                             }
-                            Parse(sr);
+                            logParser.Parse();
                             prevFileSize = fs.Position;
                         }
                     }
@@ -215,15 +297,15 @@ namespace Koturn.VRChat.Log
                     }
                     finally
                     {
-                        FileClosed?.Invoke(this, new FileEventArgs(CurrentFilePath));
-                        Terminate();
+                        logParser.Dispose();
+                        FileClosed?.Invoke(this, new FileCloseEventArgs(CurrentFilePath, logParser.LogFrom, logParser.LogUntil));
                     }
                 }
             })
             {
                 IsBackground = true
             };
-            thread.Start();
+            thread.Start(logParser);
             return thread;
         }
 
@@ -234,7 +316,7 @@ namespace Koturn.VRChat.Log
         /// <returns>Latest log file path.</returns>
         private static string? GetLatestLogFile(string logDirPath)
         {
-            var filePaths = GetLogFilePaths(logDirPath);
+            var filePaths = VRCBaseLogParser.GetLogFilePaths(logDirPath);
             if (filePaths.Length == 0)
             {
                 return null;
@@ -268,11 +350,17 @@ namespace Koturn.VRChat.Log
         }
 
 #if USE_WIN32_API
+        /// <summary>
+        /// Get specified file size.
+        /// </summary>
+        /// <param name="filePath">File path.</param>
+        /// <returns>File size of <paramref name="filePath"/>.</returns>
         private static ulong GetFileSize(string filePath)
         {
             var result = NativeMethods.GetFileAttributesEx(filePath, GetFileExInfoLevels.InfoStandard, out var fileAttrData);
             return result ? ((ulong)fileAttrData.FileSizeHigh << 32) | (ulong)fileAttrData.FileSizeLow : 0;
         }
+#endif
 
         /// <summary>
         /// Occurs when a file or directory in the specified <see cref='FileSystemWatcher.Path'/> is created.
@@ -292,6 +380,187 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
+        /// VRChat log file parser for <see cref="VRCLogWatcher"/>.
+        /// </summary>
+        private sealed class VRCWatcherLogParser : VRCCoreLogParser
+        {
+            /// <summary>
+            /// Reference to <see cref="VRCLogWatcher"/> instance.
+            /// </summary>
+            private readonly VRCLogWatcher _logWatcher;
+
+            /// <summary>
+            /// Create <see cref="VRCWatcherLogParser"/> instance.
+            /// </summary>
+            /// <param name="filePath">VRChat log file path.</param>
+            /// <param name="logWatcher"><see cref="VRCLogWatcher"/> instance.</param>
+            public VRCWatcherLogParser(string filePath, VRCLogWatcher logWatcher)
+                : base(filePath)
+            {
+                _logWatcher = logWatcher;
+            }
+
+            /// <summary>
+            /// Fire <see cref="JoinedToInstance"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
+            {
+                _logWatcher.JoinedToInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="LeftFromInstance"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
+            {
+                _logWatcher.LeftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="UserJoined"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="userName">User name.</param>
+            /// <param name="stayFrom">A timestamp the user joined.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnUserJoined(DateTime logAt, string userName, DateTime stayFrom, InstanceInfo instanceInfo)
+            {
+                _logWatcher.UserJoined?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="UserLeft"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="userName">User name.</param>
+            /// <param name="stayFrom">A timestamp the user joined.</param>
+            /// <param name="stayUntil">A timestamp the user left.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnUserLeft(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            {
+                _logWatcher.UserLeft?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, stayUntil, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="UserUnregistering"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="userName">User name.</param>
+            /// <param name="stayFrom">A timestamp the user joined.</param>
+            /// <param name="stayUntil">A timestamp the user left.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnUserUnregistering(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            {
+                _logWatcher.UserUnregistering?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, stayUntil, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="ScreenshotTook"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="filePath">Screenshort file path.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnScreenshotTook(DateTime logAt, string filePath, InstanceInfo instanceInfo)
+            {
+                _logWatcher.ScreenshotTook?.Invoke(this, new ScreenshotTakeEventArgs(logAt, filePath, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="VideoUrlResolving"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="url">Video URL.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnVideoUrlResolving(DateTime logAt, string url, InstanceInfo instanceInfo)
+            {
+                _logWatcher.VideoUrlResolving?.Invoke(this, new VideoUrlResolveEventArgs(logAt, url, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="VideoUrlResolved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="url">Video URL.</param>
+            /// <param name="resolvedUrl">Resolved Video URL.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnVideoUrlResolved(DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
+            {
+                _logWatcher.VideoUrlResolved?.Invoke(this, new VideoUrlResolveEventArgs(logAt, url, resolvedUrl, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="Downloaded"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="url">Download URL.</param>
+            /// <param name="type"></param>
+            /// <param name="instanceInfo"></param>
+            protected override void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
+            {
+                _logWatcher.Downloaded?.Invoke(this, new DownloadEventArgs(logAt, url, type, instanceInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="IdleHomeSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="WarningDetected"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="level">Log level.</param>
+            /// <param name="logLines">Log lines.</param>
+            protected override void OnWarningDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            {
+                _logWatcher.WarningDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+            }
+
+            /// <summary>
+            /// Fire <see cref="ErrorDetected"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="level">Log level.</param>
+            /// <param name="logLines">Log lines.</param>
+            protected override void OnErrorDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            {
+                _logWatcher.ErrorDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+            }
+
+            /// <summary>
+            /// Fire <see cref="ExceptionDetected"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="level">Log level.</param>
+            /// <param name="logLines">Log lines.</param>
+            protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            {
+                _logWatcher.ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+            }
+        }
+
+
+#if USE_WIN32_API
+        /// <summary>
         /// Defines values that are used with the <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
         /// and <see href="https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-getfileattributestransacteda">GetFileAttributesTransacted</see> functions
         /// to specify the information level of the returned data.
@@ -299,7 +568,7 @@ namespace Koturn.VRChat.Log
         /// <remarks>
         /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-minwinbase-get_fileex_info_levels"/>
         /// </remarks>
-        internal enum GetFileExInfoLevels : int
+        private enum GetFileExInfoLevels : int
         {
             /// <summary>
             /// The <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
@@ -343,7 +612,7 @@ namespace Koturn.VRChat.Log
         /// For more information, see the topic for the function you are calling.</para>
         /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct Win32FileTime
+        private readonly struct Win32FileTime
         {
             /// <summary>
             /// The low-order part of the file time.
@@ -373,7 +642,7 @@ namespace Koturn.VRChat.Log
         /// </para>
         /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct Win32FileAttributeData
+        private readonly struct Win32FileAttributeData
         {
             /// <summary>
             /// <para>The file system attribute information for a file or directory.</para>
@@ -416,7 +685,7 @@ namespace Koturn.VRChat.Log
         /// Provides native methods.
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        internal static class NativeMethods
+        private static class NativeMethods
         {
             /// <summary>
             /// <para>Retrieves attributes for a specified file or directory.</para>

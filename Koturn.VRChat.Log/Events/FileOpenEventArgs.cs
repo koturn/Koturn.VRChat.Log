@@ -4,9 +4,9 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogWatcher.FileOpened"/> or <see cref="VRCLogWatcher.FileClosed"/> event.
+    /// Provides data for <see cref="VRCLogWatcher.FileOpened"/>.
     /// </summary>
-    public class FileEventArgs : EventArgs
+    public class FileOpenEventArgs : EventArgs
     {
         /// <summary>
         /// Opened or closed file path.
@@ -17,7 +17,7 @@ namespace Koturn.VRChat.Log.Events
         /// Create instance with specified file path.
         /// </summary>
         /// <param name="filePath">Opened or closed file path.</param>
-        public FileEventArgs(string filePath)
+        public FileOpenEventArgs(string filePath)
         {
             FilePath = filePath;
         }

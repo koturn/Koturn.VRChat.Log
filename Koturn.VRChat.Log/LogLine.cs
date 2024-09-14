@@ -7,25 +7,20 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Represents one log item.
     /// </summary>
-    public struct LogLine
+    internal readonly struct LogLine
     {
-        /// <summary>
-        /// Logging timestamp format.
-        /// </summary>
-        private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-
         /// <summary>
         /// Timestamp of the log.
         /// </summary>
-        public DateTime DateTime;
+        public DateTime DateTime { get; }
         /// <summary>
         /// Level of the log.
         /// </summary>
-        public LogLevel Level;
+        public LogLevel Level { get; }
         /// <summary>
         /// Log message.
         /// </summary>
-        public string Message;
+        public string Message { get; }
 
         /// <summary>
         /// Initialize all members.
@@ -40,9 +35,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Get string representation of this instance.
         /// </summary>
-        public override string ToString()
+        public override readonly string ToString()
         {
-            return $"[{DateTime.ToString(DateTimeFormat)}][{Level,-9}] {Message}";
+            return $@"[{DateTime:yyyy-MM-dd HH\:mm\:ss}][{Level,-9}] {Message}";
         }
     }
 }
