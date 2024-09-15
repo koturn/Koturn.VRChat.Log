@@ -20,61 +20,15 @@ namespace Koturn.VRChat.Log
         public const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
 
         /// <summary>
-        /// <para>Regex to extract world name.</para>
-        /// <para><c>\[Behaviour\] Joining or Creating Room: (.+)$</c></para>
-        /// </summary>
-        private static readonly Regex _regexWorldName;
-        /// <summary>
-        /// <para>Regex to detect leaving from the instance.</para>
-        /// <para><c>\[Behaviour\] OnLeftRoom$</c></para>
-        /// </summary>
-        private static readonly Regex _regexWorldLeft;
-        /// <summary>
-        /// <para>Regex to extract joined or lefted player's name.</para>
-        /// <para><c>\[Behaviour\] OnPlayer(Joined|Left) (.+)$</c></para>
-        /// </summary>
-        private static readonly Regex _regexJoinLeave;
-        /// <summary>
-        /// <para>Regex to extract unregistered player's name.</para>
-        /// <para><c>\[Behaviour\] Unregistering (.+)$</c></para>
-        /// </summary>
-        private static readonly Regex _regexUnregistering;
-        /// <summary>
-        /// <para>Regex to extract screenshort log.</para>
-        /// <para><c>\[VRC Camera\] Took screenshot to: (.+\.png)$</c></para>
-        /// </summary>
-        private static readonly Regex _regexScreenshot;
-        /// <summary>
         /// <para>Regex to extract video URL resolved log.</para>
         /// <para><c>URL '(.+)' resolved to '(.+)'</c></para>
         /// </summary>
         private static readonly Regex _regexVideoResolved;
         /// <summary>
-        /// <para>Regex to extract video URL resolving log.</para>
-        /// <para><c>Resolving URL '(.+)'</c></para>
-        /// </summary>
-        private static readonly Regex _regexVideoResolving;
-        /// <summary>
-        /// <para>Regex to extract string download log.</para>
-        /// <para><c>\[String Download\] Attempting to load String from URL '([^']+)'$</c></para>
-        /// </summary>
-        private static readonly Regex _regexDlString;
-        /// <summary>
-        /// <para>Regex to extract image download log.</para>
-        /// <para><c>\[Image Download\] Attempting to load image from URL '([^']+)'$</c></para>
-        /// </summary>
-        private static readonly Regex _regexDlImage;
-        /// <summary>
         /// <para>Regex to extract Idle Home save data.</para>
         /// <para><c>\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$</c></para>
         /// </summary>
         private static readonly Regex _regexIdleHomeSave;
-        /// <summary>
-        /// <para>Regex to extract ToN save data.</para>
-        /// <para><c>^\[START\]([0-9,_]+)\[END\]$</c></para>
-        /// </summary>
-        private static readonly Regex _regexTonSave;
-
 
         /// <summary>
         /// Initialize regexes.
@@ -82,17 +36,8 @@ namespace Koturn.VRChat.Log
         static VRCCoreLogParser()
         {
             const RegexOptions regexOpt = RegexOptions.Compiled | RegexOptions.CultureInvariant;
-            _regexWorldName = new Regex(@"\[Behaviour\] Joining or Creating Room: (.+)$", regexOpt);
-            _regexWorldLeft = new Regex(@"\[Behaviour\] OnLeftRoom$", regexOpt);
-            _regexJoinLeave = new Regex(@"\[Behaviour\] OnPlayer(Joined|Left) (.+)$", regexOpt);
-            _regexUnregistering = new Regex(@"\[Behaviour\] Unregistering (.+)$", regexOpt);
-            _regexScreenshot = new Regex(@"\[VRC Camera\] Took screenshot to: (.+\.png)$", regexOpt);
-            _regexVideoResolved = new Regex(@"URL '(.+)' resolved to '(.+)'", regexOpt);
-            _regexVideoResolving = new Regex(@"Resolving URL '(.+)'", regexOpt);
-            _regexDlString = new Regex(@"\[String Download\] Attempting to load String from URL '([^']+)'$", regexOpt);
-            _regexDlImage = new Regex(@"\[Image Download\] Attempting to load image from URL '([^']+)'$", regexOpt);
-            _regexIdleHomeSave = new Regex(@"\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$", regexOpt);
-            _regexTonSave = new Regex(@"^\[START\]([0-9,_]+)\[END\]$", regexOpt);
+            _regexVideoResolved = new Regex(@"^URL '(.+)' resolved to '(.+)'$", regexOpt);
+            _regexIdleHomeSave = new Regex(@"^\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$", regexOpt);
         }
 
 
@@ -439,40 +384,40 @@ namespace Koturn.VRChat.Log
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
         private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
-            var match = _regexJoinLeave.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[Behaviour] OnPlayer", StringComparison.InvariantCulture))
             {
                 return false;
             }
 
-            var groups = match.Groups;
-            var joinLeaveKind = groups[1].Value;
-            var userName = groups[2].Value;
-            switch (joinLeaveKind)
+            if (firstLine.IndexOf("Joined ", 20, StringComparison.InvariantCulture) == 20)
             {
-                case "Joined":
-                    OnUserJoined(logAt, userName, logAt, _instanceInfo);
-                    if (_userJoinTimeDict.ContainsKey(userName))
-                    {
-                        ThrowInvalidLogException(
-                            $@"User join log already exists; {userName} {_userJoinTimeDict[userName]:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
-                    }
-                    _userJoinTimeDict.Add(userName, logAt);
-                    return true;
-                case "Left":
-                    if (_userJoinTimeDict.ContainsKey(userName))
-                    {
-                        OnUserLeft(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
-                        _userJoinTimeDict.Remove(userName);
-                    }
-                    else
-                    {
-                        OnUserLeft(logAt, userName, logAt, logAt, _instanceInfo);
-                    }
-                    return true;
-                default:
-                    return false;
+                var userName = firstLine.Substring(27);
+                OnUserJoined(logAt, userName, logAt, _instanceInfo);
+                if (_userJoinTimeDict.ContainsKey(userName))
+                {
+                    ThrowInvalidLogException(
+                        $@"User join log already exists; {userName} {_userJoinTimeDict[userName]:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
+                }
+                _userJoinTimeDict.Add(userName, logAt);
+                return true;
             }
+
+            if (firstLine.IndexOf("Left ", 20, StringComparison.InvariantCulture) == 20)
+            {
+                var userName = firstLine.Substring(25);
+                if (_userJoinTimeDict.ContainsKey(userName))
+                {
+                    OnUserLeft(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
+                    _userJoinTimeDict.Remove(userName);
+                }
+                else
+                {
+                    OnUserLeft(logAt, userName, logAt, logAt, _instanceInfo);
+                }
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -483,14 +428,12 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsUserUnregisteringLog(DateTime logAt, string firstLine)
         {
-            var match = _regexUnregistering.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[Behaviour] Unregistering ", StringComparison.InvariantCulture))
             {
                 return false;
             }
 
-            var groups = match.Groups;
-            var userName = groups[1].Value;
+            var userName = firstLine.Substring(26);
             if (_userJoinTimeDict.ContainsKey(userName))
             {
                 OnUserUnregistering(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
@@ -508,24 +451,32 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsVideoPlaybackLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Video Playback] "))
+            if (!firstLine.StartsWith("[Video Playback] ") || firstLine[firstLine.Length - 1] != '\'')
             {
                 return false;
             }
 
             var content = firstLine.Substring(17);
+            if (content.StartsWith("Resolving URL '", StringComparison.InvariantCulture))
+            {
+                OnVideoUrlResolving(logAt, content.Substring(15, content.Length - 16), _instanceInfo);
+                return true;
+            }
+
+            // if (content.StartsWith("Attempting to resolve URL '", StringComparison.InvariantCulture))
+            // {
+            //     OnVideoUrlResolving(logAt, content.Substring(27, content.Length - 28), _instanceInfo);
+            //     return true;
+            // }
 
             Match match;
             if ((match = _regexVideoResolved.Match(content)).Success)
             {
                 OnVideoUrlResolved(logAt, match.Groups[1].Value, match.Groups[2].Value, _instanceInfo);
-            }
-            else if ((match = _regexVideoResolving.Match(content)).Success)
-            {
-                OnVideoUrlResolving(logAt, match.Groups[1].Value, _instanceInfo);
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -536,13 +487,12 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsScreenshotLog(DateTime logAt, string firstLine)
         {
-            var match = _regexScreenshot.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[VRC Camera] Took screenshot to: ", StringComparison.InvariantCulture))
             {
                 return false;
             }
 
-            OnScreenshotTook(logAt, match.Groups[1].Value, _instanceInfo);
+            OnScreenshotTook(logAt, firstLine.Substring(33), _instanceInfo);
 
             return true;
         }
@@ -555,13 +505,13 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsStringDownloadLog(DateTime logAt, string firstLine)
         {
-            var match = _regexDlString.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[String Download] Attempting to load String from URL '", StringComparison.InvariantCulture)
+                || firstLine[firstLine.Length - 1] != '\'')
             {
                 return false;
             }
 
-            OnDownloaded(logAt, match.Groups[1].Value, DownloadType.String, _instanceInfo);
+            OnDownloaded(logAt, firstLine.Substring(54, firstLine.Length - 55), DownloadType.String, _instanceInfo);
 
             return true;
         }
@@ -574,13 +524,13 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsImageDownloadLog(DateTime logAt, string firstLine)
         {
-            var match = _regexDlImage.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[Image Download] Attempting to load image from URL '", StringComparison.InvariantCulture)
+                || firstLine[firstLine.Length - 1] != '\'')
             {
                 return false;
             }
 
-            OnDownloaded(logAt, match.Groups[1].Value, DownloadType.Image, _instanceInfo);
+            OnDownloaded(logAt, firstLine.Substring(52, firstLine.Length - 53), DownloadType.Image, _instanceInfo);
 
             return true;
         }
@@ -593,7 +543,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] Joining wrld_"))
+            if (!firstLine.StartsWith("[Behaviour] Joining wrld_", StringComparison.InvariantCulture))
             {
                 return false;
             }
@@ -685,13 +635,12 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
         {
-            var match = _regexWorldName.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[Behaviour] Joining or Creating Room: ", StringComparison.InvariantCulture))
             {
                 return false;
             }
 
-            _instanceInfo.WorldName = match.Groups[1].Value;
+            _instanceInfo.WorldName = firstLine.Substring(38);
             OnJoinedToInstance(logAt, _instanceInfo);
 
             return true;
@@ -705,8 +654,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsLeftLog(DateTime logAt, string firstLine)
         {
-            var match = _regexWorldLeft.Match(firstLine);
-            if (!match.Success)
+            if (firstLine != "[Behaviour] OnLeftRoom")
             {
                 return false;
             }
@@ -769,13 +717,13 @@ namespace Koturn.VRChat.Log
 
             _isTonSaveData = false;
 
-            var match = _regexTonSave.Match(firstLine);
-            if (!match.Success)
+            if (!firstLine.StartsWith("[START]", StringComparison.InvariantCulture)
+                || !firstLine.EndsWith("[END]", StringComparison.InvariantCulture))
             {
                 return false;
             }
 
-            OnTerrorsOfNowhereSaved(logAt, match.Groups[1].Value);
+            OnTerrorsOfNowhereSaved(logAt, firstLine.Substring(7, firstLine.Length - 12));
 
             return true;
         }
