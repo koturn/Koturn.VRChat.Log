@@ -57,6 +57,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
         /// <summary>
+        /// Occurs when detect a log that save data text of Rhapsody is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? RhapsodySaved;
+        /// <summary>
         /// Occurs when detect a warning log.
         /// </summary>
         public event EventHandler<ErrorLogEventArgs>? WarningDetected;
@@ -222,6 +226,16 @@ namespace Koturn.VRChat.Log
         protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
         {
             TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="RhapsodySaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnRhapsodySaved(DateTime logAt, string saveText)
+        {
+            RhapsodySaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
         }
 
         /// <summary>

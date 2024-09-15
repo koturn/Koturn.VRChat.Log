@@ -18,6 +18,11 @@ namespace Koturn.VRChat.Log
         /// ToN save data preamble log line.
         /// </summary>
         public const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
+        /// <summary>
+        /// Rhapsody save data preamble log line.
+        /// </summary>
+        public const string RhapsodySaveDataPreamble = "セーブが実行されました";
+
 
         /// <summary>
         /// <para>Regex to extract video URL resolved log.</para>
@@ -58,6 +63,10 @@ namespace Koturn.VRChat.Log
         /// Indicate next log line is ToN save data.
         /// </summary>
         private bool _isTonSaveData;
+        /// <summary>
+        /// Indicate next log line is Rhapsody save data.
+        /// </summary>
+        private bool _isRhapsodySaveData;
 
 
         /// <summary>
@@ -71,6 +80,7 @@ namespace Koturn.VRChat.Log
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
             _isTonSaveData = false;
+            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -85,6 +95,7 @@ namespace Koturn.VRChat.Log
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
             _isTonSaveData = false;
+            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -98,6 +109,7 @@ namespace Koturn.VRChat.Log
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
             _isTonSaveData = false;
+            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -138,7 +150,9 @@ namespace Koturn.VRChat.Log
                 || ParseAsLeftLog(logAt, firstLine)
                 || ParseAsIdleHomeSaveData(logAt, firstLine)
                 || ParseAsTonSaveDataPreamble(firstLine)
-                || ParseAsTonSaveData(logAt, firstLine);
+                || ParseAsTonSaveData(logAt, firstLine)
+                || ParseAsRhapsodySaveDataPreamble(firstLine)
+                || ParseAsRhapsodySaveData(logAt, firstLine);
         }
 
         /// <summary>
@@ -296,6 +310,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when Rhapsody save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnRhapsodySaved(DateTime logAt, string saveText)
         {
         }
 
@@ -727,6 +754,44 @@ namespace Koturn.VRChat.Log
 
             return true;
         }
+
+        /// <summary>
+        /// Parse first log line as Rhapsody save data preamble log.
+        /// </summary>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsRhapsodySaveDataPreamble(string firstLine)
+        {
+            if (firstLine != RhapsodySaveDataPreamble)
+            {
+                return false;
+            }
+
+            _isRhapsodySaveData = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as Terrors of Nowhere save data log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsRhapsodySaveData(DateTime logAt, string firstLine)
+        {
+            if (!_isRhapsodySaveData)
+            {
+                return false;
+            }
+
+            _isRhapsodySaveData = false;
+
+            OnRhapsodySaved(logAt, firstLine);
+
+            return true;
+        }
+
 
         /// <summary>
         /// Parse instance string optipn, "~XXX(YYY)".
