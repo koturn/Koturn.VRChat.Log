@@ -291,14 +291,10 @@ namespace Koturn.VRChat.Log
                     {
                         // Do nothing
                     }
-                    catch (ThreadAbortException)
-                    {
-                        // Do nothing
-                    }
                     finally
                     {
                         logParser.Dispose();
-                        FileClosed?.Invoke(this, new FileCloseEventArgs(CurrentFilePath, logParser.LogFrom, logParser.LogUntil));
+                        FileClosed?.Invoke(this, new FileCloseEventArgs(filePath, logParser.LogFrom, logParser.LogUntil));
                     }
                 }
             })
@@ -330,18 +326,11 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="thread">Target thread.</param>
         /// <param name="interruptWait">Wait time for interrupt. (in milliseconds; -1 means infinity)</param>
-        /// <param name="abortWait">Wait time for abort. (in milliseconds; -1 means infinity)</param>
         /// <returns>True when interrupt or abort succseeded, otherwise false.</returns>
-        private static bool StopThread(Thread thread, int interruptWait = -1, int abortWait = -1)
+        private static bool StopThread(Thread thread, int interruptWait = -1)
         {
             thread.Interrupt();
             if (thread.Join(interruptWait))
-            {
-                return true;
-            }
-
-            thread.Abort();
-            if (thread.Join(abortWait))
             {
                 return true;
             }
