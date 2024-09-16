@@ -120,26 +120,27 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
+        protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
         {
             switch (level)
             {
                 case LogLevel.Warning:
                     OnWarningDetected(logAt, level, logLines);
-                    return;
+                    return false;
                 case LogLevel.Error:
                     OnErrorDetected(logAt, level, logLines);
-                    return;
+                    return false;
                 case LogLevel.Exception:
                     OnExceptionDetected(logAt, level, logLines);
-                    return;
+                    return false;
                 default:
                     break;
             }
 
             var firstLine = logLines[0];
 
-            _ = ParseAsUserJoinLeaveLog(logAt, firstLine)
+            return ParseAsUserJoinLeaveLog(logAt, firstLine)
                 || ParseAsUserUnregisteringLog(logAt, firstLine)
                 || ParseAsScreenshotLog(logAt, firstLine)
                 || ParseAsVideoPlaybackLog(logAt, firstLine)

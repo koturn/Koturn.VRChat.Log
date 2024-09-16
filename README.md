@@ -199,10 +199,11 @@ namespace VRCBaseLogParserSample
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines (First line does not contain timestamp and level part, just message only).</param>
-        protected override void OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
+        protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
         {
             var firstLine = logLines[0];
-            ParseAsUserJoinLeaveLog(logAt, firstLine);
+            return ParseAsUserJoinLeaveLog(logAt, firstLine);
         }
 
         /// <summary>

@@ -172,7 +172,11 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines (First line does not contain timestamp and level part, just message only).</param>
-        protected abstract void OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines);
+        /// <returns>True if any of log parsing succeeds, otherwise false.</returns>
+        /// <remarks>
+        /// Return values is not used in <see cref="VRCBaseLogParser"/>, just for inherited classes.
+        /// </remarks>
+        protected abstract bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines);
 
         /// <summary>
         /// Get underlying file path from specified <see cref="Reader"/>.
