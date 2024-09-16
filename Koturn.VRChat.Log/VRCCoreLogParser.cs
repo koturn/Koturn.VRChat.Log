@@ -149,6 +149,7 @@ namespace Koturn.VRChat.Log
                 || ParseAsJoinedLog(logAt, firstLine)
                 || ParseAsLeftLog(logAt, firstLine)
                 || ParseAsIdleHomeSaveData(logAt, firstLine)
+                || ParseAsIdleDefenseSaveData(logAt, logLines)
                 || ParseAsTonSaveDataPreamble(firstLine)
                 || ParseAsTonSaveData(logAt, firstLine)
                 || ParseAsRhapsodySaveDataPreamble(firstLine)
@@ -297,6 +298,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsIdleHomeSaveData(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when Idle Defense save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsIdleDefenseSaveData(DateTime, List{string})"/></para>
+        /// </remarks>
+        protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
         {
         }
 
@@ -708,6 +722,26 @@ namespace Koturn.VRChat.Log
             }
 
             OnIdleHomeSaved(logAt, match.Groups[1].Value);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse log lines as Idle Defense save data log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsIdleDefenseSaveData(DateTime logAt, List<string> logLines)
+        {
+            if (logLines.Count != 2
+                || logLines[0] != "Saving data complete! "
+                || !logLines[1].EndsWith(" IDLEDEFENSE", StringComparison.InvariantCulture))
+            {
+                return false;
+            }
+
+            OnIdleDefenseSaved(logAt, logLines[1].Substring(0, logLines[1].Length - 12));
 
             return true;
         }

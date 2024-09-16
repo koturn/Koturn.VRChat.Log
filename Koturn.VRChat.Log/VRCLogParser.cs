@@ -53,6 +53,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public event EventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <summary>
+        /// Occurs when detect a log that save data text of Idle Defense is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
+        /// <summary>
         /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
         /// </summary>
         public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
@@ -216,6 +220,16 @@ namespace Koturn.VRChat.Log
         protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
         {
             IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="IdleDefenseSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        {
+            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
         }
 
         /// <summary>
