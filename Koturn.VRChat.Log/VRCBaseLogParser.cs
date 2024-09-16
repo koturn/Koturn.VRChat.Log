@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
+using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -39,9 +40,7 @@ namespace Koturn.VRChat.Log
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
                 "VRChat",
                 "VRChat");
-            _regexLogLine = new Regex(
-                @"^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2}) (\w+)\s+-  (.+)$",
-                RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            _regexLogLine = RegexHelper.GetLogLineRegex();
         }
 
         /// <summary>

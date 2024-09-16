@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
+using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -40,9 +41,8 @@ namespace Koturn.VRChat.Log
         /// </summary>
         static VRCCoreLogParser()
         {
-            const RegexOptions regexOpt = RegexOptions.Compiled | RegexOptions.CultureInvariant;
-            _regexVideoResolved = new Regex(@"^URL '(.+)' resolved to '(.+)'$", regexOpt);
-            _regexIdleHomeSave = new Regex(@"^\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$", regexOpt);
+            _regexVideoResolved = RegexHelper.GetVideoResolvedRegex();
+            _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
         }
 
 
