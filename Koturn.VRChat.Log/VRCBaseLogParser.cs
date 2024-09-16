@@ -217,7 +217,7 @@ namespace Koturn.VRChat.Log
         /// <param name="message">The error message that explains the reason for the exception.</param>
         protected InvalidLogException CreateInvalidLogException(string message)
         {
-            return new InvalidLogException(message, GetFilePath(), LineCount);
+            return new InvalidLogException(message, GetFilePath(), LineCount - (ulong)_lineStack.Count - 3UL);
         }
 
         /// <summary>
