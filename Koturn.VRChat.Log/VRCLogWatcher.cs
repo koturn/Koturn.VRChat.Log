@@ -28,6 +28,14 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public string? CurrentFilePath { get; private set; }
         /// <summary>
+        /// First timestamp of current log file.
+        /// </summary>
+        public DateTime CurrentLogFrom { get; private set; }
+        /// <summary>
+        /// Last timestamp of current log file.
+        /// </summary>
+        public DateTime CurrentLogUntil { get; private set; }
+        /// <summary>
         /// True if disposed, otherwise false.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -133,6 +141,8 @@ namespace Koturn.VRChat.Log
             _thread = null;
             WatchCycle = watchCycle;
             CurrentFilePath = null;
+            CurrentLogFrom = default;
+            CurrentLogUntil = default;
         }
 
         /// <summary>
@@ -266,6 +276,8 @@ namespace Koturn.VRChat.Log
                     var fs = (FileStream)((StreamReader)logParser.Reader).BaseStream;
                     var filePath = fs.Name;
                     CurrentFilePath = filePath;
+                    CurrentLogFrom = default;
+                    CurrentLogUntil = default;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
                     try
@@ -395,6 +407,24 @@ namespace Koturn.VRChat.Log
                 : base(filePath)
             {
                 _logWatcher = logWatcher;
+            }
+
+            /// <summary>
+            /// Load one line of log file and parse it, and fire each event as needed.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="level">Log level.</param>
+            /// <param name="logLines">Log lines.</param>
+            /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
+            protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            {
+                var logWatcher = _logWatcher;
+                if (logWatcher.CurrentLogFrom != default)
+                {
+                    logWatcher.CurrentLogFrom = logAt;
+                }
+                logWatcher.CurrentLogUntil = logAt;
+                return base.OnLogDetected(logAt, level, logLines);
             }
 
             /// <summary>
