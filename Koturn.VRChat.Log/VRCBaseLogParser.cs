@@ -44,6 +44,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public ulong LineCount { get; private set; }
         /// <summary>
+        /// Log item counter.
+        /// </summary>
+        public ulong LogCount { get; private set; }
+        /// <summary>
         /// First timestamp of log file.
         /// </summary>
         public DateTime LogFrom { get; private set; }
@@ -93,6 +97,7 @@ namespace Koturn.VRChat.Log
         {
             Reader = reader;
             LineCount = 0;
+            LogCount = 0;
             LogFrom = default;
             LogUntil = default;
             _lineStack = new List<string>(128);
@@ -143,6 +148,7 @@ namespace Koturn.VRChat.Log
             }
             LogUntil = parsed.DateTime;
 
+            LogCount++;
             OnLogDetected(parsed.DateTime, parsed.Level, _lineStack);
 
             _lineStack.Clear();
@@ -199,6 +205,7 @@ namespace Koturn.VRChat.Log
                 Reader.Dispose();
                 _emptyLineCount = 0;
                 LineCount = 0;
+                LogCount = 0;
                 LogFrom = default;
                 LogUntil = default;
             }
@@ -212,7 +219,7 @@ namespace Koturn.VRChat.Log
         /// <param name="message">The error message that explains the reason for the exception.</param>
         protected InvalidLogException CreateInvalidLogException(string message)
         {
-            return new InvalidLogException(message, GetFilePath(), LineCount - (ulong)_lineStack.Count - 3UL);
+            return new InvalidLogException(message, GetFilePath(), LineCount - (ulong)_lineStack.Count - 3UL, LogCount);
         }
 
         /// <summary>

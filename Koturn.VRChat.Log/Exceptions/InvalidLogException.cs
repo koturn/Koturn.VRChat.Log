@@ -18,16 +18,20 @@ namespace Koturn.VRChat.Log.Exceptions
         /// Log line counter.
         /// </summary>
         public ulong LineCount { get; }
+        /// <summary>
+        /// Log item counter.
+        /// </summary>
+        public ulong LogCount { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvalidLogException"/> class.
         /// </summary>
         /// <param name="filePath">Log file path.</param>
         /// <param name="lineCount">Log line counter.</param>
-        public InvalidLogException(string? filePath, ulong lineCount)
+        /// <param name="logCount">Log item counter.</param>
+        public InvalidLogException(string? filePath, ulong lineCount, ulong logCount)
+            : this("An error occured", filePath, lineCount, logCount)
         {
-            FilePath = filePath;
-            LineCount = lineCount;
         }
 
         /// <summary>
@@ -36,11 +40,13 @@ namespace Koturn.VRChat.Log.Exceptions
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="filePath">Log file path.</param>
         /// <param name="lineCount">Log line counter.</param>
-        public InvalidLogException(string message, string? filePath, ulong lineCount)
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount}")
+        /// <param name="logCount">Log item counter.</param>
+        public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount)
+            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})")
         {
             FilePath = filePath;
             LineCount = lineCount;
+            LogCount = logCount;
         }
 
         /// <summary>
@@ -51,14 +57,16 @@ namespace Koturn.VRChat.Log.Exceptions
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="filePath">Log file path.</param>
         /// <param name="lineCount">Log line counter.</param>
+        /// <param name="logCount">Log item counter.</param>
         /// <param name="inner">The exception that is the cause of the current exception.
         /// If the innerException parameter is not a null reference,
         /// the current exception is raised in a catch block that handles the inner exception.</param>
-        public InvalidLogException(string message, string? filePath, ulong lineCount, Exception inner)
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount}", inner)
+        public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount, Exception inner)
+            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})", inner)
         {
             FilePath = filePath;
             LineCount = lineCount;
+            LogCount = logCount;
         }
 
         /// <summary>
@@ -69,8 +77,6 @@ namespace Koturn.VRChat.Log.Exceptions
         private InvalidLogException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            FilePath = string.Empty;
-            LineCount = 0;
         }
     }
 }
