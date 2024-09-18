@@ -426,12 +426,12 @@ namespace Koturn.VRChat.Log
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
         private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] OnPlayer", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[Behaviour] OnPlayer", StringComparison.Ordinal))
             {
                 return false;
             }
 
-            if (firstLine.IndexOf("Joined ", 20, StringComparison.InvariantCulture) == 20)
+            if (firstLine.IndexOf("Joined ", 20, StringComparison.Ordinal) == 20)
             {
                 var userName = firstLine.Substring(27);
                 OnUserJoined(logAt, userName, logAt, _instanceInfo);
@@ -444,7 +444,7 @@ namespace Koturn.VRChat.Log
                 return true;
             }
 
-            if (firstLine.IndexOf("Left ", 20, StringComparison.InvariantCulture) == 20)
+            if (firstLine.IndexOf("Left ", 20, StringComparison.Ordinal) == 20)
             {
                 var userName = firstLine.Substring(25);
                 if (_userJoinTimeDict.ContainsKey(userName))
@@ -470,7 +470,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsUserUnregisteringLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] Unregistering ", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[Behaviour] Unregistering ", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -499,13 +499,13 @@ namespace Koturn.VRChat.Log
             }
 
             var content = firstLine.Substring(17);
-            if (content.StartsWith("Resolving URL '", StringComparison.InvariantCulture))
+            if (content.StartsWith("Resolving URL '", StringComparison.Ordinal))
             {
                 OnVideoUrlResolving(logAt, content.Substring(15, content.Length - 16), _instanceInfo);
                 return true;
             }
 
-            // if (content.StartsWith("Attempting to resolve URL '", StringComparison.InvariantCulture))
+            // if (content.StartsWith("Attempting to resolve URL '", StringComparison.Ordinal))
             // {
             //     OnVideoUrlResolving(logAt, content.Substring(27, content.Length - 28), _instanceInfo);
             //     return true;
@@ -529,7 +529,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsScreenshotLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[VRC Camera] Took screenshot to: ", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[VRC Camera] Took screenshot to: ", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -547,7 +547,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsStringDownloadLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[String Download] Attempting to load String from URL '", StringComparison.InvariantCulture)
+            if (!firstLine.StartsWith("[String Download] Attempting to load String from URL '", StringComparison.Ordinal)
                 || firstLine[firstLine.Length - 1] != '\'')
             {
                 return false;
@@ -566,7 +566,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsImageDownloadLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Image Download] Attempting to load image from URL '", StringComparison.InvariantCulture)
+            if (!firstLine.StartsWith("[Image Download] Attempting to load image from URL '", StringComparison.Ordinal)
                 || firstLine[firstLine.Length - 1] != '\'')
             {
                 return false;
@@ -585,7 +585,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] Joining wrld_", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[Behaviour] Joining wrld_", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -677,7 +677,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] Joining or Creating Room: ", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[Behaviour] Joining or Creating Room: ", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -737,7 +737,7 @@ namespace Koturn.VRChat.Log
         {
             if (logLines.Count != 2
                 || logLines[0] != "Saving data complete! "
-                || !logLines[1].EndsWith(" IDLEDEFENSE", StringComparison.InvariantCulture))
+                || !logLines[1].EndsWith(" IDLEDEFENSE", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -779,8 +779,8 @@ namespace Koturn.VRChat.Log
 
             _isTonSaveData = false;
 
-            if (!firstLine.StartsWith("[START]", StringComparison.InvariantCulture)
-                || !firstLine.EndsWith("[END]", StringComparison.InvariantCulture))
+            if (!firstLine.StartsWith("[START]", StringComparison.Ordinal)
+                || !firstLine.EndsWith("[END]", StringComparison.Ordinal))
             {
                 return false;
             }
