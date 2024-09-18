@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
-using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -26,12 +24,6 @@ namespace Koturn.VRChat.Log
         public static string DefaultVRChatLogDirectory { get; }
 
         /// <summary>
-        /// <para>Regex to detect log message with timestamp.</para>
-        /// <para><c>^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2}) (\w+)\s+-  (.+)$</c></para>
-        /// </summary>
-        private static readonly Regex _regexLogLine;
-
-        /// <summary>
         /// Initialize regexes.
         /// </summary>
         static VRCBaseLogParser()
@@ -40,7 +32,6 @@ namespace Koturn.VRChat.Log
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
                 "VRChat",
                 "VRChat");
-            _regexLogLine = RegexHelper.GetLogLineRegex();
         }
 
         /// <summary>
@@ -242,33 +233,67 @@ namespace Koturn.VRChat.Log
         /// <returns>Parsed result.</returns>
         private LogLine ParseFirstLogLine(string line)
         {
-            var match = _regexLogLine.Match(line);
-            var groups = match.Groups;
-            if (!match.Success || groups.Count < 9)
+            if (line.Length < 34)
             {
-                ThrowInvalidLogException("Invalid log line: " + line);
+                ThrowInvalidLogException("Invalid log line detected: " + line);
             }
 
-            var logLevel = groups[7].Value switch
+            // Avoid to call Substring() method to reduce number of memory allocations.
+            DateTime logDateTime;
+            unsafe
             {
-                "Log" => LogLevel.Log,
-                "Warning" => LogLevel.Warning,
-                "Error" => LogLevel.Error,
-                "Exception" => LogLevel.Exception,
-                _ => throw CreateInvalidLogException("Invalid log level: " + groups[7].Value)
-            };
+                fixed (char *pcLineBase = line)
+                {
+                    logDateTime = new DateTime(
+                        ParseIntSimple(&pcLineBase[0], 4),
+                        ParseIntSimple(&pcLineBase[5], 2),
+                        ParseIntSimple(&pcLineBase[8], 2),
+                        ParseIntSimple(&pcLineBase[11], 2),
+                        ParseIntSimple(&pcLineBase[14], 2),
+                        ParseIntSimple(&pcLineBase[17], 2),
+                        DateTimeKind.Utc);
 
-            return new LogLine(
-                new DateTime(
-                    int.Parse(groups[1].Value),
-                    int.Parse(groups[2].Value),
-                    int.Parse(groups[3].Value),
-                    int.Parse(groups[4].Value),
-                    int.Parse(groups[5].Value),
-                    int.Parse(groups[6].Value),
-                    DateTimeKind.Utc),
-                logLevel,
-                groups[8].Value);
+                    if (pcLineBase[4] != '.'
+                        || pcLineBase[7] != '.'
+                        || pcLineBase[10] != ' '
+                        || pcLineBase[13] != ':'
+                        || pcLineBase[16] != ':'
+                        || pcLineBase[19] != ' ')
+                    {
+                        ThrowInvalidLogException("Invalid log line detected: " + line);
+                    }
+                }
+            }
+
+            LogLevel logLevel;
+            if (line.IndexOf("Log        ", 20, StringComparison.Ordinal) == 20)
+            {
+                logLevel = LogLevel.Log;
+            }
+            else if (line.IndexOf("Warning    ", 20, StringComparison.Ordinal) == 20)
+            {
+                logLevel = LogLevel.Warning;
+            }
+            else if (line.IndexOf("Error      ", 20, StringComparison.Ordinal) == 20)
+            {
+                logLevel = LogLevel.Error;
+            }
+            else if (line.IndexOf("Exception  ", 20, StringComparison.Ordinal) == 20)
+            {
+                logLevel = LogLevel.Exception;
+            }
+            else
+            {
+                ThrowInvalidLogException("Invalid log level detected: " + line.Substring(20, 11));
+                return default;
+            }
+
+            if (line.IndexOf("-  ", 31, StringComparison.Ordinal) != 31)
+            {
+                ThrowInvalidLogException("Invalid log line detected: " + line);
+            }
+
+            return new LogLine(logDateTime, logLevel, line.Substring(34));
         }
 
 
@@ -316,6 +341,30 @@ namespace Koturn.VRChat.Log
         protected static string? GetFilePath(Stream stream)
         {
             return (stream as FileStream)?.Name;
+        }
+
+
+        /// <summary>
+        /// <para>Converts the string representation of a number to its 32-bit signed integer equivalent with very simple way.</para>
+        /// <para>No boundary checks or overflow detection.</para>
+        /// </summary>
+        /// <param name="pcLine">Pointer to log line.</param>
+        /// <param name="count">Number of characters.</param>
+        /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="pcLine"/>.</returns>
+        /// <exception cref="FormatException">Thrown when non digit character is detected.</exception>
+        private static unsafe int ParseIntSimple(char* pcLine, int count)
+        {
+            int val = 0;
+            for (int i = 0; i < count; i++)
+            {
+                var d = pcLine[i] - '0';
+                if ((uint)d > 9)
+                {
+                    throw new FormatException($"Non digit character detected: '{pcLine[i]}'");
+                }
+                val = val * 10 + d;
+            }
+            return val;
         }
     }
 }
