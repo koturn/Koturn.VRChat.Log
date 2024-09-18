@@ -2,7 +2,7 @@ using System;
 using Koturn.VRChat.Log.Enums;
 
 
-namespace Koturn.VRChat.Log
+namespace Koturn.VRChat.Log.Internals
 {
     /// <summary>
     /// Represents one log item.

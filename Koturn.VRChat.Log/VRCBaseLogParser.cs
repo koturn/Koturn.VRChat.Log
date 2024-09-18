@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
+using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
