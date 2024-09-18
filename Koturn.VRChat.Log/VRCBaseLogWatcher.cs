@@ -1,4 +1,4 @@
-﻿#define USE_WIN32_API
+#define USE_WIN32_API
 
 using System;
 using System.IO;
@@ -101,18 +101,7 @@ namespace Koturn.VRChat.Log
             var filePath = GetLatestLogFile(dirPath);
             if (filePath != null)
             {
-                VRCBaseLogParser? logParser = null;
-                try
-                {
-                    logParser = CreateLogParser(filePath);
-                    logParser.Parse();
-                    StartFileWatchingThread(logParser);
-                }
-                catch (Exception)
-                {
-                    logParser?.Dispose();
-                    throw;
-                }
+                StartFileWatchingThread(filePath, true);
             }
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.VRChatLogFileFilter)
             {
@@ -187,13 +176,18 @@ namespace Koturn.VRChat.Log
         /// Start flush log file thread.
         /// </summary>
         /// <param name="filePath">Target file path.</param>
+        /// <param name="isParseToEnd">True to parse to end.</param>
         /// <returns>Started thread.</returns>
-        private Thread StartFileWatchingThread(string filePath)
+        private Thread StartFileWatchingThread(string filePath, bool isParseToEnd = false)
         {
             VRCBaseLogParser? logParser = null;
             try
             {
                 logParser = CreateLogParser(filePath);
+                if (isParseToEnd)
+                {
+                    logParser.Parse();
+                }
                 return StartFileWatchingThread(logParser);
             }
             catch (Exception)
