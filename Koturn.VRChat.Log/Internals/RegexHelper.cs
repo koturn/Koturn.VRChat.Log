@@ -4,6 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Koturn.VRChat.Log.Internals
 {
+    /// <summary>
+    /// Provides some <see cref="Regex"/> instances.
+    /// </summary>
 #if NET7_0_OR_GREATER
     internal static partial class RegexHelper
 #else
