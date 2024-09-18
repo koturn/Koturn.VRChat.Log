@@ -126,7 +126,7 @@ namespace Koturn.VRChat.Log
         public void LoadLine(string line)
         {
             LineCount++;
-            if (line != string.Empty)
+            if (line.Length > 0)
             {
                 if (_emptyLineCount == 1)
                 {
