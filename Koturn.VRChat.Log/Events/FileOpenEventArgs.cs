@@ -4,7 +4,7 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogWatcher.FileOpened"/>.
+    /// Provides data for <see cref="VRCBaseLogWatcher.FileOpened"/>.
     /// </summary>
     public class FileOpenEventArgs : EventArgs
     {
