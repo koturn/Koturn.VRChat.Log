@@ -82,9 +82,9 @@ namespace Koturn.VRChat.Log
         /// Start watching log file on default VRChat log directory.
         /// </summary>
         /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void StartWatching(int watchCycle = 1000)
+        public void Start(int watchCycle = 1000)
         {
-            StartWatching(VRCBaseLogParser.DefaultVRChatLogDirectory, watchCycle);
+            Start(VRCBaseLogParser.DefaultVRChatLogDirectory, watchCycle);
         }
 
         /// <summary>
@@ -92,11 +92,11 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="dirPath">VRChat log directory.</param>
         /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void StartWatching(string dirPath, int watchCycle = 1000)
+        public void Start(string dirPath, int watchCycle = 1000)
         {
             WatchCycle = watchCycle;
 
-            StopWatching();
+            Stop();
 
             var filePath = GetLatestLogFile(dirPath);
             if (filePath != null)
@@ -121,7 +121,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Stop watching.
         /// </summary>
-        public void StopWatching()
+        public void Stop()
         {
             var thread = _thread;
             if (thread != null)
@@ -167,7 +167,7 @@ namespace Koturn.VRChat.Log
 
             if (disposing)
             {
-                StopWatching();
+                Stop();
             }
             IsDisposed = true;
         }
@@ -190,7 +190,7 @@ namespace Koturn.VRChat.Log
                 }
                 return StartFileWatchingThread(logParser);
             }
-            catch (Exception)
+            catch
             {
                 logParser?.Dispose();
                 throw;
@@ -284,12 +284,7 @@ namespace Koturn.VRChat.Log
         private static bool StopThread(Thread thread, int interruptWait = -1)
         {
             thread.Interrupt();
-            if (thread.Join(interruptWait))
-            {
-                return true;
-            }
-
-            return false;
+            return thread.Join(interruptWait);
         }
 
 #if USE_WIN32_API

@@ -268,7 +268,7 @@ namespace VRCLogWatcherSample
             {
                 logWatcher.FileOpened += (sender, e) => Console.WriteLine($"Start watching: {e.FilePath}");
                 logWatcher.FileClosed += (sender, e) => Console.WriteLine($"End watching: {e.FilePath}");
-                logWatcher.StartWatching();  // Start watching and read to end of latest log file.
+                logWatcher.Start();  // Start watching and read to end of latest log file.
 
                 logWatcher.UserJoined += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: {e.UserName}");
                 logWatcher.UserLeft += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: {e.UserName}");
@@ -279,8 +279,8 @@ namespace VRCLogWatcherSample
                     // Do nothing.
                 }
 
-                // StopWatching() is called in Dispose().
-                // logWatcher.StopWatching();
+                // Stop() is called in Dispose().
+                // logWatcher.Stop();
             }
         }
     }
