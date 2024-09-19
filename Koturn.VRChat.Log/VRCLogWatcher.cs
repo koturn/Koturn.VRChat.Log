@@ -11,7 +11,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-    public class VRCLogWatcher : VRCBaseLogWatcher
+    public class VRCLogWatcher : VRCBaseLogWatcher, IVRCCoreLogEvent
     {
         /// <summary>
         /// Occurs when detect a log that you joined to instance.

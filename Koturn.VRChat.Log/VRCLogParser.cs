@@ -10,7 +10,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat log file parser.
     /// </summary>
-    public class VRCLogParser : VRCCoreLogParser
+    public class VRCLogParser : VRCCoreLogParser, IVRCCoreLogEvent
     {
         /// <summary>
         /// Occurs when detect a log that you joined to instance.
