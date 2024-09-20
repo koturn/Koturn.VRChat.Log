@@ -26,14 +26,6 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public string? CurrentFilePath { get; protected set; }
         /// <summary>
-        /// First timestamp of current log file.
-        /// </summary>
-        public DateTime CurrentLogFrom { get; protected set; }
-        /// <summary>
-        /// Last timestamp of current log file.
-        /// </summary>
-        public DateTime CurrentLogUntil { get; protected set; }
-        /// <summary>
         /// True if disposed, otherwise false.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -74,8 +66,6 @@ namespace Koturn.VRChat.Log
             _thread = null;
             WatchCycle = watchCycle;
             CurrentFilePath = null;
-            CurrentLogFrom = default;
-            CurrentLogUntil = default;
         }
 
         /// <summary>
@@ -210,8 +200,6 @@ namespace Koturn.VRChat.Log
                     var fs = (FileStream)((StreamReader)logParser.Reader).BaseStream;
                     var filePath = fs.Name;
                     CurrentFilePath = filePath;
-                    CurrentLogFrom = default;
-                    CurrentLogUntil = default;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
                     try

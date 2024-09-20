@@ -14,6 +14,15 @@ namespace Koturn.VRChat.Log
     public class VRCLogWatcher : VRCBaseLogWatcher, IVRCCoreLogEvent
     {
         /// <summary>
+        /// First timestamp of current log file.
+        /// </summary>
+        public DateTime CurrentLogFrom { get; private set; }
+        /// <summary>
+        /// Last timestamp of current log file.
+        /// </summary>
+        public DateTime CurrentLogUntil { get; private set; }
+
+        /// <summary>
         /// Occurs when detect a log that you joined to instance.
         /// </summary>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
@@ -103,6 +112,8 @@ namespace Koturn.VRChat.Log
         /// <returns>Created <see cref="VRCWatcherLogParser"/> instance.</returns>
         protected override VRCBaseLogParser CreateLogParser(string filePath)
         {
+            CurrentLogFrom = default;
+            CurrentLogUntil = default;
             return new VRCWatcherLogParser(filePath, this);
         }
 
