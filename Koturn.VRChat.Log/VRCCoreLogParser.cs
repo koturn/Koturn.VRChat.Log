@@ -60,6 +60,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private InstanceInfo _instanceInfo;
         /// <summary>
+        /// World kind.
+        /// </summary>
+        private WorldKind _worldKind;
+        /// <summary>
         /// Indicate next log line is ToN save data.
         /// </summary>
         private bool _isTonSaveData;
@@ -79,6 +83,7 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
+            _worldKind = WorldKind.NoSpecificWorld;
             _isTonSaveData = false;
             _isRhapsodySaveData = false;
             IsDisposed = false;
@@ -140,7 +145,7 @@ namespace Koturn.VRChat.Log
 
             var firstLine = logLines[0];
 
-            return ParseAsUserJoinLeaveLog(logAt, firstLine)
+            if (ParseAsUserJoinLeaveLog(logAt, firstLine)
                 || ParseAsUserUnregisteringLog(logAt, firstLine)
                 || ParseAsScreenshotLog(logAt, firstLine)
                 || ParseAsVideoPlaybackLog(logAt, firstLine)
@@ -148,13 +153,19 @@ namespace Koturn.VRChat.Log
                 || ParseAsImageDownloadLog(logAt, firstLine)
                 || ParseAsJoiningLog(logAt, firstLine)
                 || ParseAsJoinedLog(logAt, firstLine)
-                || ParseAsLeftLog(logAt, firstLine)
-                || ParseAsIdleHomeSaveData(logAt, firstLine)
-                || ParseAsIdleDefenseSaveData(logAt, logLines)
-                || ParseAsTonSaveDataPreamble(firstLine)
-                || ParseAsTonSaveData(logAt, firstLine)
-                || ParseAsRhapsodySaveDataPreamble(firstLine)
-                || ParseAsRhapsodySaveData(logAt, firstLine);
+                || ParseAsLeftLog(logAt, firstLine))
+            {
+                return true;
+            }
+
+            return _worldKind switch
+            {
+                WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
+                WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
+                WorldKind.TerrorsOfNowhere => ParseAsTonSaveDataPreamble(firstLine) || ParseAsTonSaveData(logAt, firstLine),
+                WorldKind.Rhapsody => ParseAsRhapsodySaveDataPreamble(firstLine) || ParseAsRhapsodySaveData(logAt, firstLine),
+                _ => false
+            };
         }
 
         /// <summary>
@@ -665,6 +676,15 @@ namespace Koturn.VRChat.Log
             }
 
             _instanceInfo = instanceInfo;
+
+            _worldKind = instanceInfo.WorldId switch
+            {
+                WorldIds.IdleHome => WorldKind.IdleHome,
+                WorldIds.IdleDefense => WorldKind.IdleDefense,
+                WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
+                WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
+                _ => WorldKind.NoSpecificWorld
+            };
 
             return true;
         }
