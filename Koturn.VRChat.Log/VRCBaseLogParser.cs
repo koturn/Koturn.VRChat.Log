@@ -69,6 +69,10 @@ namespace Koturn.VRChat.Log
         /// Empty line count.
         /// </summary>
         private int _emptyLineCount;
+        /// <summary>
+        /// true to leave the <see cref="Reader"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
+        /// </summary>
+        private bool _leaveOpen;
 
         /// <summary>
         /// Initialize all members.
@@ -85,8 +89,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
         /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
-        public VRCBaseLogParser(Stream stream, int bufferSize = 65536)
-            : this(new StreamReader(stream, Encoding.UTF8, false, bufferSize, true))
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCBaseLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+            : this(new StreamReader(stream, Encoding.UTF8, false, bufferSize, leaveOpen))
         {
         }
 
@@ -94,7 +100,9 @@ namespace Koturn.VRChat.Log
         /// Initialize all members.
         /// </summary>
         /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
-        public VRCBaseLogParser(TextReader reader)
+        /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
+        /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCBaseLogParser(TextReader reader, bool leaveOpen = false)
         {
             Reader = reader;
             LineCount = 0;
@@ -102,6 +110,8 @@ namespace Koturn.VRChat.Log
             LogFrom = default;
             LogUntil = default;
             _lineStack = new List<string>(128);
+            _emptyLineCount = 0;
+            _leaveOpen = leaveOpen;
         }
 
         /// <summary>
@@ -203,7 +213,10 @@ namespace Koturn.VRChat.Log
 
             if (disposing)
             {
-                Reader.Dispose();
+                if (!_leaveOpen)
+                {
+                    Reader.Dispose();
+                }
                 _emptyLineCount = 0;
                 LineCount = 0;
                 LogCount = 0;

@@ -93,8 +93,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
         /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
-        public VRCLogParser(Stream stream, int bufferSize = 65536)
-            : base(stream, bufferSize)
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+            : base(stream, bufferSize, leaveOpen)
         {
         }
 
@@ -102,8 +104,10 @@ namespace Koturn.VRChat.Log
         /// Create <see cref="VRCLogParser"/> instance.
         /// </summary>
         /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
-        public VRCLogParser(TextReader reader)
-            : base(reader)
+        /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
+        /// after the <see cref="VRCLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCLogParser(TextReader reader, bool leaveOpen = false)
+            : base(reader, leaveOpen)
         {
         }
 

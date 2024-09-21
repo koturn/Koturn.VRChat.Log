@@ -88,8 +88,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
         /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
-        public VRCCoreLogParser(Stream stream, int bufferSize = 65536)
-            : base(stream, bufferSize)
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCCoreLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCCoreLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+            : base(stream, bufferSize, leaveOpen)
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
@@ -102,8 +104,10 @@ namespace Koturn.VRChat.Log
         /// Initialize all members.
         /// </summary>
         /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
-        public VRCCoreLogParser(TextReader reader)
-            : base(reader)
+        /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
+        /// after the <see cref="VRCCoreLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCCoreLogParser(TextReader reader, bool leaveOpen = false)
+            : base(reader, leaveOpen)
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
