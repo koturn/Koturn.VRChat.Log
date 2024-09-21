@@ -26,11 +26,6 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
-        /// <para>Regex to extract video URL resolved log.</para>
-        /// <para><c>URL '(.+)' resolved to '(.+)'</c></para>
-        /// </summary>
-        private static readonly Regex _regexVideoResolved;
-        /// <summary>
         /// <para>Regex to extract Idle Home save data.</para>
         /// <para><c>\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$</c></para>
         /// </summary>
@@ -41,7 +36,6 @@ namespace Koturn.VRChat.Log
         /// </summary>
         static VRCCoreLogParser()
         {
-            _regexVideoResolved = RegexHelper.GetVideoResolvedRegex();
             _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
         }
 
@@ -504,28 +498,57 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsVideoPlaybackLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Video Playback] ") || firstLine[firstLine.Length - 1] != '\'')
+            if (!firstLine.StartsWith("[Video Playback] "))
             {
                 return false;
             }
 
-            var content = firstLine.Substring(17);
-            if (content.StartsWith("Resolving URL '", StringComparison.Ordinal))
+            // Almost same as regex pattern, /^\[Video Playback\] Resolving URL '(.+)'$/
+            if (firstLine.IndexOf("Resolving URL '", 17, StringComparison.Ordinal) == 17)
             {
-                OnVideoUrlResolving(logAt, content.Substring(15, content.Length - 16), _instanceInfo);
+                if (firstLine.IndexOf('\'', 32) != firstLine.Length - 1)
+                {
+                    return false;
+                }
+
+                OnVideoUrlResolving(logAt, firstLine.Substring(32, firstLine.Length - 33), _instanceInfo);
+
                 return true;
             }
 
-            // if (content.StartsWith("Attempting to resolve URL '", StringComparison.Ordinal))
+            // if (firstLine.IndexOf("Attempting to resolve URL '", 44, StringComparison.Ordinal) == 44)
             // {
-            //     OnVideoUrlResolving(logAt, content.Substring(27, content.Length - 28), _instanceInfo);
+            //     OnVideoUrlResolving(logAt, firstLine.Substring(44, firstLine.Length - 45), _instanceInfo);
             //     return true;
             // }
 
-            Match match;
-            if ((match = _regexVideoResolved.Match(content)).Success)
+            // Almost same as regex pattern, /^\[Video Playback\] URL '(.+)' resolved to '(.+)'$/
+            if (firstLine.IndexOf("URL '", 17, StringComparison.Ordinal) == 17)
             {
-                OnVideoUrlResolved(logAt, match.Groups[1].Value, match.Groups[2].Value, _instanceInfo);
+                var idx = firstLine.IndexOf('\'', 22);
+                if (idx == -1)
+                {
+                    return false;
+                }
+
+                var url = firstLine.Substring(22, idx - 22);
+
+                idx++;
+                if (firstLine.IndexOf(" resolved to '", idx, StringComparison.Ordinal) != idx)
+                {
+                    return false;
+                }
+
+                idx += 14;
+                if (firstLine.IndexOf('\'', idx) != firstLine.Length - 1)
+                {
+                    return false;
+                }
+
+                var resolvedUrl = firstLine.Substring(idx, firstLine.Length - idx - 1);
+
+                OnVideoUrlResolved(logAt, url, resolvedUrl, _instanceInfo);
+
                 return true;
             }
 
