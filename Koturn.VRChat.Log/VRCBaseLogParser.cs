@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
@@ -360,15 +361,22 @@ namespace Koturn.VRChat.Log
         /// <param name="count">Number of characters.</param>
         /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="pcLine"/>.</returns>
         /// <exception cref="FormatException">Thrown when non digit character is detected.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe int ParseIntSimple(char* pcLine, int count)
         {
+            [DoesNotReturn]
+            static void ThrowFormatException(char c)
+            {
+                throw new FormatException($"Non digit character detected: '{c}'");
+            }
+
             int val = 0;
             for (int i = 0; i < count; i++)
             {
                 var d = pcLine[i] - '0';
                 if ((uint)d > 9)
                 {
-                    throw new FormatException($"Non digit character detected: '{pcLine[i]}'");
+                    ThrowFormatException(pcLine[i]);
                 }
                 val = val * 10 + d;
             }
