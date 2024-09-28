@@ -74,9 +74,27 @@ namespace Koturn.VRChat.Log.Exceptions
         /// </summary>
         /// <param name="info">The object that holds the serialized object data.</param>
         /// <param name="context">The contextual information about the source or destination.</param>
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")]
+#endif
         private InvalidLogException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+
+        /// <summary>
+        /// Populates a <see cref="SerializationInfo"/> with the data needed to serialize the target object.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
+        /// <param name="context">The destination (see <see cref="StreamingContext"/>) for this serialization.</param>
+        /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")]
+#endif
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
         }
     }
 }

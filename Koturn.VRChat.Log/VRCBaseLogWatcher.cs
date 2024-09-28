@@ -195,6 +195,10 @@ namespace Koturn.VRChat.Log
         {
             var thread = new Thread(param =>
             {
+                if (param == null)
+                {
+                    throw new ArgumentNullException(nameof(param));
+                }
                 using (var logParser = (VRCBaseLogParser)param)
                 {
                     var fs = (FileStream)((StreamReader)logParser.Reader).BaseStream;
