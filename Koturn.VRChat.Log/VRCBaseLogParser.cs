@@ -120,7 +120,9 @@ namespace Koturn.VRChat.Log
         public void Parse()
         {
             var sr = Reader;
-            for (var line = sr.ReadLine(); line != null; line = sr.ReadLine())
+
+            string? line;
+            while ((line = sr.ReadLine()) != null)
             {
                 LoadLine(line);
             }
@@ -130,29 +132,32 @@ namespace Koturn.VRChat.Log
         /// Load one line of log file and parse it, and fire each event as needed.
         /// </summary>
         /// <param name="line">Log line.</param>
-        /// <exception cref="InvalidDataException"></exception>
         public void LoadLine(string line)
         {
             LineCount++;
+
+            var lineStack = _lineStack;
+            var emptyLineCount = _emptyLineCount;
             if (line.Length > 0)
             {
-                if (_emptyLineCount == 1)
+                if (emptyLineCount == 1)
                 {
-                    _lineStack.Add(string.Empty);
+                    lineStack.Add(string.Empty);
                 }
                 _emptyLineCount = 0;
-                _lineStack.Add(line);
+                lineStack.Add(line);
                 return;
             }
 
-            _emptyLineCount++;
-            if (_emptyLineCount < 2 || _lineStack.Count == 0)
+            emptyLineCount++;
+            _emptyLineCount = emptyLineCount;
+            if (emptyLineCount < 2 || lineStack.Count == 0)
             {
                 return;
             }
 
-            var parsed = ParseFirstLogLine(_lineStack[0]);
-            _lineStack[0] = parsed.Message;
+            var parsed = ParseFirstLogLine(lineStack[0]);
+            lineStack[0] = parsed.Message;
             if (LogFrom == default)
             {
                 LogFrom = parsed.DateTime;
@@ -160,9 +165,9 @@ namespace Koturn.VRChat.Log
             LogUntil = parsed.DateTime;
 
             LogCount++;
-            OnLogDetected(parsed.DateTime, parsed.Level, _lineStack);
+            OnLogDetected(parsed.DateTime, parsed.Level, lineStack);
 
-            _lineStack.Clear();
+            lineStack.Clear();
         }
 
         /// <summary>
