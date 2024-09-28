@@ -7,7 +7,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Provides some events that occures when detect specific logs.
     /// </summary>
-    internal interface IVRCCoreLogEvent
+    public interface IVRCCoreLogEvent
     {
         /// <summary>
         /// Occurs when detect a log that you joined to instance.
@@ -29,6 +29,14 @@ namespace Koturn.VRChat.Log
         /// Occurs when detect a log that any player unregistering from your instance.
         /// </summary>
         event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        /// <summary>
+        /// Occurs when detect a log that object pickedup.
+        /// </summary>
+        event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
+        /// <summary>
+        /// Occurs when detect a log that object dropped.
+        /// </summary>
+        event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
         /// <summary>
         /// Occurs when detect a log that you take a screenshot.
         /// </summary>

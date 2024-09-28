@@ -28,10 +28,16 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private const int BehaviourLogOffset = 12;
 
-
         /// <summary>
-        /// <para>Regex to extract Idle Home save data.</para>
-        /// <para><c>\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$</c></para>
+        /// Regex to extract pickedup object.
+        /// </summary>
+        private static readonly Regex _regexPickupObject;
+        /// <summary>
+        /// Regex to extract dropped object.
+        /// </summary>
+        private static readonly Regex _regexDropObject;
+        /// <summary>
+        /// Regex to extract Idle Home save data.
         /// </summary>
         private static readonly Regex _regexIdleHomeSave;
 
@@ -40,6 +46,8 @@ namespace Koturn.VRChat.Log
         /// </summary>
         static VRCCoreLogParser()
         {
+            _regexPickupObject = RegexHelper.GetPickupObjectRegex();
+            _regexDropObject = RegexHelper.GetDropObjectRegex();
             _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
         }
 
@@ -236,6 +244,31 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsUserUnregisteringLog(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnUserUnregistering(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when pickup object log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="objectName">Pickedup object name.</param>
+        /// <param name="isEquipped">True if equipped.</param>
+        /// <param name="isEquippable">True if the object is equippable.</param>
+        /// <param name="lastInputMethod">Last input method name.</param>
+        /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
+        protected virtual void OnPickupObject(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when drop object log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="objectName">Pickedup object name.</param>
+        /// <param name="isEquipped">True if the object was equipped.</param>
+        /// <param name="dropReason">Reason for dropping the object.</param>
+        /// <param name="lastInputMethod">Last input method name.</param>
+        protected virtual void OnDropObject(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
         {
         }
 
@@ -442,6 +475,8 @@ namespace Koturn.VRChat.Log
 
             return ParseAsUserJoinLeaveLog(logAt, firstLine)
                 || ParseAsUserUnregisteringLog(logAt, firstLine)
+                || ParseAsPickupObjectLog(logAt, firstLine)
+                || ParseAsDropObjectLog(logAt, firstLine)
                 || ParseAsJoiningLog(logAt, firstLine)
                 || ParseAsJoinedLog(logAt, firstLine)
                 || ParseAsLeftLog(logAt, firstLine);
@@ -513,6 +548,57 @@ namespace Koturn.VRChat.Log
                 OnUserUnregistering(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
                 _userJoinTimeDict.Remove(userName);
             }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as pickup object log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsPickupObjectLog(DateTime logAt, string firstLine)
+        {
+            var match = _regexPickupObject.Match(firstLine, BehaviourLogOffset);
+            if (!match.Success)
+            {
+                return false;
+            }
+
+            var groups = match.Groups;
+            OnPickupObject(
+                logAt,
+                groups[1].Value,
+                bool.Parse(groups[2].Value),
+                bool.Parse(groups[3].Value),
+                groups[4].Value,
+                bool.Parse(groups[5].Value));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as drop object log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsDropObjectLog(DateTime logAt, string firstLine)
+        {
+            var match = _regexDropObject.Match(firstLine, BehaviourLogOffset);
+            if (!match.Success)
+            {
+                return false;
+            }
+
+            var groups = match.Groups;
+            OnDropObject(
+                logAt,
+                groups[1].Value,
+                bool.Parse(groups[2].Value),
+                groups[3].Value,
+                groups[4].Value);
 
             return true;
         }

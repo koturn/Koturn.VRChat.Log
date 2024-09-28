@@ -33,6 +33,14 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
         /// <summary>
+        /// Occurs when detect a log that object pickedup.
+        /// </summary>
+        public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
+        /// <summary>
+        /// Occurs when detect a log that object dropped.
+        /// </summary>
+        public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
+        /// <summary>
         /// Occurs when detect a log that you take a screenshot.
         /// </summary>
         public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
@@ -168,6 +176,33 @@ namespace Koturn.VRChat.Log
         protected override void OnUserUnregistering(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
             UserUnregistering?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, stayUntil, instanceInfo));
+        }
+
+        /// <summary>
+        /// Fire <see cref="ObjectPickedup"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="objectName">Pickedup object name.</param>
+        /// <param name="isEquipped">True if equipped.</param>
+        /// <param name="isEquippable">True if the object is equippable.</param>
+        /// <param name="lastInputMethod">Last input method name.</param>
+        /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
+        protected override void OnPickupObject(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+        {
+            ObjectPickedup?.Invoke(this, new ObjectPickedupEventArgs(logAt, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
+        }
+
+        /// <summary>
+        /// Fire <see cref="ObjectDropped"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="objectName">Pickedup object name.</param>
+        /// <param name="isEquipped">True if the object was equipped.</param>
+        /// <param name="dropReason">Reason for dropping the object.</param>
+        /// <param name="lastInputMethod">Last input method name.</param>
+        protected override void OnDropObject(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
+        {
+            ObjectDropped?.Invoke(this, new ObjectDroppedEventArgs(logAt, objectName, isEquipped, dropReason, lastInputMethod));
         }
 
         /// <summary>
