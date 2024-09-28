@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
-using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -156,16 +155,15 @@ namespace Koturn.VRChat.Log
                 return;
             }
 
-            var parsed = ParseFirstLogLine(lineStack[0]);
-            lineStack[0] = parsed.Message;
+            lineStack[0] = ParseFirstLogLine(lineStack[0], out var logDateTime, out var logLevel);
             if (LogFrom == default)
             {
-                LogFrom = parsed.DateTime;
+                LogFrom = logDateTime;
             }
-            LogUntil = parsed.DateTime;
+            LogUntil = logDateTime;
 
             LogCount++;
-            OnLogDetected(parsed.DateTime, parsed.Level, lineStack);
+            OnLogDetected(logDateTime, logLevel, lineStack);
 
             lineStack.Clear();
         }
@@ -256,9 +254,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse one line of log.
         /// </summary>
-        /// <param name="line">One line of log.</param>
-        /// <returns>Parsed result.</returns>
-        private LogLine ParseFirstLogLine(string line)
+        /// <param name="line">Entire first line of log item.</param>
+        /// <param name="logDateTime">Timestamp of the log.</param>
+        /// <param name="logLevel">Log level.</param>
+        /// <returns>Log message of the first line of log item without timestamp and log level.</returns>
+        private string ParseFirstLogLine(string line, out DateTime logDateTime, out LogLevel logLevel)
         {
             if (line.Length < 34)
             {
@@ -266,7 +266,6 @@ namespace Koturn.VRChat.Log
             }
 
             // Avoid to call Substring() method to reduce number of memory allocations.
-            DateTime logDateTime;
             unsafe
             {
                 fixed (char *pcLineBase = line)
@@ -292,7 +291,6 @@ namespace Koturn.VRChat.Log
                 }
             }
 
-            LogLevel logLevel;
             if (line.IndexOf("Log        ", 20, StringComparison.Ordinal) == 20)
             {
                 logLevel = LogLevel.Log;
@@ -312,7 +310,8 @@ namespace Koturn.VRChat.Log
             else
             {
                 ThrowInvalidLogException("Invalid log level detected: " + line.Substring(20, 11));
-                return default;
+                logLevel = LogLevel.Other;
+                return string.Empty;
             }
 
             if (line.IndexOf("-  ", 31, StringComparison.Ordinal) != 31)
@@ -320,7 +319,7 @@ namespace Koturn.VRChat.Log
                 ThrowInvalidLogException("Invalid log line detected: " + line);
             }
 
-            return new LogLine(logDateTime, logLevel, line.Substring(34));
+            return line.Substring(34);
         }
 
 
