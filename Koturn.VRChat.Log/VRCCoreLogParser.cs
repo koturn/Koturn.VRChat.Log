@@ -23,6 +23,10 @@ namespace Koturn.VRChat.Log
         /// Rhapsody save data preamble log line.
         /// </summary>
         public const string RhapsodySaveDataPreamble = "セーブが実行されました";
+        /// <summary>
+        /// "[Behaviour]" log offset.
+        /// </summary>
+        private const int BehaviourLogOffset = 12;
 
 
         /// <summary>
@@ -143,15 +147,11 @@ namespace Koturn.VRChat.Log
 
             var firstLine = logLines[0];
 
-            if (ParseAsUserJoinLeaveLog(logAt, firstLine)
-                || ParseAsUserUnregisteringLog(logAt, firstLine)
+            if (ParseAsBehaviourLog(logAt, firstLine)
                 || ParseAsScreenshotLog(logAt, firstLine)
                 || ParseAsVideoPlaybackLog(logAt, firstLine)
                 || ParseAsStringDownloadLog(logAt, firstLine)
-                || ParseAsImageDownloadLog(logAt, firstLine)
-                || ParseAsJoiningLog(logAt, firstLine)
-                || ParseAsJoinedLog(logAt, firstLine)
-                || ParseAsLeftLog(logAt, firstLine))
+                || ParseAsImageDownloadLog(logAt, firstLine))
             {
                 return true;
             }
@@ -427,6 +427,28 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
+        /// Parse first log line as "[Behaviour]" log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
+        private bool ParseAsBehaviourLog(DateTime logAt, string firstLine)
+        {
+            if (!firstLine.StartsWith("[Behaviour] ", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return ParseAsUserJoinLeaveLog(logAt, firstLine)
+                || ParseAsUserUnregisteringLog(logAt, firstLine)
+                || ParseAsJoiningLog(logAt, firstLine)
+                || ParseAsJoinedLog(logAt, firstLine)
+                || ParseAsLeftLog(logAt, firstLine);
+        }
+
+
+        /// <summary>
         /// Parse first log line as user joined or left log.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
@@ -435,12 +457,13 @@ namespace Koturn.VRChat.Log
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
         private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] OnPlayer", StringComparison.Ordinal))
+            if (firstLine.IndexOf("OnPlayer", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
             {
                 return false;
             }
 
-            if (firstLine.IndexOf("Joined ", 20, StringComparison.Ordinal) == 20)
+            const int JoinLeaveOffset = BehaviourLogOffset + 8;
+            if (firstLine.IndexOf("Joined ", JoinLeaveOffset, StringComparison.Ordinal) == JoinLeaveOffset)
             {
                 var userName = firstLine.Substring(27);
                 OnUserJoined(logAt, userName, logAt, _instanceInfo);
@@ -453,7 +476,7 @@ namespace Koturn.VRChat.Log
                 return true;
             }
 
-            if (firstLine.IndexOf("Left ", 20, StringComparison.Ordinal) == 20)
+            if (firstLine.IndexOf("Left ", JoinLeaveOffset, StringComparison.Ordinal) == JoinLeaveOffset)
             {
                 var userName = firstLine.Substring(25);
                 if (_userJoinTimeDict.ContainsKey(userName))
@@ -479,17 +502,157 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsUserUnregisteringLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Behaviour] Unregistering ", StringComparison.Ordinal))
+            if (firstLine.IndexOf("Unregistering ", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
             {
                 return false;
             }
 
-            var userName = firstLine.Substring(26);
+            var userName = firstLine.Substring(BehaviourLogOffset + 14);
             if (_userJoinTimeDict.ContainsKey(userName))
             {
                 OnUserUnregistering(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
                 _userJoinTimeDict.Remove(userName);
             }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as joining to instance log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
+        {
+            if (firstLine.IndexOf("Joining wrld_", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            {
+                return false;
+            }
+
+            var instanceString = firstLine.Substring(BehaviourLogOffset + 8);
+            var tokens = instanceString.Split('~');
+            var ids = tokens[0].Split(':');
+
+            var instanceInfo = new InstanceInfo(logAt)
+            {
+                WorldId = ids[0],
+                InstanceString = instanceString,
+                InstanceId = ids[1],
+                InstanceType = InstanceType.Public,
+                LogFrom = LogFrom
+            };
+
+            // Options
+            var canRequestInvite = false;
+            foreach (var token in tokens.Skip(1))
+            {
+                var (optName, optArg) = ParseInstanceStringOption(token);
+                switch (optName)
+                {
+                    case "canRequestInvite":
+                        canRequestInvite = true;
+                        if (instanceInfo.InstanceType == InstanceType.Invite)
+                        {
+                            instanceInfo.InstanceType = InstanceType.InvitePlus;
+                        }
+                        break;
+                    case "public":
+                        instanceInfo.InstanceType = InstanceType.Public;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "hidden":
+                        instanceInfo.InstanceType = InstanceType.FriendPlus;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "friends":
+                        instanceInfo.InstanceType = InstanceType.Friend;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "private":
+                        instanceInfo.InstanceType = canRequestInvite ? InstanceType.InvitePlus : InstanceType.Invite;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "region":
+                        instanceInfo.Region = optArg switch
+                        {
+                            "us" => Region.USW,
+                            "use" => Region.USE,
+                            "eu" => Region.EU,
+                            "jp" => Region.JP,
+                            _ => throw CreateInvalidLogException($"Unrecognized region is detected: {optArg}")
+                        }; ;
+                        break;
+                    case "nonce":
+                        instanceInfo.Nonce = optArg;
+                        break;
+                    case "group":
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "groupAccessType":
+                        instanceInfo.InstanceType = optArg switch
+                        {
+                            "public" => InstanceType.GroupPublic,
+                            "plus" => InstanceType.GroupPlus,
+                            "members" => InstanceType.GroupMembers,
+                            _ => instanceInfo.InstanceType
+                        };
+                        break;
+                    default:
+                        ThrowInvalidLogException($"Unknown option detected: {token}");
+                        break;
+                }
+            }
+
+            _instanceInfo = instanceInfo;
+
+            _worldKind = instanceInfo.WorldId switch
+            {
+                WorldIds.IdleHome => WorldKind.IdleHome,
+                WorldIds.IdleDefense => WorldKind.IdleDefense,
+                WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
+                WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
+                _ => WorldKind.NoSpecificWorld
+            };
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as joined to instance log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
+        {
+            if (firstLine.IndexOf("Joining or Creating Room: ", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            {
+                return false;
+            }
+
+            _instanceInfo.WorldName = firstLine.Substring(BehaviourLogOffset + 26);
+            OnJoinedToInstance(logAt, _instanceInfo);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as left from instance log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsLeftLog(DateTime logAt, string firstLine)
+        {
+            if (firstLine.IndexOf("OnLeftRoom", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            {
+                return false;
+            }
+
+            _instanceInfo.StayUntil = logAt;
+            OnLeftFromInstance(logAt, _instanceInfo);
+            _instanceInfo.IsEmitted = true;
 
             return true;
         }
@@ -611,146 +774,6 @@ namespace Koturn.VRChat.Log
             }
 
             OnDownloaded(logAt, firstLine.Substring(52, firstLine.Length - 53), DownloadType.Image, _instanceInfo);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as joining to instance log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
-        {
-            if (!firstLine.StartsWith("[Behaviour] Joining wrld_", StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            var instanceString = firstLine.Substring(20);
-            var tokens = instanceString.Split('~');
-            var ids = tokens[0].Split(':');
-
-            var instanceInfo = new InstanceInfo(logAt)
-            {
-                WorldId = ids[0],
-                InstanceString = instanceString,
-                InstanceId = ids[1],
-                InstanceType = InstanceType.Public,
-                LogFrom = LogFrom
-            };
-
-            // Options
-            var canRequestInvite = false;
-            foreach (var token in tokens.Skip(1))
-            {
-                var (optName, optArg) = ParseInstanceStringOption(token);
-                switch (optName)
-                {
-                    case "canRequestInvite":
-                        canRequestInvite = true;
-                        if (instanceInfo.InstanceType == InstanceType.Invite)
-                        {
-                            instanceInfo.InstanceType = InstanceType.InvitePlus;
-                        }
-                        break;
-                    case "public":
-                        instanceInfo.InstanceType = InstanceType.Public;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "hidden":
-                        instanceInfo.InstanceType = InstanceType.FriendPlus;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "friends":
-                        instanceInfo.InstanceType = InstanceType.Friend;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "private":
-                        instanceInfo.InstanceType = canRequestInvite ? InstanceType.InvitePlus : InstanceType.Invite;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "region":
-                        instanceInfo.Region = optArg switch
-                        {
-                            "us" => Region.USW,
-                            "use" => Region.USE,
-                            "eu" => Region.EU,
-                            "jp" => Region.JP,
-                            _ => throw CreateInvalidLogException($"Unrecognized region is detected: {optArg}")
-                        }; ;
-                        break;
-                    case "nonce":
-                        instanceInfo.Nonce = optArg;
-                        break;
-                    case "group":
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "groupAccessType":
-                        instanceInfo.InstanceType = optArg switch
-                        {
-                            "public" => InstanceType.GroupPublic,
-                            "plus" => InstanceType.GroupPlus,
-                            "members" => InstanceType.GroupMembers,
-                            _ => instanceInfo.InstanceType
-                        };
-                        break;
-                    default:
-                        ThrowInvalidLogException($"Unknown option detected: {token}");
-                        break;
-                }
-            }
-
-            _instanceInfo = instanceInfo;
-
-            _worldKind = instanceInfo.WorldId switch
-            {
-                WorldIds.IdleHome => WorldKind.IdleHome,
-                WorldIds.IdleDefense => WorldKind.IdleDefense,
-                WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
-                WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
-                _ => WorldKind.NoSpecificWorld
-            };
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as joined to instance log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
-        {
-            if (!firstLine.StartsWith("[Behaviour] Joining or Creating Room: ", StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            _instanceInfo.WorldName = firstLine.Substring(38);
-            OnJoinedToInstance(logAt, _instanceInfo);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as left from instance log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsLeftLog(DateTime logAt, string firstLine)
-        {
-            if (firstLine != "[Behaviour] OnLeftRoom")
-            {
-                return false;
-            }
-
-            _instanceInfo.StayUntil = logAt;
-            OnLeftFromInstance(logAt, _instanceInfo);
-            _instanceInfo.IsEmitted = true;
 
             return true;
         }
