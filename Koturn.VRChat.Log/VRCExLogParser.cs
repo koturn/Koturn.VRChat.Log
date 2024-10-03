@@ -10,7 +10,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat log file parser.
     /// </summary>
-    public class VRCLogParser : VRCCoreLogParser, IVRCCoreLogEvent
+    public class VRCExLogParser : VRCCoreExLogParser, IVRCCoreLogEvent, IVRCExLogEvent
     {
         /// <summary>
         /// Occurs when detect a log that you joined to instance.
@@ -68,6 +68,22 @@ namespace Koturn.VRChat.Log
         /// Occurs when detect a exception log.
         /// </summary>
         public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Idle Home is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? IdleHomeSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Idle Defense is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Rhapsody is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? RhapsodySaved;
 
 
         /// <summary>
@@ -75,7 +91,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="filePath">VRChat log file path.</param>
         /// <param name="bufferSize">Buffer size for <see cref="FileStream"/> and <see cref="StreamReader"/>.</param>
-        public VRCLogParser(string filePath, int bufferSize = 65536)
+        public VRCExLogParser(string filePath, int bufferSize = 65536)
             : base(filePath, bufferSize)
         {
         }
@@ -87,7 +103,7 @@ namespace Koturn.VRChat.Log
         /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
         /// after the <see cref="VRCLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+        public VRCExLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
             : base(stream, bufferSize, leaveOpen)
         {
         }
@@ -98,7 +114,7 @@ namespace Koturn.VRChat.Log
         /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
         /// after the <see cref="VRCLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCLogParser(TextReader reader, bool leaveOpen = false)
+        public VRCExLogParser(TextReader reader, bool leaveOpen = false)
             : base(reader, leaveOpen)
         {
         }
@@ -111,6 +127,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
+            base.OnJoinedToInstance(logAt, instanceInfo);
             JoinedToInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
         }
 
@@ -233,6 +250,46 @@ namespace Koturn.VRChat.Log
         protected override void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
         {
             Downloaded?.Invoke(this, new DownloadEventArgs(logAt, url, type, instanceInfo));
+        }
+
+        /// <summary>
+        /// Fire <see cref="IdleHomeSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+        {
+            IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="IdleDefenseSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        {
+            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+        {
+            TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="RhapsodySaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnRhapsodySaved(DateTime logAt, string saveText)
+        {
+            RhapsodySaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
         }
 
         /// <summary>

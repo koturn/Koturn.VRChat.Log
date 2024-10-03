@@ -16,14 +16,6 @@ namespace Koturn.VRChat.Log
     public abstract class VRCCoreLogParser : VRCBaseLogParser
     {
         /// <summary>
-        /// ToN save data preamble log line.
-        /// </summary>
-        public const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
-        /// <summary>
-        /// Rhapsody save data preamble log line.
-        /// </summary>
-        public const string RhapsodySaveDataPreamble = "セーブが実行されました";
-        /// <summary>
         /// "[Behaviour]" log offset.
         /// </summary>
         private const int BehaviourLogOffset = 12;
@@ -36,10 +28,7 @@ namespace Koturn.VRChat.Log
         /// Regex to extract dropped object.
         /// </summary>
         private static readonly Regex _regexDropObject;
-        /// <summary>
-        /// Regex to extract Idle Home save data.
-        /// </summary>
-        private static readonly Regex _regexIdleHomeSave;
+
 
         /// <summary>
         /// Initialize regexes.
@@ -48,7 +37,6 @@ namespace Koturn.VRChat.Log
         {
             _regexPickupObject = RegexHelper.GetPickupObjectRegex();
             _regexDropObject = RegexHelper.GetDropObjectRegex();
-            _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
         }
 
 
@@ -65,18 +53,6 @@ namespace Koturn.VRChat.Log
         /// Instance information.
         /// </summary>
         private InstanceInfo _instanceInfo;
-        /// <summary>
-        /// World kind.
-        /// </summary>
-        private WorldKind _worldKind;
-        /// <summary>
-        /// Indicate next log line is ToN save data.
-        /// </summary>
-        private bool _isTonSaveData;
-        /// <summary>
-        /// Indicate next log line is Rhapsody save data.
-        /// </summary>
-        private bool _isRhapsodySaveData;
 
 
         /// <summary>
@@ -89,9 +65,6 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
-            _worldKind = WorldKind.NoSpecificWorld;
-            _isTonSaveData = false;
-            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -107,8 +80,6 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
-            _isTonSaveData = false;
-            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -123,8 +94,6 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
-            _isTonSaveData = false;
-            _isRhapsodySaveData = false;
             IsDisposed = false;
         }
 
@@ -155,23 +124,11 @@ namespace Koturn.VRChat.Log
 
             var firstLine = logLines[0];
 
-            if (ParseAsBehaviourLog(logAt, firstLine)
+            return ParseAsBehaviourLog(logAt, firstLine)
                 || ParseAsScreenshotLog(logAt, firstLine)
                 || ParseAsVideoPlaybackLog(logAt, firstLine)
                 || ParseAsStringDownloadLog(logAt, firstLine)
-                || ParseAsImageDownloadLog(logAt, firstLine))
-            {
-                return true;
-            }
-
-            return _worldKind switch
-            {
-                WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
-                WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
-                WorldKind.TerrorsOfNowhere => ParseAsTonSaveDataPreamble(firstLine) || ParseAsTonSaveData(logAt, firstLine),
-                WorldKind.Rhapsody => ParseAsRhapsodySaveDataPreamble(firstLine) || ParseAsRhapsodySaveData(logAt, firstLine),
-                _ => false
-            };
+                || ParseAsImageDownloadLog(logAt, firstLine);
         }
 
         /// <summary>
@@ -328,58 +285,6 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsImageDownloadLog(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
-        {
-        }
-
-        /// <summary>
-        /// This method is called when Idle Home save data log is detected.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        /// <remarks>
-        /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleHomeSaveData(DateTime, string)"/></para>
-        /// </remarks>
-        protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
-        {
-        }
-
-        /// <summary>
-        /// This method is called when Idle Defense save data log is detected.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        /// <remarks>
-        /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleDefenseSaveData(DateTime, List{string})"/></para>
-        /// </remarks>
-        protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
-        {
-        }
-
-        /// <summary>
-        /// This method is called when Terrors of nowhere save data log is detected.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        /// <remarks>
-        /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
-        /// </remarks>
-        protected virtual void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
-        {
-        }
-
-        /// <summary>
-        /// This method is called when Rhapsody save data log is detected.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        /// <remarks>
-        /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
-        /// </remarks>
-        protected virtual void OnRhapsodySaved(DateTime logAt, string saveText)
         {
         }
 
@@ -692,15 +597,6 @@ namespace Koturn.VRChat.Log
 
             _instanceInfo = instanceInfo;
 
-            _worldKind = instanceInfo.WorldId switch
-            {
-                WorldIds.IdleHome => WorldKind.IdleHome,
-                WorldIds.IdleDefense => WorldKind.IdleDefense,
-                WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
-                WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
-                _ => WorldKind.NoSpecificWorld
-            };
-
             return true;
         }
 
@@ -863,126 +759,6 @@ namespace Koturn.VRChat.Log
 
             return true;
         }
-
-        /// <summary>
-        /// Parse first log line as Idle Home save data log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsIdleHomeSaveData(DateTime logAt, string firstLine)
-        {
-            var match = _regexIdleHomeSave.Match(firstLine);
-            if (!match.Success)
-            {
-                return false;
-            }
-
-            OnIdleHomeSaved(logAt, match.Groups[1].Value);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse log lines as Idle Defense save data log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="logLines">Log lines.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsIdleDefenseSaveData(DateTime logAt, List<string> logLines)
-        {
-            if (logLines.Count != 2
-                || logLines[0] != "Saving data complete! "
-                || !logLines[1].EndsWith(" IDLEDEFENSE", StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            OnIdleDefenseSaved(logAt, logLines[1].Substring(0, logLines[1].Length - 12));
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as Terrors of Nowhere save data preamble log.
-        /// </summary>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonSaveDataPreamble(string firstLine)
-        {
-            if (firstLine != TonSaveDataPreamble)
-            {
-                return false;
-            }
-
-            _isTonSaveData = true;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as Terrors of Nowhere save data log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonSaveData(DateTime logAt, string firstLine)
-        {
-            if (!_isTonSaveData)
-            {
-                return false;
-            }
-
-            _isTonSaveData = false;
-
-            if (!firstLine.StartsWith("[START]", StringComparison.Ordinal)
-                || !firstLine.EndsWith("[END]", StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            OnTerrorsOfNowhereSaved(logAt, firstLine.Substring(7, firstLine.Length - 12));
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as Rhapsody save data preamble log.
-        /// </summary>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsRhapsodySaveDataPreamble(string firstLine)
-        {
-            if (firstLine != RhapsodySaveDataPreamble)
-            {
-                return false;
-            }
-
-            _isRhapsodySaveData = true;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as Terrors of Nowhere save data log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsRhapsodySaveData(DateTime logAt, string firstLine)
-        {
-            if (!_isRhapsodySaveData)
-            {
-                return false;
-            }
-
-            _isRhapsodySaveData = false;
-
-            OnRhapsodySaved(logAt, firstLine);
-
-            return true;
-        }
-
 
         /// <summary>
         /// Parse instance string optipn, "~XXX(YYY)".

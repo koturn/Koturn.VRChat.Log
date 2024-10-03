@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Events;
-using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -10,202 +9,38 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-    public class VRCLogWatcher : VRCBaseLogWatcher, IVRCCoreLogEvent
+    public class VRCExLogWatcher : VRCLogWatcher, IVRCExLogEvent
     {
         /// <summary>
-        /// First timestamp of current log file.
+        /// Occurs when detect a log that save data text of Idle Home is generated.
         /// </summary>
-        public DateTime CurrentLogFrom { get; protected set; }
+        public event EventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <summary>
-        /// Last timestamp of current log file.
+        /// Occurs when detect a log that save data text of Idle Defense is generated.
         /// </summary>
-        public DateTime CurrentLogUntil { get; protected set; }
+        public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Rhapsody is generated.
+        /// </summary>
+        public event EventHandler<SaveEventArgs>? RhapsodySaved;
 
         /// <summary>
-        /// Occurs when detect a log that you joined to instance.
+        /// Create <see cref="VRCExLogWatcher"/> instance.
         /// </summary>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
-        {
-            add => EventHelper.Add(ref _joinedToInstance, value);
-            remove => EventHelper.Remove(ref _joinedToInstance, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that you left from instance.
-        /// </summary>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance
-        {
-            add => EventHelper.Add(ref _leftFromInstance, value);
-            remove => EventHelper.Remove(ref _leftFromInstance, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that any player joined to your instance.
-        /// </summary>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserJoined
-        {
-            add => EventHelper.Add(ref _userJoined, value);
-            remove => EventHelper.Remove(ref _userJoined, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that any player left from your instance.
-        /// </summary>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserLeft
-        {
-            add => EventHelper.Add(ref _userLeft, value);
-            remove => EventHelper.Remove(ref _userLeft, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that any player unregistering from your instance.
-        /// </summary>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering
-        {
-            add => EventHelper.Add(ref _userUnregistering, value);
-            remove => EventHelper.Remove(ref _userUnregistering, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that object pickedup.
-        /// </summary>
-        public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup
-        {
-            add => EventHelper.Add(ref _objectPickedup, value);
-            remove => EventHelper.Remove(ref _objectPickedup, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that object dropped.
-        /// </summary>
-        public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped
-        {
-            add => EventHelper.Add(ref _objectDropped, value);
-            remove => EventHelper.Remove(ref _objectDropped, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that you take a screenshot.
-        /// </summary>
-        public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook
-        {
-            add => EventHelper.Add(ref _screenshotTook, value);
-            remove => EventHelper.Remove(ref _screenshotTook, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that video URL resolving.
-        /// </summary>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving
-        {
-            add => EventHelper.Add(ref _videoUrlResolving, value);
-            remove => EventHelper.Remove(ref _videoUrlResolving, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that video URL resolved.
-        /// </summary>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved
-        {
-            add => EventHelper.Add(ref _videoUrlResolved, value);
-            remove => EventHelper.Remove(ref _videoUrlResolved, value);
-        }
-        /// <summary>
-        /// Occurs when detect a log that string or image is downloaded.
-        /// </summary>
-        public event EventHandler<DownloadEventArgs>? Downloaded
-        {
-            add => EventHelper.Add(ref _downloaded, value);
-            remove => EventHelper.Remove(ref _downloaded, value);
-        }
-        /// <summary>
-        /// Occurs when detect a warning log.
-        /// </summary>
-        public event EventHandler<ErrorLogEventArgs>? WarningDetected
-        {
-            add => EventHelper.Add(ref _warningDetected, value);
-            remove => EventHelper.Remove(ref _warningDetected, value);
-        }
-        /// <summary>
-        /// Occurs when detect a error log.
-        /// </summary>
-        public event EventHandler<ErrorLogEventArgs>? ErrorDetected
-        {
-            add => EventHelper.Add(ref _errorDetected, value);
-            remove => EventHelper.Remove(ref _errorDetected, value);
-        }
-        /// <summary>
-        /// Occurs when detect a exception log.
-        /// </summary>
-        public event EventHandler<ErrorLogEventArgs>? ExceptionDetected
-        {
-            add => EventHelper.Add(ref _exceptionDetected, value);
-            remove => EventHelper.Remove(ref _exceptionDetected, value);
-        }
-
-
-        /// <summary>
-        /// Occurs when detect a log that you joined to instance.
-        /// </summary>
-        protected EventHandler<JoinLeaveInstanceEventArgs>? _joinedToInstance;
-        /// <summary>
-        /// Occurs when detect a log that you left from instance.
-        /// </summary>
-        protected EventHandler<JoinLeaveInstanceEventArgs>? _leftFromInstance;
-        /// <summary>
-        /// Occurs when detect a log that any player joined to your instance.
-        /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userJoined;
-        /// <summary>
-        /// Occurs when detect a log that any player left from your instance.
-        /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userLeft;
-        /// <summary>
-        /// Occurs when detect a log that any player unregistering from your instance.
-        /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userUnregistering;
-        /// <summary>
-        /// Occurs when detect a log that object pickedup.
-        /// </summary>
-        protected EventHandler<ObjectPickedupEventArgs>? _objectPickedup;
-        /// <summary>
-        /// Occurs when detect a log that object dropped.
-        /// </summary>
-        protected EventHandler<ObjectDroppedEventArgs>? _objectDropped;
-        /// <summary>
-        /// Occurs when detect a log that you take a screenshot.
-        /// </summary>
-        protected EventHandler<ScreenshotTakeEventArgs>? _screenshotTook;
-        /// <summary>
-        /// Occurs when detect a log that video URL resolving.
-        /// </summary>
-        protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolving;
-        /// <summary>
-        /// Occurs when detect a log that video URL resolved.
-        /// </summary>
-        protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolved;
-        /// <summary>
-        /// Occurs when detect a log that string or image is downloaded.
-        /// </summary>
-        protected EventHandler<DownloadEventArgs>? _downloaded;
-        /// <summary>
-        /// Occurs when detect a warning log.
-        /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _warningDetected;
-        /// <summary>
-        /// Occurs when detect a error log.
-        /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _errorDetected;
-        /// <summary>
-        /// Occurs when detect a exception log.
-        /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _exceptionDetected;
-
-
-        /// <summary>
-        /// Create <see cref="VRCLogWatcher"/> instance.
-        /// </summary>
-        public VRCLogWatcher()
+        public VRCExLogWatcher()
             : this(1000)
         {
         }
 
         /// <summary>
-        /// Create <see cref="VRCLogWatcher"/> instance.
+        /// Create <see cref="VRCExLogWatcher"/> instance.
         /// </summary>
         /// <param name="watchCycle">File watch cycle.</param>
-        public VRCLogWatcher(int watchCycle)
+        public VRCExLogWatcher(int watchCycle)
             : base(watchCycle)
         {
         }
@@ -220,26 +55,26 @@ namespace Koturn.VRChat.Log
         {
             CurrentLogFrom = default;
             CurrentLogUntil = default;
-            return new VRCWatcherLogParser(filePath, this);
+            return new VRCWatcherExLogParser(filePath, this);
         }
 
 
         /// <summary>
-        /// VRChat log file parser for <see cref="VRCLogWatcher"/>.
+        /// VRChat log file parser for <see cref="VRCExLogWatcher"/>.
         /// </summary>
-        private sealed class VRCWatcherLogParser : VRCCoreLogParser
+        private sealed class VRCWatcherExLogParser : VRCCoreExLogParser
         {
             /// <summary>
-            /// Reference to <see cref="VRCLogWatcher"/> instance.
+            /// Reference to <see cref="VRCExLogWatcher"/> instance.
             /// </summary>
-            private readonly VRCLogWatcher _logWatcher;
+            private readonly VRCExLogWatcher _logWatcher;
 
             /// <summary>
-            /// Create <see cref="VRCWatcherLogParser"/> instance.
+            /// Create <see cref="VRCWatcherExLogParser"/> instance.
             /// </summary>
             /// <param name="filePath">VRChat log file path.</param>
-            /// <param name="logWatcher"><see cref="VRCLogWatcher"/> instance.</param>
-            public VRCWatcherLogParser(string filePath, VRCLogWatcher logWatcher)
+            /// <param name="logWatcher"><see cref="VRCExLogWatcher"/> instance.</param>
+            public VRCWatcherExLogParser(string filePath, VRCExLogWatcher logWatcher)
                 : base(filePath)
             {
                 _logWatcher = logWatcher;
@@ -425,6 +260,46 @@ namespace Koturn.VRChat.Log
             protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
             {
                 _logWatcher._exceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+            }
+
+            /// <summary>
+            /// Fire <see cref="IdleHomeSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="IdleDefenseSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="RhapsodySaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnRhapsodySaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.RhapsodySaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
             }
         }
     }
