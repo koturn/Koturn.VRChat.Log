@@ -4,7 +4,7 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.ScreenshotTook"/> event.
+    /// Provides data for <see cref="IVRCCoreLogEvent.ScreenshotTook"/> event.
     /// </summary>
     public class ScreenshotTakeEventArgs : LogEventArgs
     {

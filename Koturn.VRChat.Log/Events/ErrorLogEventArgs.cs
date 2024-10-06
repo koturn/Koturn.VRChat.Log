@@ -6,8 +6,8 @@ using Koturn.VRChat.Log.Enums;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.WarningDetected"/>, <see cref="VRCLogParser.ErrorDetected"/>
-    /// or <see cref="VRCLogParser.ExceptionDetected"/> event.
+    /// Provides data for <see cref="IVRCCoreLogEvent.WarningDetected"/>, <see cref="IVRCCoreLogEvent.ErrorDetected"/>
+    /// or <see cref="IVRCCoreLogEvent.ExceptionDetected"/> event.
     /// </summary>
     public class ErrorLogEventArgs : LogEventArgs
     {

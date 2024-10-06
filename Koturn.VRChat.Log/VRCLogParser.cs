@@ -12,61 +12,33 @@ namespace Koturn.VRChat.Log
     /// </summary>
     public class VRCLogParser : VRCCoreLogParser, IVRCCoreLogEvent
     {
-        /// <summary>
-        /// Occurs when detect a log that you joined to instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
-        /// <summary>
-        /// Occurs when detect a log that you left from instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
-        /// <summary>
-        /// Occurs when detect a log that any player joined to your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
-        /// <summary>
-        /// Occurs when detect a log that any player left from your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserLeft;
-        /// <summary>
-        /// Occurs when detect a log that any player unregistering from your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
-        /// <summary>
-        /// Occurs when detect a log that object pickedup.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
-        /// <summary>
-        /// Occurs when detect a log that object dropped.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
-        /// <summary>
-        /// Occurs when detect a log that you take a screenshot.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
-        /// <summary>
-        /// Occurs when detect a log that video URL resolving.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
-        /// <summary>
-        /// Occurs when detect a log that video URL resolved.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
-        /// <summary>
-        /// Occurs when detect a log that string or image is downloaded.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<DownloadEventArgs>? Downloaded;
-        /// <summary>
-        /// Occurs when detect a warning log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? WarningDetected;
-        /// <summary>
-        /// Occurs when detect a error log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? ErrorDetected;
-        /// <summary>
-        /// Occurs when detect a exception log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
 
 

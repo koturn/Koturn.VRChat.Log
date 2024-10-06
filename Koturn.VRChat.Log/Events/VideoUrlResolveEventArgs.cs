@@ -4,7 +4,7 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.VideoUrlResolving"/> or <see cref="VRCLogParser.VideoUrlResolved"/> event.
+    /// Provides data for <see cref="IVRCCoreLogEvent.VideoUrlResolving"/> or <see cref="IVRCCoreLogEvent.VideoUrlResolved"/> event.
     /// </summary>
     public class VideoUrlResolveEventArgs : LogEventArgs
     {

@@ -4,7 +4,7 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.IdleHomeSaved"/> or <see cref="VRCLogParser.TerrorsOfNowhereSaved"/> event.
+    /// Provides data for <see cref="IVRCExLogEvent.IdleHomeSaved"/> or <see cref="IVRCExLogEvent.TerrorsOfNowhereSaved"/> event.
     /// </summary>
     public class SaveEventArgs : LogEventArgs
     {

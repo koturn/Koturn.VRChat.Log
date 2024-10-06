@@ -3,7 +3,7 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.JoinedToInstance"/> or <see cref="VRCLogParser.LeftFromInstance"/> event.
+    /// Provides data for <see cref="IVRCCoreLogEvent.JoinedToInstance"/> or <see cref="IVRCCoreLogEvent.LeftFromInstance"/> event.
     /// </summary>
     public class JoinLeaveInstanceEventArgs : LogEventArgs
     {

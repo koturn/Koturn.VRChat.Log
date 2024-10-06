@@ -1,5 +1,6 @@
-using Koturn.VRChat.Log.Enums;
 using System;
+using Koturn.VRChat.Log.Enums;
+
 
 namespace Koturn.VRChat.Log.Events
 {

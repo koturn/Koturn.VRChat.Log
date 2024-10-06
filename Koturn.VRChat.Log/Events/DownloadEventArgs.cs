@@ -5,7 +5,7 @@ using Koturn.VRChat.Log.Enums;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="VRCLogParser.Downloaded"/> event.
+    /// Provides data for <see cref="IVRCCoreLogEvent.Downloaded"/> event.
     /// </summary>
     public class DownloadEventArgs : LogEventArgs
     {

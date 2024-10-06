@@ -4,8 +4,8 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for the <see cref="VRCLogParser.UserJoined"/>, <see cref="VRCLogParser.UserLeft"/>
-    /// or <see cref="VRCLogParser.UserUnregistering"/>.
+    /// Provides data for the <see cref="IVRCCoreLogEvent.UserJoined"/>, <see cref="IVRCCoreLogEvent.UserLeft"/>
+    /// or <see cref="IVRCCoreLogEvent.UserUnregistering"/>.
     /// </summary>
     public class UserJoinLeaveEventArgs : LogEventArgs
     {

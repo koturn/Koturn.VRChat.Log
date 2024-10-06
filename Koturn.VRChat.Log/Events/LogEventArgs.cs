@@ -1,5 +1,6 @@
 using System;
 
+
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>

@@ -21,113 +21,85 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public DateTime CurrentLogUntil { get; protected set; }
 
-        /// <summary>
-        /// Occurs when detect a log that you joined to instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
             remove => EventHelper.Remove(ref _joinedToInstance, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that you left from instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance
         {
             add => EventHelper.Add(ref _leftFromInstance, value);
             remove => EventHelper.Remove(ref _leftFromInstance, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that any player joined to your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserJoined
         {
             add => EventHelper.Add(ref _userJoined, value);
             remove => EventHelper.Remove(ref _userJoined, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that any player left from your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserLeft
         {
             add => EventHelper.Add(ref _userLeft, value);
             remove => EventHelper.Remove(ref _userLeft, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that any player unregistering from your instance.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering
         {
             add => EventHelper.Add(ref _userUnregistering, value);
             remove => EventHelper.Remove(ref _userUnregistering, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that object pickedup.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup
         {
             add => EventHelper.Add(ref _objectPickedup, value);
             remove => EventHelper.Remove(ref _objectPickedup, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that object dropped.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped
         {
             add => EventHelper.Add(ref _objectDropped, value);
             remove => EventHelper.Remove(ref _objectDropped, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that you take a screenshot.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook
         {
             add => EventHelper.Add(ref _screenshotTook, value);
             remove => EventHelper.Remove(ref _screenshotTook, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that video URL resolving.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving
         {
             add => EventHelper.Add(ref _videoUrlResolving, value);
             remove => EventHelper.Remove(ref _videoUrlResolving, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that video URL resolved.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved
         {
             add => EventHelper.Add(ref _videoUrlResolved, value);
             remove => EventHelper.Remove(ref _videoUrlResolved, value);
         }
-        /// <summary>
-        /// Occurs when detect a log that string or image is downloaded.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<DownloadEventArgs>? Downloaded
         {
             add => EventHelper.Add(ref _downloaded, value);
             remove => EventHelper.Remove(ref _downloaded, value);
         }
-        /// <summary>
-        /// Occurs when detect a warning log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? WarningDetected
         {
             add => EventHelper.Add(ref _warningDetected, value);
             remove => EventHelper.Remove(ref _warningDetected, value);
         }
-        /// <summary>
-        /// Occurs when detect a error log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? ErrorDetected
         {
             add => EventHelper.Add(ref _errorDetected, value);
             remove => EventHelper.Remove(ref _errorDetected, value);
         }
-        /// <summary>
-        /// Occurs when detect a exception log.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? ExceptionDetected
         {
             add => EventHelper.Add(ref _exceptionDetected, value);
@@ -136,59 +108,59 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
-        /// Occurs when detect a log that you joined to instance.
+        /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
         protected EventHandler<JoinLeaveInstanceEventArgs>? _joinedToInstance;
         /// <summary>
-        /// Occurs when detect a log that you left from instance.
+        /// The substance event handler delegate of <see cref="LeftFromInstance"/>.
         /// </summary>
         protected EventHandler<JoinLeaveInstanceEventArgs>? _leftFromInstance;
         /// <summary>
-        /// Occurs when detect a log that any player joined to your instance.
+        /// The substance event handler delegate of <see cref="UserJoined"/>.
         /// </summary>
         protected EventHandler<UserJoinLeaveEventArgs>? _userJoined;
         /// <summary>
-        /// Occurs when detect a log that any player left from your instance.
+        /// The substance event handler delegate of <see cref="UserLeft"/>.
         /// </summary>
         protected EventHandler<UserJoinLeaveEventArgs>? _userLeft;
         /// <summary>
-        /// Occurs when detect a log that any player unregistering from your instance.
+        /// The substance event handler delegate of <see cref="UserUnregistering"/>.
         /// </summary>
         protected EventHandler<UserJoinLeaveEventArgs>? _userUnregistering;
         /// <summary>
-        /// Occurs when detect a log that object pickedup.
+        /// The substance event handler delegate of <see cref="ObjectPickedup"/>.
         /// </summary>
         protected EventHandler<ObjectPickedupEventArgs>? _objectPickedup;
         /// <summary>
-        /// Occurs when detect a log that object dropped.
+        /// The substance event handler delegate of <see cref="ObjectDropped"/>.
         /// </summary>
         protected EventHandler<ObjectDroppedEventArgs>? _objectDropped;
         /// <summary>
-        /// Occurs when detect a log that you take a screenshot.
+        /// The substance event handler delegate of <see cref="ScreenshotTook"/>.
         /// </summary>
         protected EventHandler<ScreenshotTakeEventArgs>? _screenshotTook;
         /// <summary>
-        /// Occurs when detect a log that video URL resolving.
+        /// The substance event handler delegate of <see cref="VideoUrlResolving"/>.
         /// </summary>
         protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolving;
         /// <summary>
-        /// Occurs when detect a log that video URL resolved.
+        /// The substance event handler delegate of <see cref="VideoUrlResolved"/>.
         /// </summary>
         protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolved;
         /// <summary>
-        /// Occurs when detect a log that string or image is downloaded.
+        /// The substance event handler delegate of <see cref="Downloaded"/>.
         /// </summary>
         protected EventHandler<DownloadEventArgs>? _downloaded;
         /// <summary>
-        /// Occurs when detect a warning log.
+        /// The substance event handler delegate of <see cref="WarningDetected"/>.
         /// </summary>
         protected EventHandler<ErrorLogEventArgs>? _warningDetected;
         /// <summary>
-        /// Occurs when detect a error log.
+        /// The substance event handler delegate of <see cref="ErrorDetected"/>.
         /// </summary>
         protected EventHandler<ErrorLogEventArgs>? _errorDetected;
         /// <summary>
-        /// Occurs when detect a exception log.
+        /// The substance event handler delegate of <see cref="ExceptionDetected"/>.
         /// </summary>
         protected EventHandler<ErrorLogEventArgs>? _exceptionDetected;
 

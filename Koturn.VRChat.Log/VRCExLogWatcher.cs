@@ -11,17 +11,11 @@ namespace Koturn.VRChat.Log
     /// </summary>
     public class VRCExLogWatcher : VRCLogWatcher, IVRCExLogEvent
     {
-        /// <summary>
-        /// Occurs when detect a log that save data text of Idle Home is generated.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleHomeSaved;
-        /// <summary>
-        /// Occurs when detect a log that save data text of Idle Defense is generated.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
-        /// <summary>
-        /// Occurs when detect a log that save data text of Rhapsody is generated.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? RhapsodySaved;
         /// <inheritdoc/>
         public event EventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
@@ -118,7 +112,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="JoinedToInstance"/> event.
+            /// Fire <see cref="VRCLogWatcher.JoinedToInstance"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="instanceInfo">Instance information.</param>
@@ -129,7 +123,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="LeftFromInstance"/> event.
+            /// Fire <see cref="VRCLogWatcher.LeftFromInstance"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="instanceInfo">Instance information.</param>
@@ -139,7 +133,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="UserJoined"/> event.
+            /// Fire <see cref="VRCLogWatcher.UserJoined"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
@@ -151,7 +145,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="UserLeft"/> event.
+            /// Fire <see cref="VRCLogWatcher.UserLeft"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
@@ -164,7 +158,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="UserUnregistering"/> event.
+            /// Fire <see cref="VRCLogWatcher.UserUnregistering"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
@@ -177,7 +171,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="ObjectPickedup"/> event.
+            /// Fire <see cref="VRCLogWatcher.ObjectPickedup"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="objectName">Pickedup object name.</param>
@@ -191,7 +185,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="ObjectDropped"/> event.
+            /// Fire <see cref="VRCLogWatcher.ObjectDropped"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="objectName">Pickedup object name.</param>
@@ -204,7 +198,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="ScreenshotTook"/> event.
+            /// Fire <see cref="VRCLogWatcher.ScreenshotTook"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="filePath">Screenshort file path.</param>
@@ -215,7 +209,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="VideoUrlResolving"/> event.
+            /// Fire <see cref="VRCLogWatcher.VideoUrlResolving"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Video URL.</param>
@@ -226,7 +220,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="VideoUrlResolved"/> event.
+            /// Fire <see cref="VRCLogWatcher.VideoUrlResolved"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Video URL.</param>
@@ -238,7 +232,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="Downloaded"/> event.
+            /// Fire <see cref="VRCLogWatcher.Downloaded"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Download URL.</param>
@@ -250,7 +244,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="WarningDetected"/> event.
+            /// Fire <see cref="VRCLogWatcher.WarningDetected"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
@@ -261,7 +255,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="ErrorDetected"/> event.
+            /// Fire <see cref="VRCLogWatcher.ErrorDetected"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
@@ -272,7 +266,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="ExceptionDetected"/> event.
+            /// Fire <see cref="VRCLogWatcher.ExceptionDetected"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
