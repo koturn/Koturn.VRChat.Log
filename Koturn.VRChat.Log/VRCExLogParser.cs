@@ -77,13 +77,31 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
         /// <summary>
-        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
-        /// </summary>
-        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
-        /// <summary>
         /// Occurs when detect a log that save data text of Rhapsody is generated.
         /// </summary>
         public event EventHandler<SaveEventArgs>? RhapsodySaved;
+        /// <inheritdoc/>
+        public event EventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
+        /// <inheritdoc/>
+        public event EventHandler<TonPlayerDeadEventArgs>? TonPlayerDead;
+        /// <inheritdoc/>
+        public event EventHandler<TonPlayerDamagedEventArgs>? TonPlayerDamaged;
+        /// <inheritdoc/>
+        public event EventHandler<TonKillerNameEventArgs>? TonKillerStunned;
+        /// <inheritdoc/>
+        public event EventHandler<TonKillerEnragedEventArgs>? TonKillerEnraged;
+        /// <inheritdoc/>
+        public event EventHandler<TonKillerSetEventArgs>? TonKillerSet;
+        /// <inheritdoc/>
+        public event EventHandler<TonKillerUnlockedEventArgs>? TonKillerUnlocked;
+        /// <inheritdoc/>
+        public event EventHandler<TonEquipEventArgs>? TonEquipped;
+        /// <inheritdoc/>
+        public event EventHandler<TonRoundStartedEventArgs>? TonRoundStarted;
+        /// <inheritdoc/>
+        public event EventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
+        /// <inheritdoc/>
+        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
 
 
         /// <summary>
@@ -253,46 +271,6 @@ namespace Koturn.VRChat.Log
         }
 
         /// <summary>
-        /// Fire <see cref="IdleHomeSaved"/> event.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
-        {
-            IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
-        }
-
-        /// <summary>
-        /// Fire <see cref="IdleDefenseSaved"/> event.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
-        {
-            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
-        }
-
-        /// <summary>
-        /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
-        {
-            TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
-        }
-
-        /// <summary>
-        /// Fire <see cref="RhapsodySaved"/> event.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        protected override void OnRhapsodySaved(DateTime logAt, string saveText)
-        {
-            RhapsodySaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
-        }
-
-        /// <summary>
         /// Fire <see cref="WarningDetected"/> event.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
@@ -323,6 +301,155 @@ namespace Koturn.VRChat.Log
         protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
         {
             ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+        }
+
+        /// <summary>
+        /// Fire <see cref="IdleHomeSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+        {
+            IdleHomeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="IdleDefenseSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        {
+            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="RhapsodySaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnRhapsodySaved(DateTime logAt, string saveText)
+        {
+            RhapsodySaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonKillerTargetChanged"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="terrorName">Terror name.</param>
+        protected override void OnTonKillerTargetChanged(DateTime logAt, string terrorName)
+        {
+            TonKillerTargetChanged?.Invoke(this, new TonKillerNameEventArgs(logAt, terrorName));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonPlayerDead"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="playerName">Player name.</param>
+        /// <param name="message">Message.</param>
+        protected override void OnTonPlayerDead(DateTime logAt, string playerName, string message)
+        {
+            TonPlayerDead?.Invoke(this, new TonPlayerDeadEventArgs(logAt, playerName, message));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonPlayerDamaged"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="damage">Damage point.</param>
+        protected override void OnTonPlayerDamaged(DateTime logAt, int damage)
+        {
+            TonPlayerDamaged?.Invoke(this, new TonPlayerDamagedEventArgs(logAt, damage));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonKillerStunned"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="terrorName">Terror name.</param>
+        protected override void OnTonKillerStunned(DateTime logAt, string terrorName)
+        {
+            TonKillerStunned?.Invoke(this, new TonKillerNameEventArgs(logAt, terrorName));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonKillerEnraged"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="terrorName">Terror name.</param>
+        /// <param name="enrageLevel">Enrage level.</param>
+        protected override void OnTonKillerEnraged(DateTime logAt, string terrorName, int enrageLevel)
+        {
+            TonKillerEnraged?.Invoke(this, new TonKillerEnragedEventArgs(logAt, terrorName, enrageLevel));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonKillerSet"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="terrorIndex1">First terror index.</param>
+        /// <param name="terrorIndex2">Second terror index.</param>
+        /// <param name="terrorIndex3">Third terror index.</param>
+        /// <param name="roundName">Round name.</param>
+        protected override void OnTonKillerSet(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
+        {
+            TonKillerSet?.Invoke(this, new TonKillerSetEventArgs(logAt, terrorIndex1, terrorIndex2, terrorIndex3, roundName));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonKillerUnlocked"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="indexType">Terror index type.</param>
+        /// <param name="terrorIndex">Terror (Killer) index.</param>
+        protected override void OnTonKillerUnlocked(DateTime logAt, TonTerrorIndexType indexType, int terrorIndex)
+        {
+            TonKillerUnlocked?.Invoke(this, new TonKillerUnlockedEventArgs(logAt, indexType, terrorIndex));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonEquipped"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="itemIndex">Equipped item index.</param>
+        /// <param name="lastItemIndex">Last equipped item index.</param>
+        protected override void OnTonEquipped(DateTime logAt, int itemIndex, int lastItemIndex)
+        {
+            TonEquipped?.Invoke(this, new TonEquipEventArgs(logAt, itemIndex, lastItemIndex));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonRoundStarted"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="placeName">Place name.</param>
+        /// <param name="placeIndex">Place index.</param>
+        /// <param name="roundName">Round name.</param>
+        protected override void OnTonRoundStart(DateTime logAt, string placeName, int placeIndex, string roundName)
+        {
+            TonRoundStarted?.Invoke(this, new TonRoundStartedEventArgs(logAt, placeName, placeIndex, roundName));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TonRoundFinished"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="result">Round result.</param>
+        protected override void OnTonRoundFinished(DateTime logAt, TonRoundResult result)
+        {
+            TonRoundFinished?.Invoke(this, new TonRoundFinishedEventArgs(logAt, result));
+        }
+
+        /// <summary>
+        /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+        {
+            TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
         }
     }
 }

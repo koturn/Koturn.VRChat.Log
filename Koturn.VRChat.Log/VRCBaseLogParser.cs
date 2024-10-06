@@ -379,7 +379,7 @@ namespace Koturn.VRChat.Log
         /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="pcLine"/>.</returns>
         /// <exception cref="FormatException">Thrown when non digit character is detected.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe int ParseIntSimple(char* pcLine, int count)
+        protected static unsafe int ParseIntSimple(char* pcLine, int count)
         {
             [DoesNotReturn]
             static void ThrowFormatException(char c)
