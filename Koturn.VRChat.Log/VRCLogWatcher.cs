@@ -20,7 +20,18 @@ namespace Koturn.VRChat.Log
         /// Last timestamp of current log file.
         /// </summary>
         public DateTime CurrentLogUntil { get; protected set; }
+        /// <summary>
+        /// Authenticated user information.
+        /// </summary>
+        public AuthUserInfo? AuthUserInfo { get; protected set; }
 
+
+        /// <inheritdoc/>
+        public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated
+        {
+            add => EventHelper.Add(ref _userAuthenticated, value);
+            remove => EventHelper.Remove(ref _userAuthenticated, value);
+        }
         /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
         {
@@ -108,6 +119,10 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
+        /// The substance event handler delegate of <see cref="UserAuthenticated"/>.
+        /// </summary>
+        protected EventHandler<UserAuthenticatedEventArgs>? _userAuthenticated;
+        /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
         protected EventHandler<JoinLeaveInstanceEventArgs>? _joinedToInstance;
@@ -192,6 +207,7 @@ namespace Koturn.VRChat.Log
         {
             CurrentLogFrom = default;
             CurrentLogUntil = default;
+            AuthUserInfo = null;
             return new VRCWatcherLogParser(filePath, this);
         }
 
@@ -233,6 +249,17 @@ namespace Koturn.VRChat.Log
                 }
                 logWatcher.CurrentLogUntil = logAt;
                 return base.OnLogDetected(logAt, level, logLines);
+            }
+
+            /// <summary>
+            /// Set <see cref="LogWatcher.AuthUserInfo"/>.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="authUserInfo">Authenticated user information.</param>
+            protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+            {
+                _logWatcher.AuthUserInfo = authUserInfo;
+                _logWatcher._userAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(logAt, authUserInfo));
             }
 
             /// <summary>

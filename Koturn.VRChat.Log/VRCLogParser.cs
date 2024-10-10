@@ -13,6 +13,8 @@ namespace Koturn.VRChat.Log
     public class VRCLogParser : VRCCoreLogParser, IVRCCoreLogEvent
     {
         /// <inheritdoc/>
+        public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
         /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
@@ -75,6 +77,16 @@ namespace Koturn.VRChat.Log
         {
         }
 
+
+        /// <summary>
+        /// Fire <see cref="UserAuthenticated"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="authUserInfo">Authenticated user information.</param>
+        protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+        {
+            UserAuthenticated?.Invoke(logAt, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+        }
 
         /// <summary>
         /// Fire <see cref="JoinedToInstance"/> event.

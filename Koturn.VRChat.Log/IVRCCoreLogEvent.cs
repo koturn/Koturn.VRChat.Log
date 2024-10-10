@@ -10,6 +10,10 @@ namespace Koturn.VRChat.Log
     public interface IVRCCoreLogEvent
     {
         /// <summary>
+        /// Occurs when detect a log that user authenticated.
+        /// </summary>
+        event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
+        /// <summary>
         /// Occurs when detect a log that you joined to instance.
         /// </summary>
         event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;

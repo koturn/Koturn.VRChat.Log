@@ -112,6 +112,17 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
+            /// Set <see cref="LogWatcher.AuthUserInfo"/>.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="authUserInfo">Authenticated user information.</param>
+            protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+            {
+                _logWatcher.AuthUserInfo = authUserInfo;
+                _logWatcher._userAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+            }
+
+            /// <summary>
             /// Fire <see cref="VRCLogWatcher.JoinedToInstance"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>

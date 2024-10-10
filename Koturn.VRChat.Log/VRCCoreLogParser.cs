@@ -41,6 +41,10 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
+        /// Authenticated user information.
+        /// </summary>
+        public AuthUserInfo? AuthUserInfo { get; private set; }
+        /// <summary>
         /// A flag property which indicates this instance is disposed or not.
         /// </summary>
         public new bool IsDisposed { get; private set; }
@@ -65,6 +69,7 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
+            AuthUserInfo = null;
             IsDisposed = false;
         }
 
@@ -80,6 +85,7 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
+            AuthUserInfo = null;
             IsDisposed = false;
         }
 
@@ -94,6 +100,7 @@ namespace Koturn.VRChat.Log
         {
             _userJoinTimeDict = new Dictionary<string, DateTime>();
             _instanceInfo = new InstanceInfo(default);
+            AuthUserInfo = null;
             IsDisposed = false;
         }
 
@@ -128,7 +135,21 @@ namespace Koturn.VRChat.Log
                 || ParseAsScreenshotLog(logAt, firstLine)
                 || ParseAsVideoPlaybackLog(logAt, firstLine)
                 || ParseAsStringDownloadLog(logAt, firstLine)
-                || ParseAsImageDownloadLog(logAt, firstLine);
+                || ParseAsImageDownloadLog(logAt, firstLine)
+                || ParseAsUserAuthenticatedLog(logAt, logLines);
+        }
+
+        /// <summary>
+        /// This method is called when user authenticated log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="authUserInfo">Authenticated user information.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsUserAuthenticatedLog(DateTime, List{string})"/></para>
+        /// </remarks>
+        protected virtual void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+        {
         }
 
         /// <summary>
@@ -756,6 +777,72 @@ namespace Koturn.VRChat.Log
             }
 
             OnDownloaded(logAt, firstLine.Substring(52, firstLine.Length - 53), DownloadType.Image, _instanceInfo);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as user authenticated log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsUserAuthenticatedLog(DateTime logAt, List<string> logLines)
+        {
+            var firstLine = logLines[0];
+            if (!firstLine.StartsWith("User Authenticated: ", StringComparison.Ordinal)
+                || firstLine[firstLine.Length - 1] != ')')
+            {
+                return false;
+            }
+
+            const int offset = 20;
+
+            var idx = firstLine.IndexOf(" (", offset, StringComparison.Ordinal);
+            var userName = firstLine.Substring(offset, idx - offset);
+            var userId = firstLine.Substring(idx + 2, firstLine.Length - idx - 3);
+
+            var count = logLines.Count;
+            var hasEmail = false;
+            var hasBirthday = false;
+            var tos = 0;
+            for (int i = 1; i < count; i++)
+            {
+                var line = logLines[i];
+                if (line.StartsWith("- hasEmail: "))
+                {
+#if NET7_0_OR_GREATER
+                    hasEmail = bool.Parse(line.AsSpan(12));
+#else
+                    hasEmail = bool.Parse(line.Substring(12));
+#endif
+                }
+                else if (line.StartsWith("- hasBirthday: "))
+                {
+#if NET7_0_OR_GREATER
+                    hasBirthday = bool.Parse(line.AsSpan(15));
+#else
+                    hasBirthday = bool.Parse(line.Substring(15));
+#endif
+                }
+                else if (line.StartsWith("- tos: "))
+                {
+#if NET7_0_OR_GREATER
+                    tos = int.Parse(line.AsSpan(7));
+#else
+                    tos = int.Parse(line.Substring(7));
+#endif
+                }
+                // else if (line.StartsWith("- avatar: "))
+                // {
+                //
+                // }
+            }
+
+            var authUserInfo = new AuthUserInfo(userName, userId, hasEmail, hasBirthday, tos);
+            AuthUserInfo = authUserInfo;
+
+            OnUserAuthenticated(logAt, authUserInfo);
 
             return true;
         }
