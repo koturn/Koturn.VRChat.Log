@@ -699,12 +699,20 @@ namespace Koturn.VRChat.Log
             const int offset = 10;
             if (firstLine.IndexOf("Entry ", offset, StringComparison.Ordinal) == offset)
             {
+#if NET7_0_OR_GREATER
+                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
+#else
                 OnTonKillerUnlocked(logAt, TonTerrorIndexType.Normal, int.Parse(firstLine.Substring(offset + 6)));
+#endif
                 return true;
             }
             if (firstLine.IndexOf("Alt Entry ", offset, StringComparison.Ordinal) == offset)
             {
+#if NET7_0_OR_GREATER
+                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
+#else
                 OnTonKillerUnlocked(logAt, TonTerrorIndexType.Alternate, int.Parse(firstLine.Substring(offset + 10)));
+#endif
                 return true;
             }
 
