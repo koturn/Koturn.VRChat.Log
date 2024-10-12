@@ -291,22 +291,44 @@ namespace Koturn.VRChat.Log
                 }
             }
 
-            if (line.IndexOf("Log        ", 20, StringComparison.Ordinal) == 20)
+            const int levelOffset = 20;
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+            const int levelLength = 11;
+            var s = line.AsSpan(levelOffset, levelLength);
+            if (s.SequenceEqual("Log        ".AsSpan()))
             {
                 logLevel = LogLevel.Log;
             }
-            else if (line.IndexOf("Warning    ", 20, StringComparison.Ordinal) == 20)
+            else if (s.SequenceEqual("Warning    ".AsSpan()))
             {
                 logLevel = LogLevel.Warning;
             }
-            else if (line.IndexOf("Error      ", 20, StringComparison.Ordinal) == 20)
+            else if (s.SequenceEqual("Error      ".AsSpan()))
             {
                 logLevel = LogLevel.Error;
             }
-            else if (line.IndexOf("Exception  ", 20, StringComparison.Ordinal) == 20)
+            else if (s.SequenceEqual("Exception  ".AsSpan()))
             {
                 logLevel = LogLevel.Exception;
             }
+#else
+            if (IsSubstringAt("Log        ", line, levelOffset))
+            {
+                logLevel = LogLevel.Log;
+            }
+            else if (IsSubstringAt("Warning    ", line, levelOffset))
+            {
+                logLevel = LogLevel.Warning;
+            }
+            else if (IsSubstringAt("Error      ", line, levelOffset))
+            {
+                logLevel = LogLevel.Error;
+            }
+            else if (IsSubstringAt("Exception  ", line, levelOffset))
+            {
+                logLevel = LogLevel.Exception;
+            }
+#endif
             else
             {
                 ThrowInvalidLogException("Invalid log level detected: " + line.Substring(20, 11));
@@ -314,7 +336,7 @@ namespace Koturn.VRChat.Log
                 return string.Empty;
             }
 
-            if (line.IndexOf("-  ", 31, StringComparison.Ordinal) != 31)
+            if (!IsSubstringAt("-  ", line, 31))
             {
                 ThrowInvalidLogException("Invalid log line detected: " + line);
             }
@@ -369,6 +391,25 @@ namespace Koturn.VRChat.Log
             return (stream as FileStream)?.Name;
         }
 
+
+        /// <summary>
+        /// Determine if one string is a substring at the specified position of the other string.
+        /// </summary>
+        /// <param name="part">One string to compare as substring.</param>
+        /// <param name="s">The other string.</param>
+        /// <param name="index">Index of <paramref name="s"/>.</param>
+        /// <returns>true if <paramref name="part"/> is substring of <paramref name="s"/> at <paramref name="index"/>, otherwise false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static bool IsSubstringAt(string part, string s, int index)
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+            return s.Length - index >= part.Length
+                && s.AsSpan(index, part.Length).SequenceEqual(part.AsSpan());
+#else
+            return s.Length - index >= part.Length
+                && s.IndexOf(part, index, part.Length, StringComparison.Ordinal) == index;
+#endif
+        }
 
         /// <summary>
         /// <para>Converts the string representation of a number to its 32-bit signed integer equivalent with very simple way.</para>

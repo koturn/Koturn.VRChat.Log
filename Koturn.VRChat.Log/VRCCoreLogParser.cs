@@ -418,13 +418,13 @@ namespace Koturn.VRChat.Log
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
         private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
-            if (firstLine.IndexOf("OnPlayer", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            if (!IsSubstringAt("OnPlayer", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
 
             const int JoinLeaveOffset = BehaviourLogOffset + 8;
-            if (firstLine.IndexOf("Joined ", JoinLeaveOffset, StringComparison.Ordinal) == JoinLeaveOffset)
+            if (IsSubstringAt("Joined ", firstLine, JoinLeaveOffset))
             {
                 var userName = firstLine.Substring(27);
                 OnUserJoined(logAt, userName, logAt, _instanceInfo);
@@ -437,7 +437,7 @@ namespace Koturn.VRChat.Log
                 return true;
             }
 
-            if (firstLine.IndexOf("Left ", JoinLeaveOffset, StringComparison.Ordinal) == JoinLeaveOffset)
+            if (IsSubstringAt("Left ", firstLine, JoinLeaveOffset))
             {
                 var userName = firstLine.Substring(25);
                 if (_userJoinTimeDict.ContainsKey(userName))
@@ -463,7 +463,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsUserUnregisteringLog(DateTime logAt, string firstLine)
         {
-            if (firstLine.IndexOf("Unregistering ", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            if (!IsSubstringAt("Unregistering ", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
@@ -537,7 +537,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
         {
-            if (firstLine.IndexOf("Joining wrld_", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            if (!IsSubstringAt("Joining wrld_", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
@@ -629,7 +629,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
         {
-            if (firstLine.IndexOf("Joining or Creating Room: ", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            if (!IsSubstringAt("Joining or Creating Room: ", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
@@ -648,7 +648,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsLeftLog(DateTime logAt, string firstLine)
         {
-            if (firstLine.IndexOf("OnLeftRoom", BehaviourLogOffset, StringComparison.Ordinal) != BehaviourLogOffset)
+            if (!IsSubstringAt("OnLeftRoom", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
@@ -674,7 +674,7 @@ namespace Koturn.VRChat.Log
             }
 
             // Almost same as regex pattern, /^\[Video Playback\] Resolving URL '(.+)'$/
-            if (firstLine.IndexOf("Resolving URL '", 17, StringComparison.Ordinal) == 17)
+            if (IsSubstringAt("Resolving URL '", firstLine, 17))
             {
                 if (firstLine.IndexOf('\'', 32) != firstLine.Length - 1)
                 {
@@ -686,14 +686,14 @@ namespace Koturn.VRChat.Log
                 return true;
             }
 
-            // if (firstLine.IndexOf("Attempting to resolve URL '", 44, StringComparison.Ordinal) == 44)
+            // if (SubstringEquals(firstLine, 44, "Attempting to resolve URL '"))
             // {
             //     OnVideoUrlResolving(logAt, firstLine.Substring(44, firstLine.Length - 45), _instanceInfo);
             //     return true;
             // }
 
             // Almost same as regex pattern, /^\[Video Playback\] URL '(.+)' resolved to '(.+)'$/
-            if (firstLine.IndexOf("URL '", 17, StringComparison.Ordinal) == 17)
+            if (IsSubstringAt("URL '", firstLine, 17))
             {
                 var idx = firstLine.IndexOf('\'', 22);
                 if (idx == -1)
@@ -704,7 +704,7 @@ namespace Koturn.VRChat.Log
                 var url = firstLine.Substring(22, idx - 22);
 
                 idx++;
-                if (firstLine.IndexOf(" resolved to '", idx, StringComparison.Ordinal) != idx)
+                if (!IsSubstringAt(" resolved to '", firstLine, idx))
                 {
                     return false;
                 }

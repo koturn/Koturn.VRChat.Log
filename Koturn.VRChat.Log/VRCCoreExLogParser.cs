@@ -494,12 +494,12 @@ namespace Koturn.VRChat.Log
             // }
             //
             // const int offset = 12;
-            // if (firstLine.IndexOf("New Target : ", offset, StringComparison.OrdinalIgnoreCase) == offset)
+            // if (SubstringEquals(firstLine, offset, "New Target : "))
             // {
             //     Console.WriteLine($@"  [{logAt:yyyy-MM-dd HH\:mm\:ss}] New Target [{firstLine.Substring(offset + 13)}]");
             //     return true;
             // }
-            // else if (firstLine.IndexOf("Initial Target : ", offset, StringComparison.OrdinalIgnoreCase) == offset)
+            // else if (SubstringEquals(firstLine, offset, "Initial Target : "))
             // {
             //     Console.WriteLine($@"  [{logAt:yyyy-MM-dd HH\:mm\:ss}] Initial Target [{firstLine.Substring(offset + 17)}]");
             //     return true;
@@ -697,7 +697,7 @@ namespace Koturn.VRChat.Log
             }
 
             const int offset = 10;
-            if (firstLine.IndexOf("Entry ", offset, StringComparison.Ordinal) == offset)
+            if (IsSubstringAt("Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
                 OnTonKillerUnlocked(logAt, TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
@@ -706,7 +706,7 @@ namespace Koturn.VRChat.Log
 #endif
                 return true;
             }
-            if (firstLine.IndexOf("Alt Entry ", offset, StringComparison.Ordinal) == offset)
+            if (IsSubstringAt("Alt Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
                 OnTonKillerUnlocked(logAt, TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
