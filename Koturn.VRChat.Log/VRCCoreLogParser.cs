@@ -424,26 +424,28 @@ namespace Koturn.VRChat.Log
             }
 
             const int JoinLeaveOffset = BehaviourLogOffset + 8;
+            var userJoinTimeDict = _userJoinTimeDict;
+
             if (IsSubstringAt("Joined ", firstLine, JoinLeaveOffset))
             {
                 var userName = firstLine.Substring(27);
                 OnUserJoined(logAt, userName, logAt, _instanceInfo);
-                if (_userJoinTimeDict.ContainsKey(userName))
+                if (userJoinTimeDict.ContainsKey(userName))
                 {
                     ThrowInvalidLogException(
-                        $@"User join log already exists; {userName} {_userJoinTimeDict[userName]:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
+                        $@"User join log already exists; {userName} {userJoinTimeDict[userName]:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
                 }
-                _userJoinTimeDict.Add(userName, logAt);
+                userJoinTimeDict.Add(userName, logAt);
                 return true;
             }
 
             if (IsSubstringAt("Left ", firstLine, JoinLeaveOffset))
             {
                 var userName = firstLine.Substring(25);
-                if (_userJoinTimeDict.ContainsKey(userName))
+                if (userJoinTimeDict.ContainsKey(userName))
                 {
-                    OnUserLeft(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
-                    _userJoinTimeDict.Remove(userName);
+                    OnUserLeft(logAt, userName, userJoinTimeDict[userName], logAt, _instanceInfo);
+                    userJoinTimeDict.Remove(userName);
                 }
                 else
                 {
@@ -468,11 +470,12 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
+            var userJoinTimeDict = _userJoinTimeDict;
             var userName = firstLine.Substring(BehaviourLogOffset + 14);
-            if (_userJoinTimeDict.ContainsKey(userName))
+            if (userJoinTimeDict.ContainsKey(userName))
             {
-                OnUserUnregistering(logAt, userName, _userJoinTimeDict[userName], logAt, _instanceInfo);
-                _userJoinTimeDict.Remove(userName);
+                OnUserUnregistering(logAt, userName, userJoinTimeDict[userName], logAt, _instanceInfo);
+                userJoinTimeDict.Remove(userName);
             }
 
             return true;
