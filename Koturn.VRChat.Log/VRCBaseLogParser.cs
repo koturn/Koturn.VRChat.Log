@@ -265,6 +265,60 @@ namespace Koturn.VRChat.Log
                 ThrowInvalidLogException("Invalid log line detected: " + line);
             }
 
+            const int levelOffset = 20;
+            const int levelLength = 11;
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+            var lineSpan = line.AsSpan(0, 34);
+
+            logDateTime = new DateTime(
+                ParseIntSimple(lineSpan.Slice(0, 4)),
+                ParseIntSimple(lineSpan.Slice(5, 2)),
+                ParseIntSimple(lineSpan.Slice(8, 2)),
+                ParseIntSimple(lineSpan.Slice(11, 2)),
+                ParseIntSimple(lineSpan.Slice(14, 2)),
+                ParseIntSimple(lineSpan.Slice(17, 2)),
+                DateTimeKind.Utc);
+
+            if (lineSpan[4] != '.'
+                || lineSpan[7] != '.'
+                || lineSpan[10] != ' '
+                || lineSpan[13] != ':'
+                || lineSpan[16] != ':'
+                || lineSpan[19] != ' ')
+            {
+                ThrowInvalidLogException("Invalid log line detected: " + line);
+            }
+
+            var logLevelSpan = lineSpan.Slice(levelOffset, levelLength);
+            if (logLevelSpan.SequenceEqual("Log        ".AsSpan()))
+            {
+                logLevel = LogLevel.Log;
+            }
+            else if (logLevelSpan.SequenceEqual("Warning    ".AsSpan()))
+            {
+                logLevel = LogLevel.Warning;
+            }
+            else if (logLevelSpan.SequenceEqual("Error      ".AsSpan()))
+            {
+                logLevel = LogLevel.Error;
+            }
+            else if (logLevelSpan.SequenceEqual("Exception  ".AsSpan()))
+            {
+                logLevel = LogLevel.Exception;
+            }
+            else
+            {
+                ThrowInvalidLogException("Invalid log level detected: " + line.Substring(20, 11));
+                logLevel = LogLevel.Other;
+                return string.Empty;
+            }
+
+            if (!lineSpan.Slice(31, 3).SequenceEqual("-  ".AsSpan()))
+            {
+                ThrowInvalidLogException("Invalid log line detected: " + line);
+            }
+#else
             // Avoid to call Substring() method to reduce number of memory allocations.
             unsafe
             {
@@ -290,28 +344,6 @@ namespace Koturn.VRChat.Log
                     }
                 }
             }
-
-            const int levelOffset = 20;
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            const int levelLength = 11;
-            var s = line.AsSpan(levelOffset, levelLength);
-            if (s.SequenceEqual("Log        ".AsSpan()))
-            {
-                logLevel = LogLevel.Log;
-            }
-            else if (s.SequenceEqual("Warning    ".AsSpan()))
-            {
-                logLevel = LogLevel.Warning;
-            }
-            else if (s.SequenceEqual("Error      ".AsSpan()))
-            {
-                logLevel = LogLevel.Error;
-            }
-            else if (s.SequenceEqual("Exception  ".AsSpan()))
-            {
-                logLevel = LogLevel.Exception;
-            }
-#else
             if (IsSubstringAt("Log        ", line, levelOffset))
             {
                 logLevel = LogLevel.Log;
@@ -328,10 +360,9 @@ namespace Koturn.VRChat.Log
             {
                 logLevel = LogLevel.Exception;
             }
-#endif
             else
             {
-                ThrowInvalidLogException("Invalid log level detected: " + line.Substring(20, 11));
+                ThrowInvalidLogException("Invalid log level detected: " + line.Substring(levelOffset, levelLength));
                 logLevel = LogLevel.Other;
                 return string.Empty;
             }
@@ -340,6 +371,7 @@ namespace Koturn.VRChat.Log
             {
                 ThrowInvalidLogException("Invalid log line detected: " + line);
             }
+#endif
 
             return line.Substring(34);
         }
@@ -440,5 +472,37 @@ namespace Koturn.VRChat.Log
             }
             return val;
         }
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        /// <summary>
+        /// <para>Converts the string representation of a number to its 32-bit signed integer equivalent with very simple way.</para>
+        /// <para>No boundary checks or overflow detection.</para>
+        /// </summary>
+        /// <param name="pcLine">Pointer to log line.</param>
+        /// <param name="count">Number of characters.</param>
+        /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="pcLine"/>.</returns>
+        /// <exception cref="FormatException">Thrown when non digit character is detected.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static unsafe int ParseIntSimple(ReadOnlySpan<char> lineSpan)
+        {
+            [DoesNotReturn]
+            static void ThrowFormatException(char c)
+            {
+                throw new FormatException($"Non digit character detected: '{c}'");
+            }
+
+            int val = 0;
+            foreach (var c in lineSpan)
+            {
+                var d = c - '0';
+                if ((uint)d > 9)
+                {
+                    ThrowFormatException(c);
+                }
+                val = val * 10 + d;
+            }
+            return val;
+        }
+#endif
     }
 }
