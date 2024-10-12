@@ -112,7 +112,7 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Set <see cref="LogWatcher.AuthUserInfo"/>.
+            /// Set <see cref="VRCLogWatcher.AuthUserInfo"/>.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="authUserInfo">Authenticated user information.</param>

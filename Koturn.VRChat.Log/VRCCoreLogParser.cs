@@ -785,7 +785,7 @@ namespace Koturn.VRChat.Log
         /// Parse first log line as user authenticated log.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
+        /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsUserAuthenticatedLog(DateTime logAt, List<string> logLines)
         {

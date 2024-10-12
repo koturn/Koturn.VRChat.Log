@@ -478,9 +478,8 @@ namespace Koturn.VRChat.Log
         /// <para>Converts the string representation of a number to its 32-bit signed integer equivalent with very simple way.</para>
         /// <para>No boundary checks or overflow detection.</para>
         /// </summary>
-        /// <param name="pcLine">Pointer to log line.</param>
-        /// <param name="count">Number of characters.</param>
-        /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="pcLine"/>.</returns>
+        /// <param name="lineSpan"><see cref="Span{T}"/> of log line.</param>
+        /// <returns>A 32-bit signed integer equivalent to the number contained in <paramref name="lineSpan"/>.</returns>
         /// <exception cref="FormatException">Thrown when non digit character is detected.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static unsafe int ParseIntSimple(ReadOnlySpan<char> lineSpan)
