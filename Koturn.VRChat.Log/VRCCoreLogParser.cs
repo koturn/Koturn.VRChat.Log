@@ -52,7 +52,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Dictionary to contain user name and join timestamp of the user.
         /// </summary>
-        private readonly Dictionary<string, DateTime> _userJoinTimeDict;
+        private readonly Dictionary<string, UserInfo> _userInfoDict;
         /// <summary>
         /// Instance information.
         /// </summary>
@@ -67,7 +67,7 @@ namespace Koturn.VRChat.Log
         public VRCCoreLogParser(string filePath, int bufferSize = 65536)
             : base(filePath, bufferSize)
         {
-            _userJoinTimeDict = new Dictionary<string, DateTime>();
+            _userInfoDict = new Dictionary<string, UserInfo>();
             _instanceInfo = new InstanceInfo(default);
             AuthUserInfo = null;
             IsDisposed = false;
@@ -83,7 +83,7 @@ namespace Koturn.VRChat.Log
         public VRCCoreLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
             : base(stream, bufferSize, leaveOpen)
         {
-            _userJoinTimeDict = new Dictionary<string, DateTime>();
+            _userInfoDict = new Dictionary<string, UserInfo>();
             _instanceInfo = new InstanceInfo(default);
             AuthUserInfo = null;
             IsDisposed = false;
@@ -98,7 +98,7 @@ namespace Koturn.VRChat.Log
         public VRCCoreLogParser(TextReader reader, bool leaveOpen = false)
             : base(reader, leaveOpen)
         {
-            _userJoinTimeDict = new Dictionary<string, DateTime>();
+            _userInfoDict = new Dictionary<string, UserInfo>();
             _instanceInfo = new InstanceInfo(default);
             AuthUserInfo = null;
             IsDisposed = false;
@@ -183,13 +183,14 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsUserJoinLeaveLog(DateTime, string)"/></para>
         /// </remarks>
-        protected virtual void OnUserJoined(DateTime logAt, string userName, DateTime stayFrom, InstanceInfo instanceInfo)
+        protected virtual void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
         }
 
@@ -198,6 +199,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
@@ -205,7 +207,7 @@ namespace Koturn.VRChat.Log
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsUserJoinLeaveLog(DateTime, string)"/></para>
         /// </remarks>
-        protected virtual void OnUserLeft(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected virtual void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
         }
 
@@ -214,6 +216,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
@@ -221,7 +224,7 @@ namespace Koturn.VRChat.Log
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsUserUnregisteringLog(DateTime, string)"/></para>
         /// </remarks>
-        protected virtual void OnUserUnregistering(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected virtual void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
         }
 
@@ -367,11 +370,12 @@ namespace Koturn.VRChat.Log
 
             if (disposing)
             {
-                foreach (var kv in _userJoinTimeDict)
+                foreach (var kv in _userInfoDict)
                 {
-                    OnUserLeft(LogUntil, kv.Key, kv.Value, null, _instanceInfo);
+                    var userInfo = kv.Value;
+                    OnUserLeft(LogUntil, kv.Key, userInfo.UserId, userInfo.JoinAt, null, _instanceInfo);
                 }
-                _userJoinTimeDict.Clear();
+                _userInfoDict.Clear();
 
                 if (!_instanceInfo.IsEmitted && _instanceInfo.StayFrom != default)
                 {
@@ -418,38 +422,60 @@ namespace Koturn.VRChat.Log
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
         private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
+            static string ExtractUserNameAndId(string firstLine, int offset, out string? userId)
+            {
+                var userNameEndIndex = firstLine.Length - 43;
+
+                if (userNameEndIndex > offset
+                    && IsSubstringAt(" (usr_", firstLine, userNameEndIndex)
+                    && firstLine[firstLine.Length - 1] == ')')
+                {
+                    userId = firstLine.Substring(userNameEndIndex + 2, 40);
+                    return firstLine.Substring(offset, userNameEndIndex - offset);
+                }
+                else
+                {
+                    userId = null;
+                    return firstLine.Substring(offset);
+                }
+            }
+
             if (!IsSubstringAt("OnPlayer", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
 
             const int JoinLeaveOffset = BehaviourLogOffset + 8;
-            var userJoinTimeDict = _userJoinTimeDict;
+            var userInfoDict = _userInfoDict;
 
             if (IsSubstringAt("Joined ", firstLine, JoinLeaveOffset))
             {
-                var userName = firstLine.Substring(27);
-                OnUserJoined(logAt, userName, logAt, _instanceInfo);
-                if (userJoinTimeDict.ContainsKey(userName))
+                var userName = ExtractUserNameAndId(firstLine, 27, out var userId);
+
+                OnUserJoined(logAt, userName, userId, logAt, _instanceInfo);
+                if (userInfoDict.TryGetValue(userName, out var userInfo))
                 {
                     ThrowInvalidLogException(
-                        $@"User join log already exists; {userName} {userJoinTimeDict[userName]:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
+                        $@"User join log already exists; {userName} ({userInfo.UserId}) {userInfo.JoinAt:yyyy-MM-dd HH\:mm\:ss} ({logAt:yyyy-MM-dd HH\:mm\:ss}).");
                 }
-                userJoinTimeDict.Add(userName, logAt);
+                userInfoDict.Add(userName, new UserInfo(userName, userId, logAt));
                 return true;
             }
 
             if (IsSubstringAt("Left ", firstLine, JoinLeaveOffset))
             {
-                var userName = firstLine.Substring(25);
-                if (userJoinTimeDict.ContainsKey(userName))
+                var userName = ExtractUserNameAndId(firstLine, 25, out var userId);
+
+                if (userInfoDict.TryGetValue(userName, out var userInfo))
                 {
-                    OnUserLeft(logAt, userName, userJoinTimeDict[userName], logAt, _instanceInfo);
-                    userJoinTimeDict.Remove(userName);
+                    OnUserLeft(logAt, userName, userId, userInfo.JoinAt, logAt, _instanceInfo);
+                    userInfoDict.Remove(userName);
                 }
                 else
                 {
-                    OnUserLeft(logAt, userName, logAt, logAt, _instanceInfo);
+                    // Rare case.
+                    // e.g.) Detect left user while you joining an instance.
+                    OnUserLeft(logAt, userName, userId, logAt, logAt, _instanceInfo);
                 }
                 return true;
             }
@@ -470,12 +496,12 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            var userJoinTimeDict = _userJoinTimeDict;
+            var userInfoDict = _userInfoDict;
             var userName = firstLine.Substring(BehaviourLogOffset + 14);
-            if (userJoinTimeDict.ContainsKey(userName))
+            if (userInfoDict.TryGetValue(userName, out var userInfo))
             {
-                OnUserUnregistering(logAt, userName, userJoinTimeDict[userName], logAt, _instanceInfo);
-                userJoinTimeDict.Remove(userName);
+                OnUserUnregistering(logAt, userName, userInfo.UserId, userInfo.JoinAt, logAt, _instanceInfo);
+                userInfoDict.Remove(userName);
             }
 
             return true;

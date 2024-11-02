@@ -14,6 +14,10 @@ namespace Koturn.VRChat.Log.Events
         /// </summary>
         public string UserName { get; }
         /// <summary>
+        /// User ID.
+        /// </summary>
+        public string? UserId { get; }
+        /// <summary>
         /// A timestamp the user joined.
         /// </summary>
         public DateTime StayFrom { get; }
@@ -31,12 +35,14 @@ namespace Koturn.VRChat.Log.Events
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        public UserJoinLeaveEventArgs(DateTime logAt, string userName, DateTime stayFrom, InstanceInfo instanceInfo)
+        public UserJoinLeaveEventArgs(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             : base(logAt)
         {
             UserName = userName;
+            UserId = userId;
             StayFrom = stayFrom;
             InstanceInfo = instanceInfo;
         }
@@ -46,11 +52,12 @@ namespace Koturn.VRChat.Log.Events
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        public UserJoinLeaveEventArgs(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
-            : this(logAt, userName, stayFrom, instanceInfo)
+        public UserJoinLeaveEventArgs(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            : this(logAt, userName, userId, stayFrom, instanceInfo)
         {
             StayUntil = stayUntil;
         }

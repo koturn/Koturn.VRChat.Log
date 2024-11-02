@@ -287,11 +287,12 @@ namespace Koturn.VRChat.Log
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
+            /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserJoined(DateTime logAt, string userName, DateTime stayFrom, InstanceInfo instanceInfo)
+            protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             {
-                _logWatcher._userJoined?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, instanceInfo));
+                _logWatcher._userJoined?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, instanceInfo));
             }
 
             /// <summary>
@@ -299,12 +300,13 @@ namespace Koturn.VRChat.Log
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
+            /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="stayUntil">A timestamp the user left.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserLeft(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userLeft?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userLeft?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
@@ -312,12 +314,13 @@ namespace Koturn.VRChat.Log
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
+            /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="stayUntil">A timestamp the user left.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserUnregistering(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userUnregistering?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userUnregistering?.Invoke(this, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
