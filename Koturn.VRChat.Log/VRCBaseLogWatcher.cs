@@ -91,7 +91,7 @@ namespace Koturn.VRChat.Log
             var filePath = GetLatestLogFile(dirPath);
             if (filePath != null)
             {
-                StartFileWatchingThread(filePath, true);
+                _thread = StartFileWatchingThread(filePath, true);
             }
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.VRChatLogFileFilter)
             {
