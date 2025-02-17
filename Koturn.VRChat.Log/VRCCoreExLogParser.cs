@@ -136,24 +136,6 @@ namespace Koturn.VRChat.Log
             _isTonSaveData = false;
         }
 
-        /// <summary>
-        /// Initialize all members.
-        /// </summary>
-        /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
-        /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
-        /// after the <see cref="VRCCoreLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCCoreExLogParser(TextReader reader, bool leaveOpen = false)
-            : base(reader, leaveOpen)
-        {
-            TonRoundInfo = null;
-            TerrorNameSet = new HashSet<string>();
-            _worldKind = WorldKind.NoSpecificWorld;
-            _isRhapsodySaveData = false;
-            _tonPlaceName = null;
-            _tonPlaceIndex = -1;
-            _isTonSaveData = false;
-        }
-
 
         /// <summary>
         /// Load one line of log file and parse it, and fire each event as needed.

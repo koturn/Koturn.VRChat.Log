@@ -94,17 +94,6 @@ namespace Koturn.VRChat.Log
         {
         }
 
-        /// <summary>
-        /// Create <see cref="VRCLogParser"/> instance.
-        /// </summary>
-        /// <param name="reader"><see cref="TextReader"/> of VRChat log file.</param>
-        /// <param name="leaveOpen">true to leave the <paramref name="reader"/> open
-        /// after the <see cref="VRCLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCExLogParser(TextReader reader, bool leaveOpen = false)
-            : base(reader, leaveOpen)
-        {
-        }
-
 
         /// <summary>
         /// Fire <see cref="UserAuthenticated"/> event.
