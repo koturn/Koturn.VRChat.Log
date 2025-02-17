@@ -65,9 +65,13 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private readonly List<string> _lineStack;
         /// <summary>
-        /// Empty line count.
+        /// Log timestamp.
         /// </summary>
-        private int _emptyLineCount;
+        private DateTime _logDateTime;
+        /// <summary>
+        /// Log level.
+        /// </summary>
+        private LogLevel _logLevel;
         /// <summary>
         /// true to leave the <see cref="Reader"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
@@ -109,7 +113,6 @@ namespace Koturn.VRChat.Log
             LogFrom = default;
             LogUntil = default;
             _lineStack = new List<string>(128);
-            _emptyLineCount = 0;
             _leaveOpen = leaveOpen;
         }
 
@@ -125,6 +128,11 @@ namespace Koturn.VRChat.Log
             {
                 LoadLine(line);
             }
+            if (_logLevel != default)
+            {
+                LogCount++;
+                OnLogDetected(_logDateTime, _logLevel, _lineStack);
+            }
         }
 
         /// <summary>
@@ -135,37 +143,29 @@ namespace Koturn.VRChat.Log
         {
             LineCount++;
 
+            var message = ParseFirstLogLine(line, out var logDateTime, out var logLevel);
+            if (message == null)
+            {
+                _lineStack.Add(line);
+                return;
+            }
+
             var lineStack = _lineStack;
-            var emptyLineCount = _emptyLineCount;
-            if (line.Length > 0)
+            if (lineStack.Count > 0)
             {
-                if (emptyLineCount == 1)
-                {
-                    lineStack.Add(string.Empty);
-                }
-                _emptyLineCount = 0;
-                lineStack.Add(line);
-                return;
+                LogCount++;
+                OnLogDetected(_logDateTime, _logLevel, lineStack);
             }
+            lineStack.Clear();
+            lineStack.Add(message);
 
-            emptyLineCount++;
-            _emptyLineCount = emptyLineCount;
-            if (emptyLineCount < 2 || lineStack.Count == 0)
-            {
-                return;
-            }
-
-            lineStack[0] = ParseFirstLogLine(lineStack[0], out var logDateTime, out var logLevel);
+            _logLevel = logLevel;
+            _logDateTime = logDateTime;
             if (LogFrom == default)
             {
                 LogFrom = logDateTime;
             }
             LogUntil = logDateTime;
-
-            LogCount++;
-            OnLogDetected(logDateTime, logLevel, lineStack);
-
-            lineStack.Clear();
         }
 
         /// <summary>
@@ -220,7 +220,6 @@ namespace Koturn.VRChat.Log
                 {
                     Reader.Dispose();
                 }
-                _emptyLineCount = 0;
                 LineCount = 0;
                 LogCount = 0;
                 LogFrom = default;
@@ -258,11 +257,15 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Timestamp of the log.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>Log message of the first line of log item without timestamp and log level.</returns>
-        private string ParseFirstLogLine(string line, out DateTime logDateTime, out LogLevel logLevel)
+        private string? ParseFirstLogLine(string line, out DateTime logDateTime, out LogLevel logLevel)
         {
+            logDateTime = default;
+            logLevel = default;
+
             if (line.Length < 34)
             {
-                ThrowInvalidLogException("Invalid log line detected: " + line);
+                // ThrowInvalidLogException("Invalid log line detected: " + line);
+                return null;
             }
 
             const int levelOffset = 20;
@@ -271,15 +274,6 @@ namespace Koturn.VRChat.Log
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
             var lineSpan = line.AsSpan(0, 34);
 
-            logDateTime = new DateTime(
-                ParseIntSimple(lineSpan.Slice(0, 4)),
-                ParseIntSimple(lineSpan.Slice(5, 2)),
-                ParseIntSimple(lineSpan.Slice(8, 2)),
-                ParseIntSimple(lineSpan.Slice(11, 2)),
-                ParseIntSimple(lineSpan.Slice(14, 2)),
-                ParseIntSimple(lineSpan.Slice(17, 2)),
-                DateTimeKind.Utc);
-
             if (lineSpan[4] != '.'
                 || lineSpan[7] != '.'
                 || lineSpan[10] != ' '
@@ -287,13 +281,26 @@ namespace Koturn.VRChat.Log
                 || lineSpan[16] != ':'
                 || lineSpan[19] != ' ')
             {
-                ThrowInvalidLogException("Invalid log line detected: " + line);
+                // ThrowInvalidLogException("Invalid log line detected: " + line);
+                return null;
             }
 
-            var logLevelSpan = lineSpan.Slice(levelOffset, levelLength);
-            if (logLevelSpan.SequenceEqual("Log        ".AsSpan()))
+            var year = ParseIntSimple(lineSpan.Slice(0, 4));
+            var month = ParseIntSimple(lineSpan.Slice(5, 2));
+            var day = ParseIntSimple(lineSpan.Slice(8, 2));
+            var hour = ParseIntSimple(lineSpan.Slice(11, 2));
+            var minute = ParseIntSimple(lineSpan.Slice(14, 2));
+            var second = ParseIntSimple(lineSpan.Slice(17, 2));
+            if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1 || second == -1)
             {
-                logLevel = LogLevel.Log;
+                return null;
+            }
+            logDateTime = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
+
+            var logLevelSpan = lineSpan.Slice(levelOffset, levelLength);
+            if (logLevelSpan.SequenceEqual("Debug      ".AsSpan()))
+            {
+                logLevel = LogLevel.Debug;
             }
             else if (logLevelSpan.SequenceEqual("Warning    ".AsSpan()))
             {
@@ -324,15 +331,6 @@ namespace Koturn.VRChat.Log
             {
                 fixed (char *pcLineBase = line)
                 {
-                    logDateTime = new DateTime(
-                        ParseIntSimple(&pcLineBase[0], 4),
-                        ParseIntSimple(&pcLineBase[5], 2),
-                        ParseIntSimple(&pcLineBase[8], 2),
-                        ParseIntSimple(&pcLineBase[11], 2),
-                        ParseIntSimple(&pcLineBase[14], 2),
-                        ParseIntSimple(&pcLineBase[17], 2),
-                        DateTimeKind.Utc);
-
                     if (pcLineBase[4] != '.'
                         || pcLineBase[7] != '.'
                         || pcLineBase[10] != ' '
@@ -340,13 +338,26 @@ namespace Koturn.VRChat.Log
                         || pcLineBase[16] != ':'
                         || pcLineBase[19] != ' ')
                     {
-                        ThrowInvalidLogException("Invalid log line detected: " + line);
+                        //ThrowInvalidLogException("Invalid log line detected: " + line);
+                        return null;
                     }
+
+                    var year = ParseIntSimple(&pcLineBase[0], 4);
+                    var month = ParseIntSimple(&pcLineBase[5], 2);
+                    var day = ParseIntSimple(&pcLineBase[8], 2);
+                    var hour = ParseIntSimple(&pcLineBase[11], 2);
+                    var minute = ParseIntSimple(&pcLineBase[14], 2);
+                    var second = ParseIntSimple(&pcLineBase[17], 2);
+                    if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1 || second == -1)
+                    {
+                        return null;
+                    }
+                    logDateTime = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
                 }
             }
-            if (IsSubstringAt("Log        ", line, levelOffset))
+            if (IsSubstringAt("Debug      ", line, levelOffset))
             {
-                logLevel = LogLevel.Log;
+                logLevel = LogLevel.Debug;
             }
             else if (IsSubstringAt("Warning    ", line, levelOffset))
             {
@@ -369,7 +380,8 @@ namespace Koturn.VRChat.Log
 
             if (!IsSubstringAt("-  ", line, 31))
             {
-                ThrowInvalidLogException("Invalid log line detected: " + line);
+                // ThrowInvalidLogException("Invalid log line detected: " + line);
+                return null;
             }
 #endif
 
@@ -454,19 +466,13 @@ namespace Koturn.VRChat.Log
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static unsafe int ParseIntSimple(char* pcLine, int count)
         {
-            [DoesNotReturn]
-            static void ThrowFormatException(char c)
-            {
-                throw new FormatException($"Non digit character detected: '{c}'");
-            }
-
             int val = 0;
             for (int i = 0; i < count; i++)
             {
                 var d = pcLine[i] - '0';
                 if ((uint)d > 9)
                 {
-                    ThrowFormatException(pcLine[i]);
+                    return -1;
                 }
                 val = val * 10 + d;
             }
@@ -484,19 +490,13 @@ namespace Koturn.VRChat.Log
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static unsafe int ParseIntSimple(ReadOnlySpan<char> lineSpan)
         {
-            [DoesNotReturn]
-            static void ThrowFormatException(char c)
-            {
-                throw new FormatException($"Non digit character detected: '{c}'");
-            }
-
             int val = 0;
             foreach (var c in lineSpan)
             {
                 var d = c - '0';
                 if ((uint)d > 9)
                 {
-                    ThrowFormatException(c);
+                    return -1;
                 }
                 val = val * 10 + d;
             }

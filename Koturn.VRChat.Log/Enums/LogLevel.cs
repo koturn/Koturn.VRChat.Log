@@ -10,9 +10,9 @@ namespace Koturn.VRChat.Log.Enums
         /// </summary>
         Other,
         /// <summary>
-        /// Represents log level: "Log".
+        /// Represents log level: "Debug".
         /// </summary>
-        Log,
+        Debug,
         /// <summary>
         /// Represents log level: "Warning".
         /// </summary>
