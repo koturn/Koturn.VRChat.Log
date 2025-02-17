@@ -209,7 +209,7 @@ namespace Koturn.VRChat.Log
 #endif  // NET6_0_OR_GREATER
                 using (var logParser = (VRCBaseLogParser)param)
                 {
-                    var fs = (FileStream)((StreamReader)logParser.Reader).BaseStream;
+                    var fs = (FileStream)logParser.BaseStream;
                     var filePath = fs.Name;
                     CurrentFilePath = filePath;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
