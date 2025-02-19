@@ -174,7 +174,7 @@ namespace Koturn.VRChat.Log
         public void Dispose()
         {
             Dispose(true);
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
 
