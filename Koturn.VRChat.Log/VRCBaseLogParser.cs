@@ -18,7 +18,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Log file filter.
         /// </summary>
-        public const string VRChatLogFileFilter = "output_log_*.txt";
+        public const string VRChatLogFileFilter = "output_log_????-??-??_??-??-??.txt";
         /// <summary>
         /// Default VRChat log directory (<c>%LOCALAPPDATA%Low\VRChat\VRChat</c>).
         /// </summary>
