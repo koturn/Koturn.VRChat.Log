@@ -71,7 +71,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// true to leave the <see cref="Reader"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
-        private bool _leaveOpen;
+        private readonly bool _leaveOpen;
 
         /// <summary>
         /// Initialize all members.
