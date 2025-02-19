@@ -480,7 +480,7 @@ namespace Koturn.VRChat.Log
             [return: MarshalAs(UnmanagedType.Bool)]
             public static partial bool GetFileAttributesEx(string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #else
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            [DllImport("kernel32.dll", EntryPoint = "GetFileAttributesExW", ExactSpelling = true, CharSet = CharSet.Unicode)]
             public static extern bool GetFileAttributesEx([In] string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #endif  // NET7_0_OR_GREATER
         }
