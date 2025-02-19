@@ -5,7 +5,7 @@ using System.IO;
 #if USE_WIN32_API
 using System.Runtime.InteropServices;
 using System.Security;
-#endif
+#endif  // USE_WIN32_API
 using System.Threading;
 using Koturn.VRChat.Log.Events;
 
@@ -15,7 +15,11 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
+#if NET7_0_OR_GREATER && USE_WIN32_API
+    public abstract partial class VRCBaseLogWatcher : IDisposable
+#else
     public abstract class VRCBaseLogWatcher : IDisposable
+#endif  // NET7_0_OR_GREATER && USE_WIN32_API
     {
         /// <summary>
         /// File watch cycle.
@@ -290,7 +294,7 @@ namespace Koturn.VRChat.Log
             var result = NativeMethods.GetFileAttributesEx(filePath, GetFileExInfoLevels.InfoStandard, out var fileAttrData);
             return result ? ((ulong)fileAttrData.FileSizeHigh << 32) | (ulong)fileAttrData.FileSizeLow : 0;
         }
-#endif
+#endif  // USE_WIN32_API
 
         /// <summary>
         /// Occurs when a file or directory in the specified <see cref='FileSystemWatcher.Path'/> is created.
@@ -434,7 +438,11 @@ namespace Koturn.VRChat.Log
         /// Provides native methods.
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
+#if NET7_0_OR_GREATER
+        private static partial class NativeMethods
+#else
         private static class NativeMethods
+#endif
         {
             /// <summary>
             /// <para>Retrieves attributes for a specified file or directory.</para>
@@ -463,9 +471,15 @@ namespace Koturn.VRChat.Log
             /// <remarks>
             /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileattributesexw"/>
             /// </remarks>
+#if NET7_0_OR_GREATER
+            [LibraryImport("kernel32.dll", EntryPoint = "GetFileAttributesExW", StringMarshalling = StringMarshalling.Utf16)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool GetFileAttributesEx(string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
+#else
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern bool GetFileAttributesEx([In] string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
+#endif  // NET7_0_OR_GREATER
         }
-#endif
+#endif  // USE_WIN32_API
     }
 }
