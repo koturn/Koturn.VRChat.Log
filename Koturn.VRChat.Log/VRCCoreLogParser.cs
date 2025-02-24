@@ -42,11 +42,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Dictionary to contain user name and join timestamp of the user.
         /// </summary>
-        private readonly Dictionary<string, UserInfo> _userInfoDict;
+        private readonly Dictionary<string, UserInfo> _userInfoDict = new Dictionary<string, UserInfo>();
         /// <summary>
         /// Instance information.
         /// </summary>
-        private InstanceInfo _instanceInfo;
+        private InstanceInfo _instanceInfo = new InstanceInfo(default);
 
 
         /// <summary>
@@ -57,10 +57,6 @@ namespace Koturn.VRChat.Log
         public VRCCoreLogParser(string filePath, int bufferSize = 65536)
             : base(filePath, bufferSize)
         {
-            _userInfoDict = new Dictionary<string, UserInfo>();
-            _instanceInfo = new InstanceInfo(default);
-            AuthUserInfo = null;
-            IsDisposed = false;
         }
 
         /// <summary>
@@ -73,10 +69,6 @@ namespace Koturn.VRChat.Log
         public VRCCoreLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
             : base(stream, bufferSize, leaveOpen)
         {
-            _userInfoDict = new Dictionary<string, UserInfo>();
-            _instanceInfo = new InstanceInfo(default);
-            AuthUserInfo = null;
-            IsDisposed = false;
         }
 
 

@@ -59,13 +59,12 @@ namespace Koturn.VRChat.Log
         public bool IsEmitted { get; set; }
 
         /// <summary>
-        /// Initialize <see cref="StayFrom"/> and <see cref="IsEmitted"/>.
+        /// Initialize <see cref="StayFrom"/>.
         /// </summary>
         /// <param name="stayFrom">Timestamp your joined to the instance.</param>
         public InstanceInfo(DateTime stayFrom)
         {
             StayFrom = stayFrom;
-            IsEmitted = false;
         }
     }
 }

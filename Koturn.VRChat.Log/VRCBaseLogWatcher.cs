@@ -66,10 +66,7 @@ namespace Koturn.VRChat.Log
         /// <param name="watchCycle">File watch cycle.</param>
         public VRCBaseLogWatcher(int watchCycle)
         {
-            _watcher = null;
-            _thread = null;
             WatchCycle = watchCycle;
-            CurrentFilePath = null;
         }
 
         /// <summary>

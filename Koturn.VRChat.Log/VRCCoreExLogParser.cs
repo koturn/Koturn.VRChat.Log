@@ -55,12 +55,12 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// <see cref="string"/> <see cref="HashSet{T}"/> of terror name.
         /// </summary>
-        public HashSet<string> TerrorNameSet { get; }
+        public HashSet<string> TerrorNameSet { get; } = new HashSet<string>();
 
         /// <summary>
         /// World kind.
         /// </summary>
-        private WorldKind _worldKind;
+        private WorldKind _worldKind = WorldKind.NoSpecificWorld;
         /// <summary>
         /// Indicate next log line is Rhapsody save data.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Round place index.
         /// </summary>
-        private int _tonPlaceIndex;
+        private int _tonPlaceIndex = -1;
 
 
         /// <summary>
@@ -95,13 +95,6 @@ namespace Koturn.VRChat.Log
         public VRCCoreExLogParser(string filePath, int bufferSize = 65536)
             : base(filePath, bufferSize)
         {
-            TonRoundInfo = null;
-            TerrorNameSet = new HashSet<string>();
-            _worldKind = WorldKind.NoSpecificWorld;
-            _isRhapsodySaveData = false;
-            _tonPlaceName = null;
-            _tonPlaceIndex = -1;
-            _isTonSaveData = false;
         }
 
         /// <summary>
@@ -114,13 +107,6 @@ namespace Koturn.VRChat.Log
         public VRCCoreExLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
             : base(stream, bufferSize, leaveOpen)
         {
-            TonRoundInfo = null;
-            TerrorNameSet = new HashSet<string>();
-            _worldKind = WorldKind.NoSpecificWorld;
-            _isRhapsodySaveData = false;
-            _tonPlaceName = null;
-            _tonPlaceIndex = -1;
-            _isTonSaveData = false;
         }
 
 
