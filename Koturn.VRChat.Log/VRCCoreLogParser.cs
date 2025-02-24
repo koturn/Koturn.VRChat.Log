@@ -23,21 +23,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Regex to extract pickedup object.
         /// </summary>
-        private static readonly Regex _regexPickupObject;
+        private static readonly Regex _regexPickupObject = RegexHelper.GetPickupObjectRegex();
         /// <summary>
         /// Regex to extract dropped object.
         /// </summary>
-        private static readonly Regex _regexDropObject;
-
-
-        /// <summary>
-        /// Initialize regexes.
-        /// </summary>
-        static VRCCoreLogParser()
-        {
-            _regexPickupObject = RegexHelper.GetPickupObjectRegex();
-            _regexDropObject = RegexHelper.GetDropObjectRegex();
-        }
+        private static readonly Regex _regexDropObject = RegexHelper.GetDropObjectRegex();
 
 
         /// <summary>

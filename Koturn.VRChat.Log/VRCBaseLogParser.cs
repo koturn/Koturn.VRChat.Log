@@ -33,7 +33,10 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Default VRChat log directory (<c>%LOCALAPPDATA%Low\VRChat\VRChat</c>).
         /// </summary>
-        public static string DefaultVRChatLogDirectory { get; }
+        public static string DefaultVRChatLogDirectory { get; } = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
+            "VRChat",
+            "VRChat");
         /// <summary>
         /// Byte sequence of " -  ".
         /// </summary>
@@ -70,17 +73,6 @@ namespace Koturn.VRChat.Log
             (byte)'E', (byte)'x', (byte)'c', (byte)'e', (byte)'p', (byte)'t', (byte)'i', (byte)'o', (byte)'n', CodeSp
         };
 
-
-        /// <summary>
-        /// Initialize regexes.
-        /// </summary>
-        static VRCBaseLogParser()
-        {
-            DefaultVRChatLogDirectory = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
-                "VRChat",
-                "VRChat");
-        }
 
         /// <summary>
         /// Input <see cref="Stream"/>.

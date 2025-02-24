@@ -25,40 +25,27 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Regex to extract Idle Home save data.
         /// </summary>
-        private static readonly Regex _regexIdleHomeSave;
+        private static readonly Regex _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
         /// <summary>
         /// Regex to extract Terros of Nowhere equipping item log.
         /// </summary>
-        private static readonly Regex _regexTonEquip;
+        private static readonly Regex _regexTonEquip = RegexHelper.GetTonEquipRegex();
         /// <summary>
         /// Regex to extract Terros of Nowhere place log.
         /// </summary>
-        private static readonly Regex _regexTonPlace;
+        private static readonly Regex _regexTonPlace = RegexHelper.GetTonPlaceRegex();
         /// <summary>
         /// Regex to extract Terros of Nowhere winning information log.
         /// </summary>
-        private static readonly Regex _regexTonWin;
+        private static readonly Regex _regexTonWin = RegexHelper.GetTonWinRegex();
         /// <summary>
         /// Regex to extract Terros of Nowhere killer set log.
         /// </summary>
-        private static readonly Regex _regexTonKillerSetting;
+        private static readonly Regex _regexTonKillerSetting = RegexHelper.GetTonKillerSettingRegex();
         /// <summary>
         /// Regex to extract Terros of Nowhere killer enrage level changed log.
         /// </summary>
-        private static readonly Regex _regexTonKillerEnrage;
-
-        /// <summary>
-        /// Initialize regexes.
-        /// </summary>
-        static VRCCoreExLogParser()
-        {
-            _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
-            _regexTonEquip = RegexHelper.GetTonEquipRegex();
-            _regexTonPlace = RegexHelper.GetTonPlaceRegex();
-            _regexTonWin = RegexHelper.GetTonWinRegex();
-            _regexTonKillerSetting = RegexHelper.GetTonKillerSettingRegex();
-            _regexTonKillerEnrage = RegexHelper.GetTonKillerEnrageRegex();
-        }
+        private static readonly Regex _regexTonKillerEnrage = RegexHelper.GetTonKillerEnrageRegex();
 
 
         /// <summary>
