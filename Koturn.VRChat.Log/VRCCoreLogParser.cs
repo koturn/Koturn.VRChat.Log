@@ -42,7 +42,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Dictionary to contain user name and join timestamp of the user.
         /// </summary>
-        private readonly Dictionary<string, UserInfo> _userInfoDict = new Dictionary<string, UserInfo>();
+        private readonly Dictionary<string, UserInfo> _userInfoDict = [];
         /// <summary>
         /// Instance information.
         /// </summary>
