@@ -40,38 +40,38 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Byte sequence of " -  ".
         /// </summary>
-        private static readonly byte[] LogSeparatorSequence = new[]
-        {
+        private static readonly byte[] LogSeparatorSequence =
+        [
             CodeSp, (byte)'-', CodeSp, CodeSp
-        };
+        ];
         /// <summary>
         /// Byte sequence of "Debug     ".
         /// </summary>
-        private static readonly byte[] LogDebugSequence = new[]
-        {
+        private static readonly byte[] LogDebugSequence =
+        [
             (byte)'D', (byte)'e', (byte)'b', (byte)'u', (byte)'g', CodeSp, CodeSp, CodeSp, CodeSp, CodeSp
-        };
+        ];
         /// <summary>
         /// Byte sequence of "Warning   ".
         /// </summary>
-        private static readonly byte[] LogWarningSequence = new[]
-        {
+        private static readonly byte[] LogWarningSequence =
+        [
             (byte)'W', (byte)'a', (byte)'r', (byte)'n', (byte)'i', (byte)'n', (byte)'g', CodeSp, CodeSp, CodeSp
-        };
+        ];
         /// <summary>
         /// Byte sequence of "Error     ".
         /// </summary>
-        private static readonly byte[] LogErrorSequence = new[]
-        {
+        private static readonly byte[] LogErrorSequence =
+        [
             (byte)'E', (byte)'r', (byte)'r', (byte)'o', (byte)'r', CodeSp, CodeSp, CodeSp, CodeSp, CodeSp
-        };
+        ];
         /// <summary>
         /// Byte sequence of "Exception ".
         /// </summary>
-        private static readonly byte[] LogExceptionSequence = new[]
-        {
+        private static readonly byte[] LogExceptionSequence =
+        [
             (byte)'E', (byte)'x', (byte)'c', (byte)'e', (byte)'p', (byte)'t', (byte)'i', (byte)'o', (byte)'n', CodeSp
-        };
+        ];
 
 
         /// <summary>
