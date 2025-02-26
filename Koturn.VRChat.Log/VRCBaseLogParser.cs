@@ -407,25 +407,24 @@ namespace Koturn.VRChat.Log
         private unsafe string? ParseFirstLogLine(byte *pBuffer, int count, out DateTime logDateTime, out LogLevel logLevel)
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            static unsafe int ParseIntSimple(byte* pBuffer, int count)
+            static unsafe bool TryParseIntSimple(byte* pBuffer, int count, out int val)
             {
-                int val = 0;
+                val = 0;
                 for (int i = 0; i < count; i++)
                 {
                     var d = pBuffer[i] - (byte)'0';
                     if ((uint)d > 9)
                     {
-                        return -1;
+                        return false;
                     }
                     val = val * 10 + d;
                 }
-                return val;
+                return true;
             }
 
             logDateTime = default;
             logLevel = default;
 
-            int year, month, day, hour, minute, second;
             if (count < 34
                 || pBuffer[4] != (byte)'.'
                 || pBuffer[7] != (byte)'.'
@@ -434,12 +433,12 @@ namespace Koturn.VRChat.Log
                 || pBuffer[16] != (byte)':'
                 || pBuffer[19] != (byte)' '
                 || !IsMatchSequence(&pBuffer[30], LogSeparatorSequence)
-                || (year = ParseIntSimple(&pBuffer[0], 4)) == -1
-                || (month = ParseIntSimple(&pBuffer[5], 2)) == -1
-                || (day = ParseIntSimple(&pBuffer[8], 2)) == -1
-                || (hour = ParseIntSimple(&pBuffer[11], 2)) == -1
-                || (minute = ParseIntSimple(&pBuffer[14], 2)) == -1
-                || (second = ParseIntSimple(&pBuffer[17], 2)) == -1)
+                || !TryParseIntSimple(&pBuffer[0], 4, out int year)
+                || !TryParseIntSimple(&pBuffer[5], 2, out int month)
+                || !TryParseIntSimple(&pBuffer[8], 2, out int day)
+                || !TryParseIntSimple(&pBuffer[11], 2, out int hour)
+                || !TryParseIntSimple(&pBuffer[14], 2, out int minute)
+                || !TryParseIntSimple(&pBuffer[17], 2, out int second))
             {
                 return null;
             }
