@@ -425,13 +425,9 @@ namespace Koturn.VRChat.Log
             logDateTime = default;
             logLevel = default;
 
-            if (count < 34)
-            {
-                return null;
-            }
-
             int year, month, day, hour, minute, second;
-            if (pBuffer[4] != (byte)'.'
+            if (count < 34
+                || pBuffer[4] != (byte)'.'
                 || pBuffer[7] != (byte)'.'
                 || pBuffer[10] != (byte)' '
                 || pBuffer[13] != (byte)':'
