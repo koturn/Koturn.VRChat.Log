@@ -46,7 +46,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Instance information.
         /// </summary>
-        private InstanceInfo _instanceInfo = new InstanceInfo(default);
+        private InstanceInfo _instanceInfo = new(default);
 
 
         /// <summary>

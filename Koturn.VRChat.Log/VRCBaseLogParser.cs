@@ -118,7 +118,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Log lines.
         /// </summary>
-        private readonly List<string> _messages = new List<string>(DefaultListCapacity);
+        private readonly List<string> _messages = new(DefaultListCapacity);
         /// <summary>
         /// Log timestamp.
         /// </summary>
