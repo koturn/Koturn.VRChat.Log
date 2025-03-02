@@ -54,7 +54,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="filePath">VRChat log file path.</param>
         /// <param name="bufferSize">Buffer size for <see cref="FileStream"/> and <see cref="VRCLogReader"/>.</param>
-        public VRCCoreLogParser(string filePath, int bufferSize = 65536)
+        public VRCCoreLogParser(string filePath, int bufferSize = InternalDefaultBufferSize)
             : base(filePath, bufferSize)
         {
         }
@@ -66,7 +66,7 @@ namespace Koturn.VRChat.Log
         /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/>.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
         /// after the <see cref="VRCCoreLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCCoreLogParser(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+        public VRCCoreLogParser(Stream stream, int bufferSize = InternalDefaultBufferSize, bool leaveOpen = false)
             : base(stream, bufferSize, leaveOpen)
         {
         }

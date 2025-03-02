@@ -16,9 +16,18 @@ namespace Koturn.VRChat.Log
     public class VRCLogReader : IDisposable
     {
         /// <summary>
+        /// Default buffer size.
+        /// </summary>
+        internal const int InternalDefaultBufferSize = 65536;
+        /// <summary>
         /// Char code of whitespace.
         /// </summary>
         private const byte CodeSp = (byte)' ';
+
+        /// <summary>
+        /// Default buffer size.
+        /// </summary>
+        public static int DefaultBufferSize { get; } = InternalDefaultBufferSize;
 
         /// <summary>
         /// Byte sequence of " -  ".
@@ -108,7 +117,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="filePath">VRChat log file path.</param>
         /// <param name="bufferSize">Buffer size for <see cref="FileStream"/> and <see cref="StreamReader"/>.</param>
-        public VRCLogReader(string filePath, int bufferSize = 65536)
+        public VRCLogReader(string filePath, int bufferSize = InternalDefaultBufferSize)
             : this(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize, FileOptions.SequentialScan), bufferSize)
         {
         }
@@ -120,7 +129,7 @@ namespace Koturn.VRChat.Log
         /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
         /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCLogReader(Stream stream, int bufferSize = 65536, bool leaveOpen = false)
+        public VRCLogReader(Stream stream, int bufferSize = InternalDefaultBufferSize, bool leaveOpen = false)
         {
             BaseStream = stream;
             _buffer = new byte[bufferSize];
