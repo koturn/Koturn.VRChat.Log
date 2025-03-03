@@ -82,21 +82,17 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Start watching log file on default VRChat log directory.
         /// </summary>
-        /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void Start(int watchCycle = InternalDefaultWatchCycle)
+        public void Start()
         {
-            Start(VRCBaseLogParser.DefaultVRChatLogDirectory, watchCycle);
+            Start(VRCBaseLogParser.DefaultVRChatLogDirectory);
         }
 
         /// <summary>
         /// Start watching log file on specified log directory.
         /// </summary>
         /// <param name="dirPath">VRChat log directory.</param>
-        /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void Start(string dirPath, int watchCycle = InternalDefaultWatchCycle)
+        public void Start(string dirPath)
         {
-            WatchCycle = watchCycle;
-
             Stop();
 
             var filePath = GetLatestLogFile(dirPath);
