@@ -1,6 +1,7 @@
 #define USE_WIN32_API
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 #if USE_WIN32_API
 using System.Runtime.InteropServices;
@@ -34,7 +35,19 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// File watch cycle.
         /// </summary>
-        public int WatchCycle { get; set; }
+        public int WatchCycle
+        {
+            get => _watchCycle;
+            set
+            {
+#if NET8_0_OR_GREATER
+                ArgumentOutOfRangeException.ThrowIfLessThan(value, Timeout.Infinite, nameof(WatchCycle));
+#else
+                ThrowIfLessThan(value, Timeout.Infinite, nameof(WatchCycle));
+#endif  // NET8_0_OR_GREATER
+                _watchCycle = value;
+            }
+        }
         /// <summary>
         /// Current watching log file path.
         /// </summary>
@@ -61,6 +74,10 @@ namespace Koturn.VRChat.Log
         /// Flush log file thread.
         /// </summary>
         private Thread? _thread;
+        /// <summary>
+        /// File watch cycle.
+        /// </summary>
+        private int _watchCycle;
 
         /// <summary>
         /// Create <see cref="VRCBaseLogWatcher"/> instance.
@@ -289,6 +306,39 @@ namespace Koturn.VRChat.Log
             thread.Interrupt();
             return thread.Join(interruptWait);
         }
+
+#if !NET8_0_OR_GREATER
+        /// <summary>
+        /// Throws an <see cref="ArgumentOutOfRangeException"/> if <paramref name="value"/> is less than <paramref name="other"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects to validate.</typeparam>
+        /// <param name="value">The argument to validate as greater than or equal to <paramref name="other"/>.</param>
+        /// <param name="other">The value to compare with <paramref name="value"/>.</param>
+        /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        private static void ThrowIfLessThan<T>(T value, T other, string? paramName)
+            where T : IComparable<T>
+        {
+            if (value.CompareTo(other) < 0)
+            {
+                ThrowLess(value, other, paramName);
+            }
+        }
+
+        /// <summary>
+        /// Throw <see cref="ArgumentOutOfRangeException"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects.</typeparam>
+        /// <param name="value">The value of the argument that causes this exception.</param>
+        /// <param name="other">The value to compare with <paramref name="value"/>.</param>
+        /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        [DoesNotReturn]
+        private static void ThrowLess<T>(T value, T other, string? paramName)
+        {
+            throw new ArgumentOutOfRangeException(paramName, value, $"'{value}' must be greater than or equal to '{other}'.");
+        }
+#endif  // !NET8_0_OR_GREATER
 
 #if USE_WIN32_API
         /// <summary>
