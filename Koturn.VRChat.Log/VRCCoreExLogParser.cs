@@ -16,11 +16,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Rhapsody save data preamble log line.
         /// </summary>
-        public const string RhapsodySaveDataPreamble = "セーブが実行されました";
+        internal const string RhapsodySaveDataPreamble = "セーブが実行されました";
         /// <summary>
         /// Terros of Nowhere save data preamble log line.
         /// </summary>
-        public const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
+        internal const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
 
         /// <summary>
         /// Regex to extract Idle Home save data.

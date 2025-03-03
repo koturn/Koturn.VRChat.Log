@@ -26,42 +26,42 @@ namespace Koturn.VRChat.Log.Internals
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect pickup object log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string PickupObjectPattern = @"^Pickup object: '([^']+)' equipped = (True|False), is equippable = (True|False), last input method = (.+), is auto equip controller = (True|False)$";
+        internal const string PickupObjectPattern = @"^Pickup object: '([^']+)' equipped = (True|False), is equippable = (True|False), last input method = (.+), is auto equip controller = (True|False)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect drop object log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string DropObjectPattern = @"^Drop object: '([^']+), was equipped = (True|False)' (.+), last input method = (.+)$";
+        internal const string DropObjectPattern = @"^Drop object: '([^']+), was equipped = (True|False)' (.+), last input method = (.+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Idle Home save log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string IdleHomeSavePattern = @"^\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$";
+        internal const string IdleHomeSavePattern = @"^\[🦀 Idle Home 🦀\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Terros of Nowhere equipping item log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string TonEquipPattern = @"^Equipping (\d+)\. Was using (\d+)$";
+        internal const string TonEquipPattern = @"^Equipping (\d+)\. Was using (\d+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect ToN place log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string TonPlacePattern = @"^This round is taking place at (.+) \((\d+)\) and the round type is (.+)$";
+        internal const string TonPlacePattern = @"^This round is taking place at (.+) \((\d+)\) and the round type is (.+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Killer setting log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string TonKillerSettingPattern = @"^Killers have been set - (\d+) (\d+) (\d+) // Round type is (.+)$";
+        internal const string TonKillerSettingPattern = @"^Killers have been set - (\d+) (\d+) (\d+) // Round type is (.+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Killer enrage level changed log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string TonKillerEnragePattern = @"^(.+)triggered an Enrage(\d)? State!$";
+        internal const string TonKillerEnragePattern = @"^(.+)triggered an Enrage(\d)? State!$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect ToN save log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        public const string TonWinPattern = @"^WE WON, THE ROUND WAS A (\d+) AGAINST (\d+) , (\d+) , (\d+) AND WE WERE HOLDING (\d+)$";
+        internal const string TonWinPattern = @"^WE WON, THE ROUND WAS A (\d+) AGAINST (\d+) , (\d+) , (\d+) AND WE WERE HOLDING (\d+)$";
 
 
         /// <summary>

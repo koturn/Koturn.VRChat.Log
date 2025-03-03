@@ -22,6 +22,16 @@ namespace Koturn.VRChat.Log
 #endif  // NET7_0_OR_GREATER && USE_WIN32_API
     {
         /// <summary>
+        /// Default watch cycle (milliseconds).
+        /// </summary>
+        internal const int InternalDefaultWatchCycle = 1000;
+
+        /// <summary>
+        /// Default watch cycle (milliseconds).
+        /// </summary>
+        public static int DefaultWatchCycle { get; } = InternalDefaultWatchCycle;
+
+        /// <summary>
         /// File watch cycle.
         /// </summary>
         public int WatchCycle { get; set; }
@@ -56,7 +66,7 @@ namespace Koturn.VRChat.Log
         /// Create <see cref="VRCBaseLogWatcher"/> instance.
         /// </summary>
         public VRCBaseLogWatcher()
-            : this(1000)
+            : this(InternalDefaultWatchCycle)
         {
         }
 
@@ -73,7 +83,7 @@ namespace Koturn.VRChat.Log
         /// Start watching log file on default VRChat log directory.
         /// </summary>
         /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void Start(int watchCycle = 1000)
+        public void Start(int watchCycle = InternalDefaultWatchCycle)
         {
             Start(VRCBaseLogParser.DefaultVRChatLogDirectory, watchCycle);
         }
@@ -83,7 +93,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="dirPath">VRChat log directory.</param>
         /// <param name="watchCycle">Watch cycle. (in milliseconds)</param>
-        public void Start(string dirPath, int watchCycle = 1000)
+        public void Start(string dirPath, int watchCycle = InternalDefaultWatchCycle)
         {
             WatchCycle = watchCycle;
 
@@ -94,7 +104,7 @@ namespace Koturn.VRChat.Log
             {
                 _thread = StartFileWatchingThread(filePath, true);
             }
-            var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.VRChatLogFileFilter)
+            var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.InternalVRChatLogFileFilter)
             {
                 InternalBufferSize = 1024 * 64,
                 NotifyFilter =

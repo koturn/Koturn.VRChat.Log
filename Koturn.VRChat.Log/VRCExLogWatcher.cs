@@ -45,7 +45,7 @@ namespace Koturn.VRChat.Log
         /// Create <see cref="VRCExLogWatcher"/> instance.
         /// </summary>
         public VRCExLogWatcher()
-            : this(1000)
+            : this(InternalDefaultWatchCycle)
         {
         }
 

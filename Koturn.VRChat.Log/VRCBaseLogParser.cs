@@ -15,19 +15,36 @@ namespace Koturn.VRChat.Log
     public abstract class VRCBaseLogParser : IDisposable
     {
         /// <summary>
+        /// VRChat log file name pattern.
+        /// </summary>
+        internal const string InternalVRChatLogFileFilter = "output_log_????-??-??_??-??-??.txt";
+        /// <summary>
         /// Default buffer size.
         /// </summary>
         internal const int InternalDefaultBufferSize = 65536;
         /// <summary>
-        /// Log file filter.
+        /// Default list capacity.
         /// </summary>
-        public const string VRChatLogFileFilter = "output_log_????-??-??_??-??-??.txt";
+        internal const int InternalDefaultListCapacity = 128;
+
+        /// <summary>
+        /// VRChat log file name pattern.
+        /// </summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        public static string VRChatLogFileFilter { get; } = new string(InternalVRChatLogFileFilter.AsSpan());
+#else
+        public static string VRChatLogFileFilter { get; } = string.Copy(InternalVRChatLogFileFilter);
+#endif  // NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        /// <summary>
+        /// Default buffer size.
+        /// </summary>
+        public static int DefaultBufferSize { get; } = InternalDefaultBufferSize;
         /// <summary>
         /// <para>Default capacity of list of message lines.</para>
         /// <para>As of 2025-02-24, up to 74 lines are output in the initialization log,
         /// so 74 or more is recommended for a capacity of the list.</para>
         /// </summary>
-        public const int DefaultListCapacity = 128;
+        public static int DefaultListCapacity { get; } = InternalDefaultListCapacity;
         /// <summary>
         /// Default VRChat log directory (<c>%LOCALAPPDATA%Low\VRChat\VRChat</c>).
         /// </summary>
@@ -57,7 +74,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Log lines.
         /// </summary>
-        private readonly List<string> _messages = new(DefaultListCapacity);
+        private readonly List<string> _messages = new(InternalDefaultListCapacity);
         /// <summary>
         /// true to leave the <see cref="LogReader"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
@@ -222,7 +239,7 @@ namespace Koturn.VRChat.Log
         /// <returns>Array of log file paths.</returns>
         public static string[] GetLogFilePaths(string logDirPath)
         {
-            return Directory.GetFiles(logDirPath, VRChatLogFileFilter);
+            return Directory.GetFiles(logDirPath, InternalVRChatLogFileFilter);
         }
 
 
