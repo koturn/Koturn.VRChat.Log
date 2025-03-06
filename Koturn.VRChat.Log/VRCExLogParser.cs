@@ -73,24 +73,72 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
-        /// Open a <see cref="FileStream"/> for the specified file path and initialize instance with it.
+        /// Create <see cref="VRCLogReader"/> with specified file path, then initialize instance with it.
         /// </summary>
         /// <param name="filePath">VRChat log file path.</param>
-        /// <param name="bufferSize">Buffer size for <see cref="FileStream"/> and <see cref="VRCLogReader"/>.</param>
-        public VRCExLogParser(string filePath, int bufferSize = InternalDefaultBufferSize)
+        public VRCExLogParser(string filePath)
+            : base(filePath)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified file path and buffer size, then initialize instance with it.
+        /// </summary>
+        /// <param name="filePath">VRChat log file path.</param>
+        /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/> and internal <see cref="FileStream"/> of <see cref="VRCLogReader"/>.</param>
+        public VRCExLogParser(string filePath, int bufferSize)
             : base(filePath, bufferSize)
         {
         }
 
         /// <summary>
-        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and initialize instance with it.
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/>, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        public VRCExLogParser(Stream stream)
+            : base(stream)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and buffer size, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/>.</param>
+        public VRCExLogParser(Stream stream, int bufferSize)
+            : base(stream, bufferSize)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/>, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCExLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCExLogParser(Stream stream, bool leaveOpen)
+            : base(stream, leaveOpen)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and buffer size, then initialize instance with it.
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
         /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/>.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
         /// after the <see cref="VRCExLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCExLogParser(Stream stream, int bufferSize = InternalDefaultBufferSize, bool leaveOpen = false)
+        public VRCExLogParser(Stream stream, int bufferSize, bool leaveOpen)
             : base(stream, bufferSize, leaveOpen)
+        {
+        }
+
+        /// <summary>
+        /// Initialize instance with specified <see cref="VRCLogReader"/>.
+        /// </summary>
+        /// <param name="logReader">VRChat Log Reader.</param>
+        public VRCExLogParser(VRCLogReader logReader)
+            : base(logReader)
         {
         }
 
@@ -100,7 +148,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logReader">VRChat Log Reader.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="logReader"/> open
         /// after the <see cref="VRCExLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCExLogParser(VRCLogReader logReader, bool leaveOpen = false)
+        public VRCExLogParser(VRCLogReader logReader, bool leaveOpen)
             : base(logReader, leaveOpen)
         {
         }

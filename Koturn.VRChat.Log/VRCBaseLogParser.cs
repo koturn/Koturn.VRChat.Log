@@ -19,10 +19,6 @@ namespace Koturn.VRChat.Log
         /// </summary>
         internal const string InternalVRChatLogFileFilter = "output_log_????-??-??_??-??-??.txt";
         /// <summary>
-        /// Default buffer size.
-        /// </summary>
-        internal const int InternalDefaultBufferSize = 65536;
-        /// <summary>
         /// Default list capacity.
         /// </summary>
         internal const int InternalDefaultListCapacity = 128;
@@ -38,7 +34,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Default buffer size.
         /// </summary>
-        public static int DefaultBufferSize { get; } = InternalDefaultBufferSize;
+        public static int DefaultBufferSize { get; } = VRCLogReader.InternalDefaultBufferSize;
         /// <summary>
         /// <para>Default capacity of list of message lines.</para>
         /// <para>As of 2025-02-24, up to 74 lines are output in the initialization log,
@@ -82,24 +78,72 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
-        /// Open a <see cref="FileStream"/> for the specified file path and initialize instance with it.
+        /// Create <see cref="VRCLogReader"/> with specified file path, then initialize instance with it.
         /// </summary>
         /// <param name="filePath">VRChat log file path.</param>
-        /// <param name="bufferSize">Buffer size for <see cref="FileStream"/> and <see cref="VRCLogReader"/>.</param>
-        public VRCBaseLogParser(string filePath, int bufferSize = VRCLogReader.InternalDefaultBufferSize)
-            : this(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize, FileOptions.SequentialScan), bufferSize)
+        public VRCBaseLogParser(string filePath)
+            : this(new VRCLogReader(filePath), false)
         {
         }
 
         /// <summary>
-        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and initialize instance with it.
+        /// Create <see cref="VRCLogReader"/> with specified file path and buffer size, then initialize instance with it.
+        /// </summary>
+        /// <param name="filePath">VRChat log file path.</param>
+        /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/> and internal <see cref="FileStream"/> of <see cref="VRCLogReader"/>.</param>
+        public VRCBaseLogParser(string filePath, int bufferSize)
+            : this(new VRCLogReader(filePath, bufferSize), false)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/>, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        public VRCBaseLogParser(Stream stream)
+            : this(new VRCLogReader(stream), false)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and buffer size, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/>.</param>
+        public VRCBaseLogParser(Stream stream, int bufferSize)
+            : this(new VRCLogReader(stream, bufferSize), false)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/>, then initialize instance with it.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
+        public VRCBaseLogParser(Stream stream, bool leaveOpen)
+            : this(new VRCLogReader(stream, leaveOpen), false)
+        {
+        }
+
+        /// <summary>
+        /// Create <see cref="VRCLogReader"/> with specified <see cref="Stream"/> and buffer size, then initialize instance with it.
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
         /// <param name="bufferSize">Buffer size for <see cref="VRCLogReader"/>.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
         /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCBaseLogParser(Stream stream, int bufferSize = VRCLogReader.InternalDefaultBufferSize, bool leaveOpen = false)
-            : this(new VRCLogReader(stream, bufferSize, false), leaveOpen)
+        public VRCBaseLogParser(Stream stream, int bufferSize, bool leaveOpen)
+            : this(new VRCLogReader(stream, bufferSize, leaveOpen), false)
+        {
+        }
+
+        /// <summary>
+        /// Initialize instance with specified <see cref="VRCLogReader"/>.
+        /// </summary>
+        /// <param name="logReader">VRChat Log Reader.</param>
+        public VRCBaseLogParser(VRCLogReader logReader)
+            : this(logReader, false)
         {
         }
 
@@ -109,7 +153,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logReader">VRChat Log Reader.</param>
         /// <param name="leaveOpen">true to leave the <paramref name="logReader"/> open
         /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCBaseLogParser(VRCLogReader logReader, bool leaveOpen = false)
+        public VRCBaseLogParser(VRCLogReader logReader, bool leaveOpen)
         {
             LogReader = logReader;
             _leaveOpen = leaveOpen;
