@@ -169,6 +169,11 @@ namespace Koturn.VRChat.Log
             var messages = _messages;
             while (logReader.ReadLog(messages, out var logDateTime, out var logLevel))
             {
+                if (LogFrom == default)
+                {
+                    LogFrom = logDateTime;
+                }
+                LogUntil = logDateTime;
                 OnLogDetected(logDateTime, logLevel, messages);
             }
         }
