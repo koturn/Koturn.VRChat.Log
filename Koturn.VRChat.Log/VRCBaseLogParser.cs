@@ -225,8 +225,6 @@ namespace Koturn.VRChat.Log
                 {
                     LogReader.Dispose();
                 }
-                LogFrom = default;
-                LogUntil = default;
             }
 
             IsDisposed = true;

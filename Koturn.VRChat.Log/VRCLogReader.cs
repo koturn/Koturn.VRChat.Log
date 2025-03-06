@@ -364,8 +364,6 @@ namespace Koturn.VRChat.Log
                 {
                     BaseStream.Dispose();
                 }
-                LineCount = 0;
-                LogCount = 0;
             }
 
             IsDisposed = true;
