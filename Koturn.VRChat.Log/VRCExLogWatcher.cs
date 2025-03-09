@@ -123,6 +123,16 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
+            /// Fire <see cref="VRCLogWatcher.ApplicationQuitted"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="activeTime">Active time (in seconds).</param>
+            protected override void OnApplicationQuit(DateTime logAt, double activeTime)
+            {
+                _logWatcher._applicationQuitted?.Invoke(logAt, new ApplicationQuittedEventArgs(logAt, activeTime));
+            }
+
+            /// <summary>
             /// Fire <see cref="VRCLogWatcher.JoinedToInstance"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>

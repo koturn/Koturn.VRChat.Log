@@ -33,6 +33,12 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _userAuthenticated, value);
         }
         /// <inheritdoc/>
+        public event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted
+        {
+            add => EventHelper.Add(ref _applicationQuitted, value);
+            remove => EventHelper.Remove(ref _applicationQuitted, value);
+        }
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
@@ -122,6 +128,10 @@ namespace Koturn.VRChat.Log
         /// The substance event handler delegate of <see cref="UserAuthenticated"/>.
         /// </summary>
         protected EventHandler<UserAuthenticatedEventArgs>? _userAuthenticated;
+        /// <summary>
+        /// The substance event handler delegate of <see cref="ApplicationQuitted"/>.
+        /// </summary>
+        protected EventHandler<ApplicationQuittedEventArgs>? _applicationQuitted;
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
@@ -260,6 +270,16 @@ namespace Koturn.VRChat.Log
             {
                 _logWatcher.AuthUserInfo = authUserInfo;
                 _logWatcher._userAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+            }
+
+            /// <summary>
+            /// Fire <see cref="ApplicationQuitted"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="activeTime">Active time (in seconds).</param>
+            protected override void OnApplicationQuit(DateTime logAt, double activeTime)
+            {
+                _logWatcher._applicationQuitted?.Invoke(logAt, new ApplicationQuittedEventArgs(logAt, activeTime));
             }
 
             /// <summary>

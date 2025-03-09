@@ -15,6 +15,8 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
         /// <inheritdoc/>
+        public event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
         /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
@@ -162,6 +164,16 @@ namespace Koturn.VRChat.Log
         protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
         {
             UserAuthenticated?.Invoke(logAt, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+        }
+
+        /// <summary>
+        /// Fire <see cref="ApplicationQuitted"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="activeTime">Active time (in seconds).</param>
+        protected override void OnApplicationQuit(DateTime logAt, double activeTime)
+        {
+            ApplicationQuitted?.Invoke(logAt, new ApplicationQuittedEventArgs(logAt, activeTime));
         }
 
         /// <summary>

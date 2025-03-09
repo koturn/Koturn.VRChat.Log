@@ -152,7 +152,8 @@ namespace Koturn.VRChat.Log
                 || ParseAsVideoPlaybackLog(logAt, firstLine)
                 || ParseAsStringDownloadLog(logAt, firstLine)
                 || ParseAsImageDownloadLog(logAt, firstLine)
-                || ParseAsUserAuthenticatedLog(logAt, logLines);
+                || ParseAsUserAuthenticatedLog(logAt, logLines)
+                || ParseAsApplicationQuitLog(logAt, firstLine);
         }
 
         /// <summary>
@@ -165,6 +166,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsUserAuthenticatedLog(DateTime, List{string})"/></para>
         /// </remarks>
         protected virtual void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when application quit log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="activeTime">Active time (in seconds).</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsApplicationQuitLog(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnApplicationQuit(DateTime logAt, double activeTime)
         {
         }
 
@@ -888,6 +902,29 @@ namespace Koturn.VRChat.Log
             AuthUserInfo = authUserInfo;
 
             OnUserAuthenticated(logAt, authUserInfo);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as application quit log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsApplicationQuitLog(DateTime logAt, string firstLine)
+        {
+            if (!firstLine.StartsWith("VRCApplication: HandleApplicationQuit at ", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+#if NET7_0_OR_GREATER
+            var activeTime = double.Parse(firstLine.AsSpan(41));
+#else
+            var activeTime = double.Parse(firstLine.Substring(41));
+#endif  // NET7_0_OR_GREATER
+            OnApplicationQuit(logAt, activeTime);
 
             return true;
         }
