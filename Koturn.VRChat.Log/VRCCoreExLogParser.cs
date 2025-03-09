@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Internals;
 
@@ -21,31 +20,6 @@ namespace Koturn.VRChat.Log
         /// Terros of Nowhere save data preamble log line.
         /// </summary>
         internal const string TonSaveDataPreamble = "[TERRORS SAVE CODE CREATED. PLEASE MAKE SURE YOU COPY THE ENTIRE THING. DO NOT INCLUDE [START] or [END]]";
-
-        /// <summary>
-        /// Regex to extract Idle Home save data.
-        /// </summary>
-        private static readonly Regex _regexIdleHomeSave = RegexHelper.GetIdleHomeSaveRegex();
-        /// <summary>
-        /// Regex to extract Terros of Nowhere equipping item log.
-        /// </summary>
-        private static readonly Regex _regexTonEquip = RegexHelper.GetTonEquipRegex();
-        /// <summary>
-        /// Regex to extract Terros of Nowhere place log.
-        /// </summary>
-        private static readonly Regex _regexTonPlace = RegexHelper.GetTonPlaceRegex();
-        /// <summary>
-        /// Regex to extract Terros of Nowhere winning information log.
-        /// </summary>
-        private static readonly Regex _regexTonWin = RegexHelper.GetTonWinRegex();
-        /// <summary>
-        /// Regex to extract Terros of Nowhere killer set log.
-        /// </summary>
-        private static readonly Regex _regexTonKillerSetting = RegexHelper.GetTonKillerSettingRegex();
-        /// <summary>
-        /// Regex to extract Terros of Nowhere killer enrage level changed log.
-        /// </summary>
-        private static readonly Regex _regexTonKillerEnrage = RegexHelper.GetTonKillerEnrageRegex();
 
 
         /// <summary>
@@ -398,7 +372,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsIdleHomeSaveData(DateTime logAt, string firstLine)
         {
-            var match = _regexIdleHomeSave.Match(firstLine);
+            var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -621,7 +595,7 @@ namespace Koturn.VRChat.Log
         private bool ParseAsTonTriggerEnrage(DateTime logAt, string firstLine)
         {
             // 2024.09.28 23:18:27 Log        -  BFFtriggered an Enrage State!
-            var match = _regexTonKillerEnrage.Match(firstLine);
+            var match = RegexHelper.TonKillerEnrageRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -655,7 +629,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonKillerSet(DateTime logAt, string firstLine)
         {
-            var match = _regexTonKillerSetting.Match(firstLine);
+            var match = RegexHelper.TonKillerSettingRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -741,7 +715,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonEquipped(DateTime logAt, string firstLine)
         {
-            var match = _regexTonEquip.Match(firstLine);
+            var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -788,7 +762,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonPlace(DateTime logAt, string firstLine)
         {
-            var match = _regexTonPlace.Match(firstLine);
+            var match = RegexHelper.TonPlaceRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -863,7 +837,7 @@ namespace Koturn.VRChat.Log
             //
             // for legacy win log.
             //
-            var match = _regexTonWin.Match(firstLine);
+            var match = RegexHelper.TonWinRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;

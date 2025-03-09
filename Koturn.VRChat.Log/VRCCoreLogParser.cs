@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
 using Koturn.VRChat.Log.Internals;
@@ -19,15 +18,6 @@ namespace Koturn.VRChat.Log
         /// "[Behaviour]" log offset.
         /// </summary>
         private const int BehaviourLogOffset = 12;
-
-        /// <summary>
-        /// Regex to extract pickedup object.
-        /// </summary>
-        private static readonly Regex _regexPickupObject = RegexHelper.GetPickupObjectRegex();
-        /// <summary>
-        /// Regex to extract dropped object.
-        /// </summary>
-        private static readonly Regex _regexDropObject = RegexHelper.GetDropObjectRegex();
 
 
         /// <summary>
@@ -541,7 +531,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsPickupObjectLog(DateTime logAt, string firstLine)
         {
-            var match = _regexPickupObject.Match(firstLine, BehaviourLogOffset);
+            var match = RegexHelper.PickupObjectRegex.Match(firstLine, BehaviourLogOffset);
             if (!match.Success)
             {
                 return false;
@@ -567,7 +557,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsDropObjectLog(DateTime logAt, string firstLine)
         {
-            var match = _regexDropObject.Match(firstLine, BehaviourLogOffset);
+            var match = RegexHelper.DropObjectRegex.Match(firstLine, BehaviourLogOffset);
             if (!match.Success)
             {
                 return false;
