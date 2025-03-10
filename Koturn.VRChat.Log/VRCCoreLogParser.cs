@@ -400,19 +400,7 @@ namespace Koturn.VRChat.Log
 
             if (disposing)
             {
-                foreach (var kv in _userInfoDict)
-                {
-                    var userInfo = kv.Value;
-                    OnUserLeft(LogUntil, kv.Key, userInfo.UserId, userInfo.JoinAt, null, _instanceInfo);
-                }
-                _userInfoDict.Clear();
-
-                if (!_instanceInfo.IsEmitted && _instanceInfo.StayFrom != default)
-                {
-                    OnLeftFromInstance(LogUntil, _instanceInfo);
-                }
-
-                _instanceInfo = new InstanceInfo(default);
+                ClearInfo();
             }
 
             IsDisposed = true;
@@ -924,6 +912,7 @@ namespace Koturn.VRChat.Log
 #else
             var activeTime = double.Parse(firstLine.Substring(41));
 #endif  // NET7_0_OR_GREATER
+            ClearInfo();
             OnApplicationQuit(logAt, activeTime);
 
             return true;
@@ -951,6 +940,26 @@ namespace Koturn.VRChat.Log
 
             return (option.Substring(0, idxParenStart), option.Substring(idxParenStart + 1, idxParenEnd - idxParenStart - 1));
             // return (option[..idxParenStart], option[(idxParenStart + 1)..idxParenEnd]);
+        }
+
+        /// <summary>
+        /// Call callback methods with remaining <see cref="_userInfoDict"/> and <see cref="_instanceInfo"/>, then clear them.
+        /// </summary>
+        private void ClearInfo()
+        {
+            foreach (var kv in _userInfoDict)
+            {
+                var userInfo = kv.Value;
+                OnUserLeft(LogUntil, kv.Key, userInfo.UserId, userInfo.JoinAt, null, _instanceInfo);
+            }
+            _userInfoDict.Clear();
+
+            if (!_instanceInfo.IsEmitted && _instanceInfo.StayFrom != default)
+            {
+                OnLeftFromInstance(LogUntil, _instanceInfo);
+            }
+
+            _instanceInfo = new InstanceInfo(default);
         }
     }
 }
