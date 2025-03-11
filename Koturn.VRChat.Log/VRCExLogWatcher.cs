@@ -16,6 +16,8 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
         /// <inheritdoc/>
+        public event EventHandler<SaveEventArgs>? MagicalCursedLandSaved;
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? RhapsodySaved;
         /// <inheritdoc/>
         public event EventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
@@ -318,6 +320,16 @@ namespace Koturn.VRChat.Log
             protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
             {
                 _logWatcher.IdleDefenseSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="MagicalCursedLandSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.MagicalCursedLandSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
             }
 
             /// <summary>

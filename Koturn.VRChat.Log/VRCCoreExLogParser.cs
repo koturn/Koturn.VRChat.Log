@@ -168,6 +168,7 @@ namespace Koturn.VRChat.Log
             {
                 WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
                 WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
+                WorldKind.MagicalCursedLand => ParseAsMagicalCursedLandSaveData(logAt, logLines),
                 WorldKind.TerrorsOfNowhere => ParseAsTonLog(logAt, firstLine),
                 WorldKind.Rhapsody => ParseAsRhapsodySaveDataPreamble(firstLine) || ParseAsRhapsodySaveData(logAt, firstLine),
                 _ => false
@@ -189,6 +190,7 @@ namespace Koturn.VRChat.Log
             {
                 WorldIds.IdleHome => WorldKind.IdleHome,
                 WorldIds.IdleDefense => WorldKind.IdleDefense,
+                WorldIds.MagicalCursedLand => WorldKind.MagicalCursedLand,
                 WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
                 WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
                 _ => WorldKind.NoSpecificWorld
@@ -219,6 +221,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsIdleDefenseSaveData(DateTime, List{string})"/></para>
         /// </remarks>
         protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when Magical Cursed Land save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsMagicalCursedLandSaveData(DateTime, List{string})"/></para>
+        /// </remarks>
+        protected virtual void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
         {
         }
 
@@ -399,6 +414,24 @@ namespace Koturn.VRChat.Log
             }
 
             OnIdleDefenseSaved(logAt, logLines[1].Substring(0, logLines[1].Length - 12));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse log lines as Magical Cursed Land save data log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsMagicalCursedLandSaveData(DateTime logAt, List<string> logLines)
+        {
+            if (logLines.Count != 2 || logLines[0] != "セーブテキスト生成")
+            {
+                return false;
+            }
+
+            OnMagicalCursedLandSaved(logAt, logLines[1]);
 
             return true;
         }

@@ -14,6 +14,10 @@ namespace Koturn.VRChat.Log.Internals
         /// </summary>
         internal const string IdleDefense = "wrld_f18613e0-eca8-45ee-b3a8-50ce482b35de";
         /// <summary>
+        /// World ID of "Magical Cursed Land".
+        /// </summary>
+        internal const string MagicalCursedLand = "wrld_a0423f4f-d9a8-42d9-bfcf-323eca2ec8a3";
+        /// <summary>
         /// World ID of "Terrors of Nowhere".
         /// </summary>
         internal const string TerrorsOfNowhere = "wrld_a61cdabe-1218-4287-9ffc-2a4d1414e5bd";

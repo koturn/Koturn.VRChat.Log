@@ -18,6 +18,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         event EventHandler<SaveEventArgs>? IdleDefenseSaved;
         /// <summary>
+        /// Occurs when detect a log that save data text of Magical Cursed Land is generated.
+        /// </summary>
+        event EventHandler<SaveEventArgs>? MagicalCursedLandSaved;
+        /// <summary>
         /// Occurs when detect a log that save data text of Rhapsody is generated.
         /// </summary>
         event EventHandler<SaveEventArgs>? RhapsodySaved;

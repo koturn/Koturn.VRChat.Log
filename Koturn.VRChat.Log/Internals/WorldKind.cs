@@ -18,6 +18,10 @@ namespace Koturn.VRChat.Log.Internals
         /// </summary>
         IdleDefense,
         /// <summary>
+        /// Represents current world is "MagicalCursedLand".
+        /// </summary>
+        MagicalCursedLand,
+        /// <summary>
         /// Represents current world is "Terrors of Nowhere".
         /// </summary>
         TerrorsOfNowhere,
