@@ -12,6 +12,8 @@ namespace Koturn.VRChat.Log
     public class VRCExLogWatcher : VRCLogWatcher, IVRCExLogEvent
     {
         /// <inheritdoc/>
+        public event EventHandler<SaveEventArgs>? IdleCubeSaved;
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
@@ -300,6 +302,16 @@ namespace Koturn.VRChat.Log
             protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
             {
                 _logWatcher._exceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+            }
+
+            /// <summary>
+            /// Fire <see cref="IdleCubeSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnIdleCubeSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.IdleCubeSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
             }
 
             /// <summary>

@@ -166,6 +166,7 @@ namespace Koturn.VRChat.Log
 
             return _worldKind switch
             {
+                WorldKind.IdleCube => ParseAsIdleCubeSaveData(logAt, firstLine),
                 WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
                 WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
                 WorldKind.MagicalCursedLand => ParseAsMagicalCursedLandSaveData(logAt, logLines),
@@ -188,6 +189,7 @@ namespace Koturn.VRChat.Log
         {
             _worldKind = instanceInfo.WorldId switch
             {
+                WorldIds.IdleCube => WorldKind.IdleCube,
                 WorldIds.IdleHome => WorldKind.IdleHome,
                 WorldIds.IdleDefense => WorldKind.IdleDefense,
                 WorldIds.MagicalCursedLand => WorldKind.MagicalCursedLand,
@@ -197,6 +199,19 @@ namespace Koturn.VRChat.Log
             };
         }
 
+
+        /// <summary>
+        /// This method is called when Idle Cube save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsIdleCubeSaveData(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnIdleCubeSaved(DateTime logAt, string saveText)
+        {
+        }
 
         /// <summary>
         /// This method is called when Idle Home save data log is detected.
@@ -378,6 +393,24 @@ namespace Koturn.VRChat.Log
         {
         }
 
+
+        /// <summary>
+        /// Parse first log line as Idle Cube save data log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsIdleCubeSaveData(DateTime logAt, string firstLine)
+        {
+            if (!firstLine.StartsWith("SaveVer"))
+            {
+                return false;
+            }
+
+            OnIdleCubeSaved(logAt, firstLine);
+
+            return true;
+        }
 
         /// <summary>
         /// Parse first log line as Idle Home save data log.

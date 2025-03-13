@@ -6,6 +6,10 @@ namespace Koturn.VRChat.Log.Internals
     internal static class WorldIds
     {
         /// <summary>
+        /// World ID of "Idle Cube".
+        /// </summary>
+        internal const string IdleCube = "wrld_bc647b75-363d-40ed-ac02-c576098a1efc";
+        /// <summary>
         /// World ID of "Idle Home".
         /// </summary>
         internal const string IdleHome = "wrld_c16e4dee-d149-4116-adbc-16bc30b664b0";
