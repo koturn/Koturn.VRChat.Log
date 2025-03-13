@@ -44,6 +44,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private DateTime _tonRoundAt;
         /// <summary>
+        /// Indicate next log line is Bullet Time Agent save data.
+        /// </summary>
+        private bool _isBulletTimeAgentSaveData;
+        /// <summary>
         /// Indicate next log line is Terros of Nowhere save data.
         /// </summary>
         private bool _isTonSaveData;
@@ -166,6 +170,7 @@ namespace Koturn.VRChat.Log
 
             return _worldKind switch
             {
+                WorldKind.BulletTimeAgent => ParseAsBulletTimeAgentSaveDataPreamble(firstLine) || ParseAsBulletTimeAgentSaveData(logAt, firstLine),
                 WorldKind.IdleCube => ParseAsIdleCubeSaveData(logAt, firstLine),
                 WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
                 WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
@@ -189,6 +194,7 @@ namespace Koturn.VRChat.Log
         {
             _worldKind = instanceInfo.WorldId switch
             {
+                WorldIds.BulletTimeAgent => WorldKind.BulletTimeAgent,
                 WorldIds.IdleCube => WorldKind.IdleCube,
                 WorldIds.IdleHome => WorldKind.IdleHome,
                 WorldIds.IdleDefense => WorldKind.IdleDefense,
@@ -199,6 +205,19 @@ namespace Koturn.VRChat.Log
             };
         }
 
+
+        /// <summary>
+        /// This method is called when Bullet Time Agent save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsBulletTimeAgentSaveData(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
+        {
+        }
 
         /// <summary>
         /// This method is called when Idle Cube save data log is detected.
@@ -393,6 +412,43 @@ namespace Koturn.VRChat.Log
         {
         }
 
+
+        /// <summary>
+        /// Parse first log line as Bullett Time Agent save data preamble log.
+        /// </summary>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsBulletTimeAgentSaveDataPreamble(string firstLine)
+        {
+            if (firstLine != "[SAVE CODE]")
+            {
+                return false;
+            }
+
+            _isBulletTimeAgentSaveData = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as Bullett Time Agent save data log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsBulletTimeAgentSaveData(DateTime logAt, string firstLine)
+        {
+            if (!_isBulletTimeAgentSaveData)
+            {
+                return false;
+            }
+
+            _isBulletTimeAgentSaveData = false;
+
+            OnBulletTimeAgentSaved(logAt, firstLine);
+
+            return true;
+        }
 
         /// <summary>
         /// Parse first log line as Idle Cube save data log.

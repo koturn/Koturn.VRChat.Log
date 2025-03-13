@@ -10,6 +10,10 @@ namespace Koturn.VRChat.Log.Internals
         /// </summary>
         NoSpecificWorld,
         /// <summary>
+        /// Represents current world is "Bullet Time Agent".
+        /// </summary>
+        BulletTimeAgent,
+        /// <summary>
         /// Represents current world is "Idle Cube".
         /// </summary>
         IdleCube,

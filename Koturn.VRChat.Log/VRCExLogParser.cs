@@ -45,6 +45,8 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
         /// <inheritdoc/>
+        public event EventHandler<SaveEventArgs>? BulletTimeAgentSaved;
+        /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleCubeSaved;
         /// <inheritdoc/>
         public event EventHandler<SaveEventArgs>? IdleHomeSaved;
@@ -346,6 +348,16 @@ namespace Koturn.VRChat.Log
         protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
         {
             ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
+        }
+
+        /// <summary>
+        /// Fire <see cref="BulletTimeAgentSaved"/> event.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        protected override void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
+        {
+            BulletTimeAgentSaved?.Invoke(this, new SaveEventArgs(logAt, saveText));
         }
 
         /// <summary>

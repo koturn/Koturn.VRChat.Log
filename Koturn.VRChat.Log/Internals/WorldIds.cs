@@ -6,6 +6,10 @@ namespace Koturn.VRChat.Log.Internals
     internal static class WorldIds
     {
         /// <summary>
+        /// World ID of "Bullet Time Agent".
+        /// </summary>
+        internal const string BulletTimeAgent = "wrld_25e938a8-3b23-4d6b-a9c2-10e28cb4970b";
+        /// <summary>
         /// World ID of "Idle Cube".
         /// </summary>
         internal const string IdleCube = "wrld_bc647b75-363d-40ed-ac02-c576098a1efc";

@@ -10,6 +10,10 @@ namespace Koturn.VRChat.Log
     public interface IVRCExLogEvent
     {
         /// <summary>
+        /// Occurs when detect a log that save data text of Bullet Time Agent is generated.
+        /// </summary>
+        event EventHandler<SaveEventArgs>? BulletTimeAgentSaved;
+        /// <summary>
         /// Occurs when detect a log that save data text of Idle Cube is generated.
         /// </summary>
         event EventHandler<SaveEventArgs>? IdleCubeSaved;
