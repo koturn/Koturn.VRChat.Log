@@ -26,6 +26,11 @@ namespace Koturn.VRChat.Log.Internals
         private const RegexOptions Options = RegexOptions.Compiled | RegexOptions.CultureInvariant;
 
         /// <summary>
+        /// <see cref="Regex"/> pattern <see cref="string"/> to detect instance close notification log.
+        /// </summary>
+        [StringSyntax(StringSyntaxAttribute.Regex)]
+        internal const string InstanceResetNotificationPattern = @"^\[ModerationManager\] This instance will be reset in (\d+) minutes due to its age.$";
+        /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect pickup object log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
@@ -66,6 +71,28 @@ namespace Koturn.VRChat.Log.Internals
         [StringSyntax(StringSyntaxAttribute.Regex)]
         internal const string TonWinPattern = @"^WE WON, THE ROUND WAS A (\d+) AGAINST (\d+) , (\d+) , (\d+) AND WE WERE HOLDING (\d+)$";
 
+
+        /// <summary>
+        /// <see cref="Regex"/> instance to detect pickup object log.
+        /// </summary>
+#if !SUPPORT_GENERATED_REGEX
+        public static Regex InstanceResetNotificationRegex => _instanceResetNotificationRegex ??= new Regex(InstanceResetNotificationPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="InstanceResetNotificationRegex"/>.
+        /// </summary>
+        private static Regex? _instanceResetNotificationRegex;
+#elif SUPPORT_GENERATED_REGEX_PROPERTY
+        [GeneratedRegex(InstanceResetNotificationPattern, Options)]
+        public static partial Regex InstanceResetNotificationRegex { get; }
+#else
+        public static Regex InstanceResetNotificationRegex => GetInstanceResetNotificationRegex();
+        /// <summary>
+        /// Get <see cref="Regex"/> instance to detect pickup object log.
+        /// </summary>
+        /// <returns><see cref="Regex"/> instance to detect pickup object log.</returns>
+        [GeneratedRegex(InstanceResetNotificationPattern, Options)]
+        private static partial Regex GetInstanceResetNotificationRegex();
+#endif
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect pickup object log.

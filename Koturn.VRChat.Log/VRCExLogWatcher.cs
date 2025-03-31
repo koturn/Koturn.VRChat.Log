@@ -139,6 +139,16 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
+            /// Fire <see cref="InstanceCloseNotified"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
+            protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
+            {
+                _logWatcher._instanceCloseNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(logAt, closeMinutes));
+            }
+
+            /// <summary>
             /// Fire <see cref="VRCLogWatcher.JoinedToInstance"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>

@@ -153,7 +153,8 @@ namespace Koturn.VRChat.Log
                 || ParseAsStringDownloadLog(logAt, firstLine)
                 || ParseAsImageDownloadLog(logAt, firstLine)
                 || ParseAsUserAuthenticatedLog(logAt, logLines)
-                || ParseAsApplicationQuitLog(logAt, firstLine);
+                || ParseAsApplicationQuitLog(logAt, firstLine)
+                || ParseAsInstanceResetNotificationLog(logAt, firstLine);
         }
 
         /// <summary>
@@ -179,6 +180,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsApplicationQuitLog(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnApplicationQuit(DateTime logAt, double activeTime)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when instance reset notification log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsInstanceResetNotificationLog(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
         {
         }
 
@@ -914,6 +928,27 @@ namespace Koturn.VRChat.Log
 #endif  // NET7_0_OR_GREATER
             ClearInfo();
             OnApplicationQuit(logAt, activeTime);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as instance reset notification log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsInstanceResetNotificationLog(DateTime logAt, string firstLine)
+        {
+            var match = RegexHelper.InstanceResetNotificationRegex.Match(firstLine);
+            if (!match.Success)
+            {
+                return false;
+            }
+
+            var groups = match.Groups;
+
+            OnInstanceResetNotified(logAt, int.Parse(groups[1].Value));
 
             return true;
         }

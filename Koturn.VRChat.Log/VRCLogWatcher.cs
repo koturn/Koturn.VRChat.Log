@@ -39,6 +39,12 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _applicationQuitted, value);
         }
         /// <inheritdoc/>
+        public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified
+        {
+            add => EventHelper.Add(ref _instanceCloseNotified, value);
+            remove => EventHelper.Remove(ref _instanceCloseNotified, value);
+        }
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
@@ -132,6 +138,10 @@ namespace Koturn.VRChat.Log
         /// The substance event handler delegate of <see cref="ApplicationQuitted"/>.
         /// </summary>
         protected EventHandler<ApplicationQuittedEventArgs>? _applicationQuitted;
+        /// <summary>
+        /// The substance event handler delegate of <see cref="InstanceResetNotified"/>.
+        /// </summary>
+        protected EventHandler<InstanceResetNotifiedEventArgs>? _instanceCloseNotified;
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
@@ -280,6 +290,16 @@ namespace Koturn.VRChat.Log
             protected override void OnApplicationQuit(DateTime logAt, double activeTime)
             {
                 _logWatcher._applicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(logAt, activeTime));
+            }
+
+            /// <summary>
+            /// Fire <see cref="InstanceResetNotified"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
+            protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
+            {
+                _logWatcher._instanceCloseNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(logAt, closeMinutes));
             }
 
             /// <summary>
