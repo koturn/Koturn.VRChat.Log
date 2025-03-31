@@ -49,6 +49,10 @@ namespace Koturn.VRChat.Log
             }
         }
         /// <summary>
+        /// true if watching thread started, otherwise false.
+        /// </summary>
+        public bool IsThreadStarted => _thread != null;
+        /// <summary>
         /// Current watching log file path.
         /// </summary>
         public string? CurrentFilePath { get; protected set; }
