@@ -279,7 +279,7 @@ namespace Koturn.VRChat.Log
             /// <param name="activeTime">Active time (in seconds).</param>
             protected override void OnApplicationQuit(DateTime logAt, double activeTime)
             {
-                _logWatcher._applicationQuitted?.Invoke(logAt, new ApplicationQuittedEventArgs(logAt, activeTime));
+                _logWatcher._applicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(logAt, activeTime));
             }
 
             /// <summary>

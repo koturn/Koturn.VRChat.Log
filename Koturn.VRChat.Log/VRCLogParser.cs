@@ -135,7 +135,7 @@ namespace Koturn.VRChat.Log
         /// <param name="authUserInfo">Authenticated user information.</param>
         protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
         {
-            UserAuthenticated?.Invoke(logAt, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+            UserAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(logAt, authUserInfo));
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Koturn.VRChat.Log
         /// <param name="activeTime">Active time (in seconds).</param>
         protected override void OnApplicationQuit(DateTime logAt, double activeTime)
         {
-            ApplicationQuitted?.Invoke(logAt, new ApplicationQuittedEventArgs(logAt, activeTime));
+            ApplicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(logAt, activeTime));
         }
 
         /// <summary>
