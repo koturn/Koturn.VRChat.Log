@@ -197,6 +197,18 @@ namespace Koturn.VRChat.Log
         }
 
         /// <summary>
+        /// This method is called when instance closed by reset log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsInstanceClosedByResetLog(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnInstanceClosedByReset(DateTime logAt)
+        {
+        }
+
+        /// <summary>
         /// This method is called when join log is detected.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
@@ -441,7 +453,8 @@ namespace Koturn.VRChat.Log
                 || ParseAsDropObjectLog(logAt, firstLine)
                 || ParseAsJoiningLog(logAt, firstLine)
                 || ParseAsJoinedLog(logAt, firstLine)
-                || ParseAsLeftLog(logAt, firstLine);
+                || ParseAsLeftLog(logAt, firstLine)
+                || ParseAsInstanceClosedByResetLog(logAt, firstLine);
         }
 
 
@@ -717,6 +730,25 @@ namespace Koturn.VRChat.Log
             _instanceInfo.StayUntil = logAt;
             OnLeftFromInstance(logAt, _instanceInfo);
             _instanceInfo.IsEmitted = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as instance closed by reset log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsInstanceClosedByResetLog(DateTime logAt, string firstLine)
+        {
+            // 2025.04.02 05:21:25 Debug      -  [Behaviour] Received executive message: Instance closed
+            if (!IsSubstringAt("Received executive message: Instance closed", firstLine, BehaviourLogOffset))
+            {
+                return false;
+            }
+
+            OnInstanceClosedByReset(logAt);
 
             return true;
         }

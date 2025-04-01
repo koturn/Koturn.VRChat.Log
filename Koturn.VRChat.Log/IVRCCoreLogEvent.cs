@@ -22,6 +22,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <summary>
+        /// Occurs when detect a log that instance closed by reset.
+        /// </summary>
+        event EventHandler<LogEventArgs>? InstanceClosedByReset;
+        /// <summary>
         /// Occurs when detect a log that you joined to instance.
         /// </summary>
         event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;

@@ -45,6 +45,12 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _instanceCloseNotified, value);
         }
         /// <inheritdoc/>
+        public event EventHandler<LogEventArgs>? InstanceClosedByReset
+        {
+            add => EventHelper.Add(ref _instanceClosedByReset, value);
+            remove => EventHelper.Remove(ref _instanceClosedByReset, value);
+        }
+        /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
@@ -142,6 +148,10 @@ namespace Koturn.VRChat.Log
         /// The substance event handler delegate of <see cref="InstanceResetNotified"/>.
         /// </summary>
         protected EventHandler<InstanceResetNotifiedEventArgs>? _instanceCloseNotified;
+        /// <summary>
+        /// The substance event handler delegate of <see cref="InstanceClosedByReset"/>.
+        /// </summary>
+        protected EventHandler<LogEventArgs>? _instanceClosedByReset;
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
@@ -300,6 +310,15 @@ namespace Koturn.VRChat.Log
             protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
             {
                 _logWatcher._instanceCloseNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(logAt, closeMinutes));
+            }
+
+            /// <summary>
+            /// Fire <see cref="InstanceClosedByReset"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            protected override void OnInstanceClosedByReset(DateTime logAt)
+            {
+                _logWatcher._instanceClosedByReset?.Invoke(this, new LogEventArgs(logAt));
             }
 
             /// <summary>
