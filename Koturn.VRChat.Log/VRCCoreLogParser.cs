@@ -154,7 +154,8 @@ namespace Koturn.VRChat.Log
                 || ParseAsImageDownloadLog(logAt, firstLine)
                 || ParseAsUserAuthenticatedLog(logAt, logLines)
                 || ParseAsApplicationQuitLog(logAt, firstLine)
-                || ParseAsInstanceResetNotificationLog(logAt, firstLine);
+                || ParseAsInstanceResetNotificationLog(logAt, firstLine)
+                || ParseAsInstanceClosedLog(logAt, firstLine);
         }
 
         /// <summary>
@@ -193,6 +194,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsInstanceResetNotificationLog(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when instance closed log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="instanceInfo">Instance information.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsInstanceClosedLog(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
         {
         }
 
@@ -616,81 +630,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            var instanceString = firstLine.Substring(BehaviourLogOffset + 8);
-            var tokens = instanceString.Split('~');
-            var ids = tokens[0].Split(':');
-
-            var instanceInfo = new InstanceInfo(logAt)
-            {
-                WorldId = ids[0],
-                InstanceString = instanceString,
-                InstanceId = ids[1],
-                InstanceType = InstanceType.Public,
-                LogFrom = LogFrom
-            };
-
-            // Options
-            var canRequestInvite = false;
-            foreach (var token in tokens.Skip(1))
-            {
-                var (optName, optArg) = ParseInstanceStringOption(token);
-                switch (optName)
-                {
-                    case "canRequestInvite":
-                        canRequestInvite = true;
-                        if (instanceInfo.InstanceType == InstanceType.Invite)
-                        {
-                            instanceInfo.InstanceType = InstanceType.InvitePlus;
-                        }
-                        break;
-                    case "public":
-                        instanceInfo.InstanceType = InstanceType.Public;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "hidden":
-                        instanceInfo.InstanceType = InstanceType.FriendPlus;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "friends":
-                        instanceInfo.InstanceType = InstanceType.Friend;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "private":
-                        instanceInfo.InstanceType = canRequestInvite ? InstanceType.InvitePlus : InstanceType.Invite;
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "region":
-                        instanceInfo.Region = optArg switch
-                        {
-                            "us" => Region.USW,
-                            "use" => Region.USE,
-                            "eu" => Region.EU,
-                            "jp" => Region.JP,
-                            _ => throw CreateInvalidLogException($"Unrecognized region is detected: {optArg}")
-                        }; ;
-                        break;
-                    case "nonce":
-                        instanceInfo.Nonce = optArg;
-                        break;
-                    case "group":
-                        instanceInfo.UserOrGroupId = optArg;
-                        break;
-                    case "groupAccessType":
-                        instanceInfo.InstanceType = optArg switch
-                        {
-                            "public" => InstanceType.GroupPublic,
-                            "plus" => InstanceType.GroupPlus,
-                            "members" => InstanceType.GroupMembers,
-                            _ => instanceInfo.InstanceType
-                        };
-                        break;
-                    default:
-                        ThrowInvalidLogException($"Unknown option detected: {token}");
-                        break;
-                }
-            }
-
-            _instanceInfo = instanceInfo;
+            _instanceInfo = ParseInstanceString(firstLine.Substring(BehaviourLogOffset + 8), logAt);
 
             return true;
         }
@@ -983,6 +923,111 @@ namespace Koturn.VRChat.Log
             OnInstanceResetNotified(logAt, int.Parse(groups[1].Value));
 
             return true;
+        }
+
+        /// <summary>
+        /// Parse first log line as instance closed log.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="firstLine">First log line.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private bool ParseAsInstanceClosedLog(DateTime logAt, string firstLine)
+        {
+            if (!firstLine.StartsWith("Instance closed: "))
+            {
+                return false;
+            }
+
+            var instanceInfo = ParseInstanceString(firstLine.Substring(17), _instanceInfo.StayFrom);
+
+            OnInstanceClosed(logAt, instanceInfo);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse instance string.
+        /// </summary>
+        /// <param name="option">Option string.</param>
+        /// <returns>Parsed result, tuple of optioh name and arguments.</returns>
+        /// <exception cref="InvalidLogException">Thrown when mismatch parent detected.</exception>
+        private InstanceInfo ParseInstanceString(string instanceString, DateTime logAt)
+        {
+            var tokens = instanceString.Split('~');
+            var ids = tokens[0].Split(':');
+
+            var instanceInfo = new InstanceInfo(logAt)
+            {
+                WorldId = ids[0],
+                InstanceString = instanceString,
+                InstanceId = ids[1],
+                InstanceType = InstanceType.Public,
+                LogFrom = LogFrom
+            };
+
+            // Options
+            var canRequestInvite = false;
+            for (int i = 1; i < tokens.Length; i++)
+            {
+                var token = tokens[i];
+                var (optName, optArg) = ParseInstanceStringOption(token);
+                switch (optName)
+                {
+                    case "canRequestInvite":
+                        canRequestInvite = true;
+                        if (instanceInfo.InstanceType == InstanceType.Invite)
+                        {
+                            instanceInfo.InstanceType = InstanceType.InvitePlus;
+                        }
+                        break;
+                    case "public":
+                        instanceInfo.InstanceType = InstanceType.Public;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "hidden":
+                        instanceInfo.InstanceType = InstanceType.FriendPlus;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "friends":
+                        instanceInfo.InstanceType = InstanceType.Friend;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "private":
+                        instanceInfo.InstanceType = canRequestInvite ? InstanceType.InvitePlus : InstanceType.Invite;
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "region":
+                        instanceInfo.Region = optArg switch
+                        {
+                            "us" => Region.USW,
+                            "use" => Region.USE,
+                            "eu" => Region.EU,
+                            "jp" => Region.JP,
+                            _ => throw CreateInvalidLogException($"Unrecognized region is detected: {optArg}")
+                        }; ;
+                        break;
+                    case "nonce":
+                        instanceInfo.Nonce = optArg;
+                        break;
+                    case "group":
+                        instanceInfo.UserOrGroupId = optArg;
+                        break;
+                    case "groupAccessType":
+                        instanceInfo.InstanceType = optArg switch
+                        {
+                            "public" => InstanceType.GroupPublic,
+                            "plus" => InstanceType.GroupPlus,
+                            "members" => InstanceType.GroupMembers,
+                            _ => instanceInfo.InstanceType
+                        };
+                        break;
+                    default:
+                        ThrowInvalidLogException($"Unknown option detected: {token}");
+                        break;
+                }
+            }
+
+            return instanceInfo;
         }
 
         /// <summary>

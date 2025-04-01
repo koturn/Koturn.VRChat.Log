@@ -149,6 +149,16 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
+            /// Fire <see cref="InstanceClosed"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="instanceInfo">Instance information.</param>
+            protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
+            {
+                _logWatcher._instanceClosed?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            }
+
+            /// <summary>
             /// Fire <see cref="InstanceClosedByReset"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>

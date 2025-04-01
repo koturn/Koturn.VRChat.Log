@@ -19,6 +19,8 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <inheritdoc/>
+        public event EventHandler<JoinLeaveInstanceEventArgs>? InstanceClosed;
+        /// <inheritdoc/>
         public event EventHandler<LogEventArgs>? InstanceClosedByReset;
         /// <inheritdoc/>
         public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
@@ -160,6 +162,16 @@ namespace Koturn.VRChat.Log
         protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
         {
             InstanceResetNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(logAt, closeMinutes));
+        }
+
+        /// <summary>
+        /// This method is called when instance closed log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="instanceInfo">Instance information.</param>
+        protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
+        {
+            InstanceClosed?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
         }
 
         /// <summary>

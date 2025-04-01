@@ -46,6 +46,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
         /// <summary>
+        /// Occurs when detect a log that instance is closed.
+        /// </summary>
+        event EventHandler<JoinLeaveInstanceEventArgs>? InstanceClosed;
+        /// <summary>
         /// Occurs when detect a log that object pickedup.
         /// </summary>
         event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
