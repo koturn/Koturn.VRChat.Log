@@ -28,11 +28,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Occurs when detect a log that you joined to instance.
         /// </summary>
-        event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
+        event EventHandler<InstanceEventArgs>? JoinedToInstance;
         /// <summary>
         /// Occurs when detect a log that you left from instance.
         /// </summary>
-        event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
+        event EventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <summary>
         /// Occurs when detect a log that any player joined to your instance.
         /// </summary>
@@ -48,7 +48,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Occurs when detect a log that instance is closed.
         /// </summary>
-        event EventHandler<JoinLeaveInstanceEventArgs>? InstanceClosed;
+        event EventHandler<InstanceEventArgs>? InstanceClosed;
         /// <summary>
         /// Occurs when detect a log that object pickedup.
         /// </summary>

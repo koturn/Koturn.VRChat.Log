@@ -155,7 +155,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._instanceClosed?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._instanceClosed?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>
@@ -175,7 +175,7 @@ namespace Koturn.VRChat.Log
             protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
                 base.OnJoinedToInstance(logAt, instanceInfo);
-                _logWatcher._joinedToInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._joinedToInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>
@@ -185,7 +185,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._leftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._leftFromInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>

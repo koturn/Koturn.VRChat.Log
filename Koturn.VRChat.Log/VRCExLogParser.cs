@@ -19,13 +19,13 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? InstanceClosed;
+        public event EventHandler<InstanceEventArgs>? InstanceClosed;
         /// <inheritdoc/>
         public event EventHandler<LogEventArgs>? InstanceClosedByReset;
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance;
+        public event EventHandler<InstanceEventArgs>? JoinedToInstance;
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance;
+        public event EventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <inheritdoc/>
         public event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
         /// <inheritdoc/>
@@ -205,7 +205,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
         {
-            InstanceClosed?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            InstanceClosed?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Koturn.VRChat.Log
         protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
             base.OnJoinedToInstance(logAt, instanceInfo);
-            JoinedToInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            JoinedToInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
-            LeftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+            LeftFromInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
         }
 
         /// <summary>

@@ -45,7 +45,7 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _instanceCloseNotified, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? InstanceClosed
+        public event EventHandler<InstanceEventArgs>? InstanceClosed
         {
             add => EventHelper.Add(ref _instanceClosed, value);
             remove => EventHelper.Remove(ref _instanceClosed, value);
@@ -57,13 +57,13 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _instanceClosedByReset, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? JoinedToInstance
+        public event EventHandler<InstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
             remove => EventHelper.Remove(ref _joinedToInstance, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<JoinLeaveInstanceEventArgs>? LeftFromInstance
+        public event EventHandler<InstanceEventArgs>? LeftFromInstance
         {
             add => EventHelper.Add(ref _leftFromInstance, value);
             remove => EventHelper.Remove(ref _leftFromInstance, value);
@@ -157,7 +157,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceClosed"/>.
         /// </summary>
-        protected EventHandler<JoinLeaveInstanceEventArgs>? _instanceClosed;
+        protected EventHandler<InstanceEventArgs>? _instanceClosed;
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceClosedByReset"/>.
         /// </summary>
@@ -165,11 +165,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
-        protected EventHandler<JoinLeaveInstanceEventArgs>? _joinedToInstance;
+        protected EventHandler<InstanceEventArgs>? _joinedToInstance;
         /// <summary>
         /// The substance event handler delegate of <see cref="LeftFromInstance"/>.
         /// </summary>
-        protected EventHandler<JoinLeaveInstanceEventArgs>? _leftFromInstance;
+        protected EventHandler<InstanceEventArgs>? _leftFromInstance;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserJoined"/>.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._instanceClosed?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._instanceClosed?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>
@@ -348,7 +348,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._joinedToInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._joinedToInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>
@@ -358,7 +358,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._leftFromInstance?.Invoke(this, new JoinLeaveInstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._leftFromInstance?.Invoke(this, new InstanceEventArgs(logAt, instanceInfo));
             }
 
             /// <summary>
