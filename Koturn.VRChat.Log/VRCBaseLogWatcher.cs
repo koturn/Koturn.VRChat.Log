@@ -204,6 +204,7 @@ namespace Koturn.VRChat.Log
                 logParser = CreateLogParser(filePath);
                 if (isParseToEnd)
                 {
+                    CurrentFilePath = ((FileStream)logParser.LogReader.BaseStream).Name;
                     logParser.Parse();
                 }
                 return StartFileWatchingThread(logParser);
