@@ -10,7 +10,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat log file parser, which parses normal log and log in specific world.
     /// </summary>
-    public abstract class VRCCoreExLogParser : VRCCoreLogParser
+    public abstract unsafe class VRCCoreExLogParser : VRCCoreLogParser
     {
         /// <summary>
         /// Rhapsody save data preamble log line.
@@ -32,9 +32,9 @@ namespace Koturn.VRChat.Log
         public HashSet<string> TerrorNameSet { get; } = new HashSet<string>();
 
         /// <summary>
-        /// World kind.
+        /// Function pointer to a function that parses the log for a specific world.
         /// </summary>
-        private WorldKind _worldKind = WorldKind.NoSpecificWorld;
+        private delegate*<VRCCoreExLogParser, DateTime, List<string>, bool> _parseAsSpecificWorldLog;
         /// <summary>
         /// Indicate next log line is Rhapsody save data.
         /// </summary>
@@ -161,24 +161,12 @@ namespace Koturn.VRChat.Log
                 return true;
             }
 
-            if (_worldKind == WorldKind.NoSpecificWorld)
+            if (_parseAsSpecificWorldLog == null)
             {
                 return false;
             }
 
-            var firstLine = logLines[0];
-
-            return _worldKind switch
-            {
-                WorldKind.BulletTimeAgent => ParseAsBulletTimeAgentSaveDataPreamble(firstLine) || ParseAsBulletTimeAgentSaveData(logAt, firstLine),
-                WorldKind.IdleCube => ParseAsIdleCubeSaveData(logAt, firstLine),
-                WorldKind.IdleHome => ParseAsIdleHomeSaveData(logAt, firstLine),
-                WorldKind.IdleDefense => ParseAsIdleDefenseSaveData(logAt, logLines),
-                WorldKind.MagicalCursedLand => ParseAsMagicalCursedLandSaveData(logAt, logLines),
-                WorldKind.TerrorsOfNowhere => ParseAsTonLog(logAt, firstLine),
-                WorldKind.Rhapsody => ParseAsRhapsodySaveDataPreamble(firstLine) || ParseAsRhapsodySaveData(logAt, firstLine),
-                _ => false
-            };
+            return _parseAsSpecificWorldLog(this, logAt, logLines);
         }
 
         /// <summary>
@@ -192,16 +180,16 @@ namespace Koturn.VRChat.Log
         /// </remarks>
         protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
-            _worldKind = instanceInfo.WorldId switch
+            _parseAsSpecificWorldLog = instanceInfo.WorldId switch
             {
-                WorldIds.BulletTimeAgent => WorldKind.BulletTimeAgent,
-                WorldIds.IdleCube => WorldKind.IdleCube,
-                WorldIds.IdleHome => WorldKind.IdleHome,
-                WorldIds.IdleDefense => WorldKind.IdleDefense,
-                WorldIds.MagicalCursedLand => WorldKind.MagicalCursedLand,
-                WorldIds.TerrorsOfNowhere => WorldKind.TerrorsOfNowhere,
-                WorldIds.RhapsodyEp1 => WorldKind.Rhapsody,
-                _ => WorldKind.NoSpecificWorld
+                WorldIds.BulletTimeAgent => &ParseAsBulletTimeAgentLog,
+                WorldIds.IdleCube => &ParseAsIdleCubeLog,
+                WorldIds.IdleDefense => &ParseAsIdleDefenseLog,
+                WorldIds.IdleHome => &ParseAsIdleCubeLog,
+                WorldIds.MagicalCursedLand => &ParseAsMagicalCursedLandLog,
+                WorldIds.RhapsodyEp1 => &ParseAsRhapsodyLog,
+                WorldIds.TerrorsOfNowhere => &ParseAsTonLog,
+                _ => null
             };
         }
 
@@ -560,31 +548,6 @@ namespace Koturn.VRChat.Log
             OnRhapsodySaved(logAt, firstLine);
 
             return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as Terrors of Nowhere save log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonLog(DateTime logAt, string firstLine)
-        {
-            return ParseAsTonTargetChanged(logAt, firstLine)
-                || ParseAsTonPlayerDead(logAt, firstLine)
-                || ParseAsTonPlayerDamaged(logAt, firstLine)
-                || ParseAsTonKillerStunned(logAt, firstLine)
-                || ParseAsTonTriggerEnrage(logAt, firstLine)
-                || ParseAsTonKillerSet(logAt, firstLine)
-                || ParseAsTonUnlockingEntry(logAt, firstLine)
-                || ParseAsTonEquipped(logAt, firstLine)
-                || ParseAsTonRoundStart(firstLine)
-                || ParseAsTonPlace(logAt, firstLine)
-                || ParseAsTonPlayerLost(logAt, firstLine)
-                || ParseAsTonPlayerWon(logAt, firstLine)
-                || ParseAsTonRespawn(firstLine)
-                || ParseAsTonSaveDataPreamble(firstLine)
-                || ParseAsTonSaveData(logAt, firstLine);
         }
 
         /// <summary>
@@ -1068,6 +1031,110 @@ namespace Koturn.VRChat.Log
             OnTerrorsOfNowhereSaved(logAt, firstLine.Substring(7, firstLine.Length - 12));
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Parse log lines as Bullet Time Agent log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsBulletTimeAgentLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            var firstLine = logLines[0];
+            return parser.ParseAsBulletTimeAgentSaveDataPreamble(firstLine)
+                || parser.ParseAsBulletTimeAgentSaveData(logAt, firstLine);
+        }
+
+        /// <summary>
+        /// Parse log lines as Idle Cube log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsIdleCubeLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            return parser.ParseAsIdleCubeSaveData(logAt, logLines[0]);
+        }
+
+        /// <summary>
+        /// Parse log lines as Idle Defense log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsIdleDefenseLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            return parser.ParseAsIdleDefenseSaveData(logAt, logLines);
+        }
+
+        /// <summary>
+        /// Parse log lines as Idle Home log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsIdleHomeLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            return parser.ParseAsIdleHomeSaveData(logAt, logLines[0]);
+        }
+
+        /// <summary>
+        /// Parse log lines as Magical Cursed Land log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsMagicalCursedLandLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            return parser.ParseAsMagicalCursedLandSaveData(logAt, logLines);
+        }
+
+        /// <summary>
+        /// Parse log lines as Rhapsody log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsRhapsodyLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            var firstLine = logLines[0];
+            return parser.ParseAsRhapsodySaveDataPreamble(firstLine)
+                || parser.ParseAsRhapsodySaveData(logAt, firstLine);
+        }
+
+        /// <summary>
+        /// Parse first log line as Terrors of Nowhere save log.
+        /// </summary>
+        /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="logLines">Log lines.</param>
+        /// <returns>True if parsed successfully, false otherwise.</returns>
+        private static bool ParseAsTonLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        {
+            var firstLine = logLines[0];
+            return parser.ParseAsTonTargetChanged(logAt, firstLine)
+                || parser.ParseAsTonPlayerDead(logAt, firstLine)
+                || parser.ParseAsTonPlayerDamaged(logAt, firstLine)
+                || parser.ParseAsTonKillerStunned(logAt, firstLine)
+                || parser.ParseAsTonTriggerEnrage(logAt, firstLine)
+                || parser.ParseAsTonKillerSet(logAt, firstLine)
+                || parser.ParseAsTonUnlockingEntry(logAt, firstLine)
+                || parser.ParseAsTonEquipped(logAt, firstLine)
+                || parser.ParseAsTonRoundStart(firstLine)
+                || parser.ParseAsTonPlace(logAt, firstLine)
+                || parser.ParseAsTonPlayerLost(logAt, firstLine)
+                || parser.ParseAsTonPlayerWon(logAt, firstLine)
+                || parser.ParseAsTonRespawn(firstLine)
+                || parser.ParseAsTonSaveDataPreamble(firstLine)
+                || parser.ParseAsTonSaveData(logAt, firstLine);
         }
     }
 }
