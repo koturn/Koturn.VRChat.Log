@@ -63,6 +63,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public DateTime LogUntil { get; private set; }
         /// <summary>
+        /// Get underlying file path from specified <see cref="LogReader"/>.
+        /// </summary>
+        public string? FilePath => LogReader.FilePath;
+        /// <summary>
         /// A flag property which indicates this instance is disposed or not.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -201,18 +205,6 @@ namespace Koturn.VRChat.Log
         protected abstract bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines);
 
         /// <summary>
-        /// Get underlying file path from specified <see cref="LogReader"/>.
-        /// </summary>
-        /// <returns>
-        /// Obtained file path.
-        /// Null if <see cref="VRCLogReader.BaseStream"/> is not <see cref="FileStream"/>.
-        /// </returns>
-        protected string? GetFilePath()
-        {
-            return LogReader.GetFilePath();
-        }
-
-        /// <summary>
         /// Release resources.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -243,7 +235,7 @@ namespace Koturn.VRChat.Log
         protected InvalidLogException CreateInvalidLogException(string message, long lineOffset = -1)
         {
             var logReader = LogReader;
-            return new InvalidLogException(message, GetFilePath(), logReader.LineCount + (ulong)lineOffset, logReader.LogCount);
+            return new InvalidLogException(message, FilePath, logReader.LineCount + (ulong)lineOffset, logReader.LogCount);
         }
 
         /// <summary>

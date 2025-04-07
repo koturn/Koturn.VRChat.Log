@@ -79,6 +79,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public ulong LogCount { get; private set; }
         /// <summary>
+        /// Get underlying file path from <see cref="BaseStream"/>.
+        /// </summary>
+        public string? FilePath => GetFilePath(BaseStream);
+        /// <summary>
         /// A flag property which indicates this instance is disposed or not.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -335,18 +339,6 @@ namespace Koturn.VRChat.Log
 
 
         /// <summary>
-        /// Get underlying file path from <see cref="BaseStream"/>.
-        /// </summary>
-        /// <returns>
-        /// Obtained file path.
-        /// Null if <see cref="BaseStream"/> is not <see cref="FileStream"/>.
-        /// </returns>
-        internal string? GetFilePath()
-        {
-            return GetFilePath(BaseStream);
-        }
-
-        /// <summary>
         /// Release resources.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -375,7 +367,7 @@ namespace Koturn.VRChat.Log
         /// <param name="message">The error message that explains the reason for the exception.</param>
         protected InvalidLogException CreateInvalidLogException(string message)
         {
-            return new InvalidLogException(message, GetFilePath(), LineCount, LogCount + 1);
+            return new InvalidLogException(message, FilePath, LineCount, LogCount + 1);
         }
 
         /// <summary>
