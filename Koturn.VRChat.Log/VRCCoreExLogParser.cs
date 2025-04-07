@@ -221,19 +221,6 @@ namespace Koturn.VRChat.Log
         }
 
         /// <summary>
-        /// This method is called when Idle Home save data log is detected.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        /// <remarks>
-        /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleHomeSaveData(DateTime, string)"/></para>
-        /// </remarks>
-        protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
-        {
-        }
-
-        /// <summary>
         /// This method is called when Idle Defense save data log is detected.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
@@ -243,6 +230,19 @@ namespace Koturn.VRChat.Log
         /// <para><see cref="ParseAsIdleDefenseSaveData(DateTime, List{string})"/></para>
         /// </remarks>
         protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        {
+        }
+
+        /// <summary>
+        /// This method is called when Idle Home save data log is detected.
+        /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="saveText">Save data text.</param>
+        /// <remarks>
+        /// <para>Called from following method.</para>
+        /// <para><see cref="ParseAsIdleHomeSaveData(DateTime, string)"/></para>
+        /// </remarks>
+        protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
         {
         }
 

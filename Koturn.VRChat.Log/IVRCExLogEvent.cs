@@ -17,13 +17,13 @@ namespace Koturn.VRChat.Log
         /// </summary>
         event VRCLogEventHandler<SaveEventArgs>? IdleCubeSaved;
         /// <summary>
-        /// Occurs when detect a log that save data text of Idle Home is generated.
-        /// </summary>
-        event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
-        /// <summary>
         /// Occurs when detect a log that save data text of Idle Defense is generated.
         /// </summary>
         event VRCLogEventHandler<SaveEventArgs>? IdleDefenseSaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Idle Home is generated.
+        /// </summary>
+        event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <summary>
         /// Occurs when detect a log that save data text of Magical Cursed Land is generated.
         /// </summary>
@@ -32,6 +32,10 @@ namespace Koturn.VRChat.Log
         /// Occurs when detect a log that save data text of Rhapsody is generated.
         /// </summary>
         event VRCLogEventHandler<SaveEventArgs>? RhapsodySaved;
+        /// <summary>
+        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
+        /// </summary>
+        event VRCLogEventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
         /// <summary>
         /// Occurs when detect a log that Terrors of Nowhere target of killer changed.
         /// </summary>
@@ -72,9 +76,5 @@ namespace Koturn.VRChat.Log
         /// Occurs when detect a log that Terrors of Nowhere player won or lost.
         /// </summary>
         event VRCLogEventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
-        /// <summary>
-        /// Occurs when detect a log that save data text of Terrors of Nowhere is generated.
-        /// </summary>
-        event VRCLogEventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
     }
 }

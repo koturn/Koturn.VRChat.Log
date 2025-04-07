@@ -16,9 +16,9 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event VRCLogEventHandler<SaveEventArgs>? IdleCubeSaved;
         /// <inheritdoc/>
-        public event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
-        /// <inheritdoc/>
         public event VRCLogEventHandler<SaveEventArgs>? IdleDefenseSaved;
+        /// <inheritdoc/>
+        public event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <inheritdoc/>
         public event VRCLogEventHandler<SaveEventArgs>? MagicalCursedLandSaved;
         /// <inheritdoc/>
@@ -356,16 +356,6 @@ namespace Koturn.VRChat.Log
             }
 
             /// <summary>
-            /// Fire <see cref="IdleHomeSaved"/> event.
-            /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
-            /// <param name="saveText">Save data text.</param>
-            protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
-            {
-                _logWatcher.IdleHomeSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
-            }
-
-            /// <summary>
             /// Fire <see cref="IdleDefenseSaved"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
@@ -373,6 +363,16 @@ namespace Koturn.VRChat.Log
             protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
             {
                 _logWatcher.IdleDefenseSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="IdleHomeSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.IdleHomeSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
             }
 
             /// <summary>
@@ -393,6 +393,16 @@ namespace Koturn.VRChat.Log
             protected override void OnRhapsodySaved(DateTime logAt, string saveText)
             {
                 _logWatcher.RhapsodySaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+            }
+
+            /// <summary>
+            /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
+            /// </summary>
+            /// <param name="logAt">Log timestamp.</param>
+            /// <param name="saveText">Save data text.</param>
+            protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+            {
+                _logWatcher.TerrorsOfNowhereSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
             }
 
             /// <summary>
@@ -502,16 +512,6 @@ namespace Koturn.VRChat.Log
             protected override void OnTonRoundFinished(DateTime logAt, TonRoundResult result)
             {
                 _logWatcher.TonRoundFinished?.Invoke(_logWatcher, new TonRoundFinishedEventArgs(logAt, result));
-            }
-
-            /// <summary>
-            /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
-            /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
-            /// <param name="saveText">Save data text.</param>
-            protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
-            {
-                _logWatcher.TerrorsOfNowhereSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
             }
         }
     }
