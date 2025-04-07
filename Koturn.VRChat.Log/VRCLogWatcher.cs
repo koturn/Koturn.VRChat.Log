@@ -283,7 +283,7 @@ namespace Koturn.VRChat.Log
             protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
             {
                 var logWatcher = _logWatcher;
-                if (logWatcher.CurrentLogFrom != default)
+                if (logWatcher.CurrentLogFrom == default)
                 {
                     logWatcher.CurrentLogFrom = logAt;
                 }
