@@ -13,77 +13,77 @@ namespace Koturn.VRChat.Log
     public class VRCExLogParser : VRCCoreExLogParser, IVRCCoreLogEvent, IVRCExLogEvent
     {
         /// <inheritdoc/>
-        public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
+        public event VRCLogEventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
         /// <inheritdoc/>
-        public event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
+        public event VRCLogEventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
         /// <inheritdoc/>
-        public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
+        public event VRCLogEventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? InstanceClosed;
+        public event VRCLogEventHandler<InstanceEventArgs>? InstanceClosed;
         /// <inheritdoc/>
-        public event EventHandler<LogEventArgs>? InstanceClosedByReset;
+        public event VRCLogEventHandler<LogEventArgs>? InstanceClosedByReset;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? JoinedToInstance;
+        public event VRCLogEventHandler<InstanceEventArgs>? JoinedToInstance;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? LeftFromInstance;
+        public event VRCLogEventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
         /// <inheritdoc/>
-        public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
+        public event VRCLogEventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
         /// <inheritdoc/>
-        public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
+        public event VRCLogEventHandler<ObjectDroppedEventArgs>? ObjectDropped;
         /// <inheritdoc/>
-        public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
+        public event VRCLogEventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
         /// <inheritdoc/>
-        public event EventHandler<DownloadEventArgs>? Downloaded;
+        public event VRCLogEventHandler<DownloadEventArgs>? Downloaded;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? WarningDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? WarningDetected;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ErrorDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ErrorDetected;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ExceptionDetected;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? BulletTimeAgentSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? BulletTimeAgentSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleCubeSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleCubeSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleHomeSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleDefenseSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? MagicalCursedLandSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? MagicalCursedLandSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? RhapsodySaved;
+        public event VRCLogEventHandler<SaveEventArgs>? RhapsodySaved;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
+        public event VRCLogEventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
         /// <inheritdoc/>
-        public event EventHandler<TonPlayerDeadEventArgs>? TonPlayerDead;
+        public event VRCLogEventHandler<TonPlayerDeadEventArgs>? TonPlayerDead;
         /// <inheritdoc/>
-        public event EventHandler<TonPlayerDamagedEventArgs>? TonPlayerDamaged;
+        public event VRCLogEventHandler<TonPlayerDamagedEventArgs>? TonPlayerDamaged;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerNameEventArgs>? TonKillerStunned;
+        public event VRCLogEventHandler<TonKillerNameEventArgs>? TonKillerStunned;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerEnragedEventArgs>? TonKillerEnraged;
+        public event VRCLogEventHandler<TonKillerEnragedEventArgs>? TonKillerEnraged;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerSetEventArgs>? TonKillerSet;
+        public event VRCLogEventHandler<TonKillerSetEventArgs>? TonKillerSet;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerUnlockedEventArgs>? TonKillerUnlocked;
+        public event VRCLogEventHandler<TonKillerUnlockedEventArgs>? TonKillerUnlocked;
         /// <inheritdoc/>
-        public event EventHandler<TonEquipEventArgs>? TonEquipped;
+        public event VRCLogEventHandler<TonEquipEventArgs>? TonEquipped;
         /// <inheritdoc/>
-        public event EventHandler<TonRoundStartedEventArgs>? TonRoundStarted;
+        public event VRCLogEventHandler<TonRoundStartedEventArgs>? TonRoundStarted;
         /// <inheritdoc/>
-        public event EventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
+        public event VRCLogEventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
 
 
         /// <summary>

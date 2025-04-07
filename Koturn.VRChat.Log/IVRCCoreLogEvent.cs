@@ -1,4 +1,3 @@
-using System;
 using Koturn.VRChat.Log.Events;
 
 
@@ -12,78 +11,78 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Occurs when detect a log that user authenticated.
         /// </summary>
-        event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
+        event VRCLogEventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
         /// <summary>
         /// Occurs when detect a log that application quitted.
         /// </summary>
-        event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
+        event VRCLogEventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
         /// <summary>
         /// Occurs when detect a log that instance close notification.
         /// </summary>
-        event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
+        event VRCLogEventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <summary>
         /// Occurs when detect a log that instance closed by reset.
         /// </summary>
-        event EventHandler<LogEventArgs>? InstanceClosedByReset;
+        event VRCLogEventHandler<LogEventArgs>? InstanceClosedByReset;
         /// <summary>
         /// Occurs when detect a log that you joined to instance.
         /// </summary>
-        event EventHandler<InstanceEventArgs>? JoinedToInstance;
+        event VRCLogEventHandler<InstanceEventArgs>? JoinedToInstance;
         /// <summary>
         /// Occurs when detect a log that you left from instance.
         /// </summary>
-        event EventHandler<InstanceEventArgs>? LeftFromInstance;
+        event VRCLogEventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <summary>
         /// Occurs when detect a log that any player joined to your instance.
         /// </summary>
-        event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined;
         /// <summary>
         /// Occurs when detect a log that any player left from your instance.
         /// </summary>
-        event EventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft;
         /// <summary>
         /// Occurs when detect a log that any player unregistering from your instance.
         /// </summary>
-        event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
         /// <summary>
         /// Occurs when detect a log that instance is closed.
         /// </summary>
-        event EventHandler<InstanceEventArgs>? InstanceClosed;
+        event VRCLogEventHandler<InstanceEventArgs>? InstanceClosed;
         /// <summary>
         /// Occurs when detect a log that object pickedup.
         /// </summary>
-        event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
+        event VRCLogEventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
         /// <summary>
         /// Occurs when detect a log that object dropped.
         /// </summary>
-        event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
+        event VRCLogEventHandler<ObjectDroppedEventArgs>? ObjectDropped;
         /// <summary>
         /// Occurs when detect a log that you take a screenshot.
         /// </summary>
-        event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
+        event VRCLogEventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
         /// <summary>
         /// Occurs when detect a log that video URL resolving.
         /// </summary>
-        event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
+        event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
         /// <summary>
         /// Occurs when detect a log that video URL resolved.
         /// </summary>
-        event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
+        event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
         /// <summary>
         /// Occurs when detect a log that string or image is downloaded.
         /// </summary>
-        event EventHandler<DownloadEventArgs>? Downloaded;
+        event VRCLogEventHandler<DownloadEventArgs>? Downloaded;
         /// <summary>
         /// Occurs when detect a warning log.
         /// </summary>
-        event EventHandler<ErrorLogEventArgs>? WarningDetected;
+        event VRCLogEventHandler<ErrorLogEventArgs>? WarningDetected;
         /// <summary>
         /// Occurs when detect a error log.
         /// </summary>
-        event EventHandler<ErrorLogEventArgs>? ErrorDetected;
+        event VRCLogEventHandler<ErrorLogEventArgs>? ErrorDetected;
         /// <summary>
         /// Occurs when detect a exception log.
         /// </summary>
-        event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
+        event VRCLogEventHandler<ErrorLogEventArgs>? ExceptionDetected;
     }
 }

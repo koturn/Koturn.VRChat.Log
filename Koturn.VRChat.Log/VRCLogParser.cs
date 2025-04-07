@@ -13,43 +13,43 @@ namespace Koturn.VRChat.Log
     public class VRCLogParser : VRCCoreLogParser, IVRCCoreLogEvent
     {
         /// <inheritdoc/>
-        public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
+        public event VRCLogEventHandler<UserAuthenticatedEventArgs>? UserAuthenticated;
         /// <inheritdoc/>
-        public event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
+        public event VRCLogEventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted;
         /// <inheritdoc/>
-        public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
+        public event VRCLogEventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? InstanceClosed;
+        public event VRCLogEventHandler<InstanceEventArgs>? InstanceClosed;
         /// <inheritdoc/>
-        public event EventHandler<LogEventArgs>? InstanceClosedByReset;
+        public event VRCLogEventHandler<LogEventArgs>? InstanceClosedByReset;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? JoinedToInstance;
+        public event VRCLogEventHandler<InstanceEventArgs>? JoinedToInstance;
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? LeftFromInstance;
+        public event VRCLogEventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft;
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
         /// <inheritdoc/>
-        public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
+        public event VRCLogEventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
         /// <inheritdoc/>
-        public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped;
+        public event VRCLogEventHandler<ObjectDroppedEventArgs>? ObjectDropped;
         /// <inheritdoc/>
-        public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
+        public event VRCLogEventHandler<ScreenshotTakeEventArgs>? ScreenshotTook;
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving;
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved;
         /// <inheritdoc/>
-        public event EventHandler<DownloadEventArgs>? Downloaded;
+        public event VRCLogEventHandler<DownloadEventArgs>? Downloaded;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? WarningDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? WarningDetected;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ErrorDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ErrorDetected;
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ExceptionDetected;
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ExceptionDetected;
 
 
         /// <summary>

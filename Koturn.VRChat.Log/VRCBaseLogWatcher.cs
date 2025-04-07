@@ -64,11 +64,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Notify when new log file opended.
         /// </summary>
-        public event EventHandler<FileOpenEventArgs>? FileOpened;
+        public event VRCLogEventHandler<FileOpenEventArgs>? FileOpened;
         /// <summary>
         /// Notify when a log file closed.
         /// </summary>
-        public event EventHandler<FileCloseEventArgs>? FileClosed;
+        public event VRCLogEventHandler<FileCloseEventArgs>? FileClosed;
 
         /// <summary>
         /// <see cref="FileSystemWatcher"/> for VRChat log directory.

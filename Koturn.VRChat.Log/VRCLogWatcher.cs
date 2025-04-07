@@ -27,115 +27,115 @@ namespace Koturn.VRChat.Log
 
 
         /// <inheritdoc/>
-        public event EventHandler<UserAuthenticatedEventArgs>? UserAuthenticated
+        public event VRCLogEventHandler<UserAuthenticatedEventArgs>? UserAuthenticated
         {
             add => EventHelper.Add(ref _userAuthenticated, value);
             remove => EventHelper.Remove(ref _userAuthenticated, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted
+        public event VRCLogEventHandler<ApplicationQuittedEventArgs>? ApplicationQuitted
         {
             add => EventHelper.Add(ref _applicationQuitted, value);
             remove => EventHelper.Remove(ref _applicationQuitted, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified
+        public event VRCLogEventHandler<InstanceResetNotifiedEventArgs>? InstanceResetNotified
         {
             add => EventHelper.Add(ref _instanceCloseNotified, value);
             remove => EventHelper.Remove(ref _instanceCloseNotified, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? InstanceClosed
+        public event VRCLogEventHandler<InstanceEventArgs>? InstanceClosed
         {
             add => EventHelper.Add(ref _instanceClosed, value);
             remove => EventHelper.Remove(ref _instanceClosed, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<LogEventArgs>? InstanceClosedByReset
+        public event VRCLogEventHandler<LogEventArgs>? InstanceClosedByReset
         {
             add => EventHelper.Add(ref _instanceClosedByReset, value);
             remove => EventHelper.Remove(ref _instanceClosedByReset, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? JoinedToInstance
+        public event VRCLogEventHandler<InstanceEventArgs>? JoinedToInstance
         {
             add => EventHelper.Add(ref _joinedToInstance, value);
             remove => EventHelper.Remove(ref _joinedToInstance, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<InstanceEventArgs>? LeftFromInstance
+        public event VRCLogEventHandler<InstanceEventArgs>? LeftFromInstance
         {
             add => EventHelper.Add(ref _leftFromInstance, value);
             remove => EventHelper.Remove(ref _leftFromInstance, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserJoined
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined
         {
             add => EventHelper.Add(ref _userJoined, value);
             remove => EventHelper.Remove(ref _userJoined, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserLeft
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft
         {
             add => EventHelper.Add(ref _userLeft, value);
             remove => EventHelper.Remove(ref _userLeft, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<UserJoinLeaveEventArgs>? UserUnregistering
+        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering
         {
             add => EventHelper.Add(ref _userUnregistering, value);
             remove => EventHelper.Remove(ref _userUnregistering, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ObjectPickedupEventArgs>? ObjectPickedup
+        public event VRCLogEventHandler<ObjectPickedupEventArgs>? ObjectPickedup
         {
             add => EventHelper.Add(ref _objectPickedup, value);
             remove => EventHelper.Remove(ref _objectPickedup, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ObjectDroppedEventArgs>? ObjectDropped
+        public event VRCLogEventHandler<ObjectDroppedEventArgs>? ObjectDropped
         {
             add => EventHelper.Add(ref _objectDropped, value);
             remove => EventHelper.Remove(ref _objectDropped, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ScreenshotTakeEventArgs>? ScreenshotTook
+        public event VRCLogEventHandler<ScreenshotTakeEventArgs>? ScreenshotTook
         {
             add => EventHelper.Add(ref _screenshotTook, value);
             remove => EventHelper.Remove(ref _screenshotTook, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolving
         {
             add => EventHelper.Add(ref _videoUrlResolving, value);
             remove => EventHelper.Remove(ref _videoUrlResolving, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved
+        public event VRCLogEventHandler<VideoUrlResolveEventArgs>? VideoUrlResolved
         {
             add => EventHelper.Add(ref _videoUrlResolved, value);
             remove => EventHelper.Remove(ref _videoUrlResolved, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<DownloadEventArgs>? Downloaded
+        public event VRCLogEventHandler<DownloadEventArgs>? Downloaded
         {
             add => EventHelper.Add(ref _downloaded, value);
             remove => EventHelper.Remove(ref _downloaded, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? WarningDetected
+        public event VRCLogEventHandler<ErrorLogEventArgs>? WarningDetected
         {
             add => EventHelper.Add(ref _warningDetected, value);
             remove => EventHelper.Remove(ref _warningDetected, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ErrorDetected
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ErrorDetected
         {
             add => EventHelper.Add(ref _errorDetected, value);
             remove => EventHelper.Remove(ref _errorDetected, value);
         }
         /// <inheritdoc/>
-        public event EventHandler<ErrorLogEventArgs>? ExceptionDetected
+        public event VRCLogEventHandler<ErrorLogEventArgs>? ExceptionDetected
         {
             add => EventHelper.Add(ref _exceptionDetected, value);
             remove => EventHelper.Remove(ref _exceptionDetected, value);
@@ -145,79 +145,79 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// The substance event handler delegate of <see cref="UserAuthenticated"/>.
         /// </summary>
-        protected EventHandler<UserAuthenticatedEventArgs>? _userAuthenticated;
+        protected VRCLogEventHandler<UserAuthenticatedEventArgs>? _userAuthenticated;
         /// <summary>
         /// The substance event handler delegate of <see cref="ApplicationQuitted"/>.
         /// </summary>
-        protected EventHandler<ApplicationQuittedEventArgs>? _applicationQuitted;
+        protected VRCLogEventHandler<ApplicationQuittedEventArgs>? _applicationQuitted;
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceResetNotified"/>.
         /// </summary>
-        protected EventHandler<InstanceResetNotifiedEventArgs>? _instanceCloseNotified;
+        protected VRCLogEventHandler<InstanceResetNotifiedEventArgs>? _instanceCloseNotified;
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceClosed"/>.
         /// </summary>
-        protected EventHandler<InstanceEventArgs>? _instanceClosed;
+        protected VRCLogEventHandler<InstanceEventArgs>? _instanceClosed;
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceClosedByReset"/>.
         /// </summary>
-        protected EventHandler<LogEventArgs>? _instanceClosedByReset;
+        protected VRCLogEventHandler<LogEventArgs>? _instanceClosedByReset;
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
-        protected EventHandler<InstanceEventArgs>? _joinedToInstance;
+        protected VRCLogEventHandler<InstanceEventArgs>? _joinedToInstance;
         /// <summary>
         /// The substance event handler delegate of <see cref="LeftFromInstance"/>.
         /// </summary>
-        protected EventHandler<InstanceEventArgs>? _leftFromInstance;
+        protected VRCLogEventHandler<InstanceEventArgs>? _leftFromInstance;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserJoined"/>.
         /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userJoined;
+        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userJoined;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserLeft"/>.
         /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userLeft;
+        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userLeft;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserUnregistering"/>.
         /// </summary>
-        protected EventHandler<UserJoinLeaveEventArgs>? _userUnregistering;
+        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userUnregistering;
         /// <summary>
         /// The substance event handler delegate of <see cref="ObjectPickedup"/>.
         /// </summary>
-        protected EventHandler<ObjectPickedupEventArgs>? _objectPickedup;
+        protected VRCLogEventHandler<ObjectPickedupEventArgs>? _objectPickedup;
         /// <summary>
         /// The substance event handler delegate of <see cref="ObjectDropped"/>.
         /// </summary>
-        protected EventHandler<ObjectDroppedEventArgs>? _objectDropped;
+        protected VRCLogEventHandler<ObjectDroppedEventArgs>? _objectDropped;
         /// <summary>
         /// The substance event handler delegate of <see cref="ScreenshotTook"/>.
         /// </summary>
-        protected EventHandler<ScreenshotTakeEventArgs>? _screenshotTook;
+        protected VRCLogEventHandler<ScreenshotTakeEventArgs>? _screenshotTook;
         /// <summary>
         /// The substance event handler delegate of <see cref="VideoUrlResolving"/>.
         /// </summary>
-        protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolving;
+        protected VRCLogEventHandler<VideoUrlResolveEventArgs>? _videoUrlResolving;
         /// <summary>
         /// The substance event handler delegate of <see cref="VideoUrlResolved"/>.
         /// </summary>
-        protected EventHandler<VideoUrlResolveEventArgs>? _videoUrlResolved;
+        protected VRCLogEventHandler<VideoUrlResolveEventArgs>? _videoUrlResolved;
         /// <summary>
         /// The substance event handler delegate of <see cref="Downloaded"/>.
         /// </summary>
-        protected EventHandler<DownloadEventArgs>? _downloaded;
+        protected VRCLogEventHandler<DownloadEventArgs>? _downloaded;
         /// <summary>
         /// The substance event handler delegate of <see cref="WarningDetected"/>.
         /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _warningDetected;
+        protected VRCLogEventHandler<ErrorLogEventArgs>? _warningDetected;
         /// <summary>
         /// The substance event handler delegate of <see cref="ErrorDetected"/>.
         /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _errorDetected;
+        protected VRCLogEventHandler<ErrorLogEventArgs>? _errorDetected;
         /// <summary>
         /// The substance event handler delegate of <see cref="ExceptionDetected"/>.
         /// </summary>
-        protected EventHandler<ErrorLogEventArgs>? _exceptionDetected;
+        protected VRCLogEventHandler<ErrorLogEventArgs>? _exceptionDetected;
 
 
         /// <summary>

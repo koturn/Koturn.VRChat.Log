@@ -12,39 +12,39 @@ namespace Koturn.VRChat.Log
     public class VRCExLogWatcher : VRCLogWatcher, IVRCExLogEvent
     {
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? BulletTimeAgentSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? BulletTimeAgentSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleCubeSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleCubeSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleHomeSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleHomeSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? IdleDefenseSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? IdleDefenseSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? MagicalCursedLandSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? MagicalCursedLandSaved;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? RhapsodySaved;
+        public event VRCLogEventHandler<SaveEventArgs>? RhapsodySaved;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
+        public event VRCLogEventHandler<TonKillerNameEventArgs>? TonKillerTargetChanged;
         /// <inheritdoc/>
-        public event EventHandler<TonPlayerDeadEventArgs>? TonPlayerDead;
+        public event VRCLogEventHandler<TonPlayerDeadEventArgs>? TonPlayerDead;
         /// <inheritdoc/>
-        public event EventHandler<TonPlayerDamagedEventArgs>? TonPlayerDamaged;
+        public event VRCLogEventHandler<TonPlayerDamagedEventArgs>? TonPlayerDamaged;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerNameEventArgs>? TonKillerStunned;
+        public event VRCLogEventHandler<TonKillerNameEventArgs>? TonKillerStunned;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerEnragedEventArgs>? TonKillerEnraged;
+        public event VRCLogEventHandler<TonKillerEnragedEventArgs>? TonKillerEnraged;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerSetEventArgs>? TonKillerSet;
+        public event VRCLogEventHandler<TonKillerSetEventArgs>? TonKillerSet;
         /// <inheritdoc/>
-        public event EventHandler<TonKillerUnlockedEventArgs>? TonKillerUnlocked;
+        public event VRCLogEventHandler<TonKillerUnlockedEventArgs>? TonKillerUnlocked;
         /// <inheritdoc/>
-        public event EventHandler<TonEquipEventArgs>? TonEquipped;
+        public event VRCLogEventHandler<TonEquipEventArgs>? TonEquipped;
         /// <inheritdoc/>
-        public event EventHandler<TonRoundStartedEventArgs>? TonRoundStarted;
+        public event VRCLogEventHandler<TonRoundStartedEventArgs>? TonRoundStarted;
         /// <inheritdoc/>
-        public event EventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
+        public event VRCLogEventHandler<TonRoundFinishedEventArgs>? TonRoundFinished;
         /// <inheritdoc/>
-        public event EventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
+        public event VRCLogEventHandler<SaveEventArgs>? TerrorsOfNowhereSaved;
 
 
         /// <summary>
