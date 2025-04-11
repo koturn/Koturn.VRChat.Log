@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Koturn.VRChat.Log.Enums;
-using Koturn.VRChat.Log.Exceptions;
 
 
 namespace Koturn.VRChat.Log
@@ -363,26 +361,6 @@ namespace Koturn.VRChat.Log
             IsDisposed = true;
         }
 
-        /// <summary>
-        /// Create <see cref="InvalidLogException"/>.
-        /// </summary>
-        /// <param name="message">The error message that explains the reason for the exception.</param>
-        protected InvalidLogException CreateInvalidLogException(string message)
-        {
-            return new InvalidLogException(message, FilePath, LineCount, LogCount + 1);
-        }
-
-        /// <summary>
-        /// Throws <see cref="InvalidLogException"/>.
-        /// </summary>
-        /// <param name="message">The error message that explains the reason for the exception.</param>
-        /// <exception cref="InvalidLogException">Always thrown.</exception>
-        [DoesNotReturn]
-        protected void ThrowInvalidLogException(string message)
-        {
-            throw CreateInvalidLogException(message);
-        }
-
 
         /// <summary>
         /// Parse one line of log.
@@ -451,8 +429,7 @@ namespace Koturn.VRChat.Log
             }
             else
             {
-                ThrowInvalidLogException("Invalid log level detected: " + Encoding.UTF8.GetString(pLogLevel, LogDebugSequence.Length));
-                return string.Empty;
+                logLevel = LogLevel.Other;
             }
 
             return Encoding.UTF8.GetString(&pBuffer[34], count - 34);
