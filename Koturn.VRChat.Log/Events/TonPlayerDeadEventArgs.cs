@@ -6,28 +6,22 @@ namespace Koturn.VRChat.Log.Events
     /// <summary>
     /// Provides data for <see cref="IVRCExLogEvent.TonPlayerDead"/> event.
     /// </summary>
-    public class TonPlayerDeadEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Create instance with timestamp, player name and message.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="playerName">Player name.</param>
+    /// <param name="message">Message.</param>
+    public class TonPlayerDeadEventArgs(DateTime logAt, string playerName, string message)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Player name.
         /// </summary>
-        public string PlayerName { get; }
+        public string PlayerName { get; } = playerName;
         /// <summary>
         /// Message.
         /// </summary>
-        public string Message { get; }
-
-        /// <summary>
-        /// Create instance with timestamp, player name and message.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="playerName">Player name.</param>
-        /// <param name="message">Message.</param>
-        public TonPlayerDeadEventArgs(DateTime logAt, string playerName, string message)
-            : base(logAt)
-        {
-            PlayerName = playerName;
-            Message = message;
-        }
+        public string Message { get; } = message;
     }
 }

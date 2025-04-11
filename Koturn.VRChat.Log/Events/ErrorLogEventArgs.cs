@@ -9,28 +9,22 @@ namespace Koturn.VRChat.Log.Events
     /// Provides data for <see cref="IVRCCoreLogEvent.WarningDetected"/>, <see cref="IVRCCoreLogEvent.ErrorDetected"/>
     /// or <see cref="IVRCCoreLogEvent.ExceptionDetected"/> event.
     /// </summary>
-    public class ErrorLogEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Create instance with log timestamp, log level and log lines.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="level">Log level.</param>
+    /// <param name="lines">Log lines.</param>
+    public class ErrorLogEventArgs(DateTime logAt, LogLevel level, List<string> lines)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Log level.
         /// </summary>
-        public LogLevel Level { get; }
+        public LogLevel Level { get; } = level;
         /// <summary>
         /// Log lines.
         /// </summary>
-        public List<string> Lines { get; }
-
-        /// <summary>
-        /// Create instance with log timestamp, log level and log lines.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="level">Log level.</param>
-        /// <param name="lines">Log lines.</param>
-        public ErrorLogEventArgs(DateTime logAt, LogLevel level, List<string> lines)
-            : base(logAt)
-        {
-            Level = level;
-            Lines = lines;
-        }
+        public List<string> Lines { get; } = lines;
     }
 }

@@ -6,22 +6,17 @@ namespace Koturn.VRChat.Log.Events
     /// <summary>
     /// Provides data for <see cref="IVRCCoreLogEvent.ApplicationQuitted"/> event.
     /// </summary>
-    public class ApplicationQuittedEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Initialize all members.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="activeTime">Active time (in seconds).</param>
+    public class ApplicationQuittedEventArgs(DateTime logAt, double activeTime)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Active time (in seconds).
         /// </summary>
-        public double ActiveTime { get; }
-
-        /// <summary>
-        /// Initialize all members.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="activeTime">Active time (in seconds).</param>
-        public ApplicationQuittedEventArgs(DateTime logAt, double activeTime)
-            : base(logAt)
-        {
-            ActiveTime = activeTime;
-        }
+        public double ActiveTime { get; } = activeTime;
     }
 }

@@ -7,12 +7,18 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Represents Terrors of Nowhere round information.
     /// </summary>
-    public class TonRoundInfo
+    /// <remarks>
+    /// Primary ctor: Create instance with round timestamp, round name and terror index.
+    /// </remarks>
+    /// <param name="roundAt">Time stamp at start of round.</param>
+    /// <param name="roundName">Round name.</param>
+    /// <param name="terrorIndex">First terror index.</param>
+    public class TonRoundInfo(DateTime roundAt, string roundName, int terrorIndex)
     {
         /// <summary>
         /// Timestamp at start of round.
         /// </summary>
-        public DateTime RoundAt { get; }
+        public DateTime RoundAt { get; } = roundAt;
         /// <summary>
         /// Round result.
         /// </summary>
@@ -24,11 +30,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Round name.
         /// </summary>
-        public string RoundName { get; }
+        public string RoundName { get; } = roundName;
         /// <summary>
         /// First terror index.
         /// </summary>
-        public int TerrorIndex1 { get; }
+        public int TerrorIndex1 { get; } = terrorIndex;
         /// <summary>
         /// Second terror index.
         /// </summary>
@@ -49,19 +55,6 @@ namespace Koturn.VRChat.Log
         /// Equipped item index.
         /// </summary>
         public int? ItemIndex { get; set; }
-
-        /// <summary>
-        /// Create instance with round timestamp, round name and terror index.
-        /// </summary>
-        /// <param name="roundAt">Time stamp at start of round.</param>
-        /// <param name="roundName">Round name.</param>
-        /// <param name="terrorIndex">First terror index.</param>
-        public TonRoundInfo(DateTime roundAt, string roundName, int terrorIndex)
-        {
-            RoundAt = roundAt;
-            RoundName = roundName;
-            TerrorIndex1 = terrorIndex;
-        }
 
         /// <summary>
         /// Create instance with round timestamp, round name and two terror indice.

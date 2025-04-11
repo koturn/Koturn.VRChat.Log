@@ -12,7 +12,13 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat log file parser.
     /// </summary>
-    public abstract class VRCBaseLogParser : IDisposable
+    /// <remarks>
+    /// Primary ctor: Initialize instance with specified <see cref="VRCLogReader"/>.
+    /// </remarks>
+    /// <param name="logReader">VRChat Log Reader.</param>
+    /// <param name="leaveOpen">true to leave the <paramref name="logReader"/> open
+    /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
+    public abstract class VRCBaseLogParser(VRCLogReader logReader, bool leaveOpen) : IDisposable
     {
         /// <summary>
         /// VRChat log file name pattern.
@@ -53,7 +59,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// VRChat log reader.
         /// </summary>
-        public VRCLogReader LogReader { get; }
+        public VRCLogReader LogReader { get; } = logReader;
         /// <summary>
         /// First timestamp of log file.
         /// </summary>
@@ -78,7 +84,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// true to leave the <see cref="LogReader"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
-        private readonly bool _leaveOpen;
+        private readonly bool _leaveOpen = leaveOpen;
 
 
         /// <summary>
@@ -149,18 +155,6 @@ namespace Koturn.VRChat.Log
         public VRCBaseLogParser(VRCLogReader logReader)
             : this(logReader, false)
         {
-        }
-
-        /// <summary>
-        /// Initialize instance with specified <see cref="VRCLogReader"/>.
-        /// </summary>
-        /// <param name="logReader">VRChat Log Reader.</param>
-        /// <param name="leaveOpen">true to leave the <paramref name="logReader"/> open
-        /// after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.</param>
-        public VRCBaseLogParser(VRCLogReader logReader, bool leaveOpen)
-        {
-            LogReader = logReader;
-            _leaveOpen = leaveOpen;
         }
 
 

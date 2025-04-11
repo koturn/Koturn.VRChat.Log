@@ -11,7 +11,15 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat Log Reader.
     /// </summary>
-    public class VRCLogReader : IDisposable
+    /// <remarks>
+    /// primary ctor: Initialize instance with specified <see cref="FileStream"/> and buffer size.
+    /// </remarks>
+    /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+    /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
+    /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+    /// after the <see cref="VRCLogReader"/> object is disposed; otherwise, false.</param>
+    public class VRCLogReader(Stream stream, int bufferSize, bool leaveOpen)
+        : IDisposable
     {
         /// <summary>
         /// Default buffer size.
@@ -67,7 +75,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Input <see cref="Stream"/>.
         /// </summary>
-        public Stream BaseStream { get; }
+        public Stream BaseStream { get; } = stream;
         /// <summary>
         /// Log line counter.
         /// </summary>
@@ -88,7 +96,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Read buffer.
         /// </summary>
-        private byte[] _buffer;
+        private byte[] _buffer = new byte[bufferSize];
         /// <summary>
         /// Read byte offset.
         /// </summary>
@@ -112,7 +120,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// true to leave the <see cref="BaseStream"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
-        private readonly bool _leaveOpen;
+        private readonly bool _leaveOpen = leaveOpen;
 
 
         /// <summary>
@@ -162,20 +170,6 @@ namespace Koturn.VRChat.Log
         public VRCLogReader(Stream stream, bool leaveOpen)
             : this(stream, InternalDefaultBufferSize, leaveOpen)
         {
-        }
-
-        /// <summary>
-        /// Initialize instance with specified <see cref="FileStream"/>and buffer size.
-        /// </summary>
-        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
-        /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
-        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
-        /// after the <see cref="VRCLogReader"/> object is disposed; otherwise, false.</param>
-        public VRCLogReader(Stream stream, int bufferSize, bool leaveOpen)
-        {
-            BaseStream = stream;
-            _buffer = new byte[bufferSize];
-            _leaveOpen = leaveOpen;
         }
 
 

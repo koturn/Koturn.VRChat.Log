@@ -4,24 +4,28 @@ using System;
 namespace Koturn.VRChat.Log.Events
 {
     /// <summary>
-    /// Provides data for <see cref="IVRCExLogEvent.IdleHomeSaved"/> or <see cref="IVRCExLogEvent.TerrorsOfNowhereSaved"/> event.
+    /// Provides data for following events:
+    /// <list type="bullet">
+    ///   <item><see cref="IVRCExLogEvent.BulletTimeAgentSaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.IdleCubeSaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.IdleDefenseSaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.IdleHomeSaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.MagicalCursedLandSaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.RhapsodySaved"/></item>
+    ///   <item><see cref="IVRCExLogEvent.TerrorsOfNowhereSaved"/></item>
+    /// </list>
     /// </summary>
-    public class SaveEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Create instance with log timestamp and save data text.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="saveText">Save data text.</param>
+    public class SaveEventArgs(DateTime logAt, string saveText)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Save data text.
         /// </summary>
-        public string SaveText { get; }
-
-        /// <summary>
-        /// Create instance with log timestamp and save data text.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="saveText">Save data text.</param>
-        public SaveEventArgs(DateTime logAt, string saveText)
-            : base(logAt)
-        {
-            SaveText = saveText;
-        }
+        public string SaveText { get; } = saveText;
     }
 }

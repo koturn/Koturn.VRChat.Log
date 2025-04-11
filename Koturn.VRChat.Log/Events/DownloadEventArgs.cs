@@ -7,34 +7,27 @@ namespace Koturn.VRChat.Log.Events
     /// <summary>
     /// Provides data for <see cref="IVRCCoreLogEvent.Downloaded"/> event.
     /// </summary>
-    public class DownloadEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Create instance with specified log timestamp, URL, Download type and instance information.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="url">Download URL.</param>
+    /// <param name="type">Download type.</param>
+    /// <param name="instanceInfo">Instance information.</param>
+    public class DownloadEventArgs(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Download URL.
         /// </summary>
-        public string Url { get; }
+        public string Url { get; } = url;
         /// <summary>
         /// Download type.
         /// </summary>
-        public DownloadType Type { get; }
+        public DownloadType Type { get; } = type;
         /// <summary>
         /// Instance information.
         /// </summary>
-        public InstanceInfo InstanceInfo { get; }
-
-        /// <summary>
-        /// Initialize all members.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="url">Download URL.</param>
-        /// <param name="type">Download type.</param>
-        /// <param name="instanceInfo">Instance information.</param>
-        public DownloadEventArgs(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
-            : base(logAt)
-        {
-            Url = url;
-            Type = type;
-            InstanceInfo = instanceInfo;
-        }
+        public InstanceInfo InstanceInfo { get; } = instanceInfo;
     }
 }

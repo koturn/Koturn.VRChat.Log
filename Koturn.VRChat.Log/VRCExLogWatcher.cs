@@ -9,7 +9,11 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-    public class VRCExLogWatcher : VRCLogWatcher, IVRCExLogEvent
+    /// <remarks>
+    /// Primary ctor: Create <see cref="VRCExLogWatcher"/> instance.
+    /// </remarks>
+    /// <param name="watchCycle">File watch cycle.</param>
+    public class VRCExLogWatcher(int watchCycle) : VRCLogWatcher(watchCycle), IVRCExLogEvent
     {
         /// <inheritdoc/>
         public event VRCLogEventHandler<SaveEventArgs>? BulletTimeAgentSaved;
@@ -55,15 +59,6 @@ namespace Koturn.VRChat.Log
         {
         }
 
-        /// <summary>
-        /// Create <see cref="VRCExLogWatcher"/> instance.
-        /// </summary>
-        /// <param name="watchCycle">File watch cycle.</param>
-        public VRCExLogWatcher(int watchCycle)
-            : base(watchCycle)
-        {
-        }
-
 
         /// <summary>
         /// Create <see cref="VRCWatcherExLogParser"/> instance with specified file path.
@@ -81,23 +76,18 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// VRChat log file parser for <see cref="VRCExLogWatcher"/>.
         /// </summary>
-        private sealed class VRCWatcherExLogParser : VRCCoreExLogParser
+        /// <remarks>
+        /// Primary ctor: Create <see cref="VRCWatcherExLogParser"/> instance.
+        /// </remarks>
+        /// <param name="filePath">VRChat log file path.</param>
+        /// <param name="logWatcher"><see cref="VRCExLogWatcher"/> instance.</param>
+        private sealed class VRCWatcherExLogParser(string filePath, VRCExLogWatcher logWatcher)
+            : VRCCoreExLogParser(filePath)
         {
             /// <summary>
             /// Reference to <see cref="VRCExLogWatcher"/> instance.
             /// </summary>
-            private readonly VRCExLogWatcher _logWatcher;
-
-            /// <summary>
-            /// Create <see cref="VRCWatcherExLogParser"/> instance.
-            /// </summary>
-            /// <param name="filePath">VRChat log file path.</param>
-            /// <param name="logWatcher"><see cref="VRCExLogWatcher"/> instance.</param>
-            public VRCWatcherExLogParser(string filePath, VRCExLogWatcher logWatcher)
-                : base(filePath)
-            {
-                _logWatcher = logWatcher;
-            }
+            private readonly VRCExLogWatcher _logWatcher = logWatcher;
 
             /// <summary>
             /// Load one line of log file and parse it, and fire each event as needed.

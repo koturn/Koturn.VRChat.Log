@@ -7,12 +7,16 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Represents instance join/leave log item.
     /// </summary>
-    public class InstanceInfo
+    /// <remarks>
+    /// Primary ctor: Initialize <see cref="StayFrom"/>.
+    /// </remarks>
+    /// <param name="stayFrom">Timestamp your joined to the instance.</param>
+    public class InstanceInfo(DateTime stayFrom)
     {
         /// <summary>
         /// Timestamp your joined to the instance.
         /// </summary>
-        public DateTime StayFrom { get; set; }
+        public DateTime StayFrom { get; set; } = stayFrom;
         /// <summary>
         /// Timestamp your left from the instance.
         /// </summary>
@@ -57,14 +61,5 @@ namespace Koturn.VRChat.Log
         /// This log is emitted or not.
         /// </summary>
         public bool IsEmitted { get; set; }
-
-        /// <summary>
-        /// Initialize <see cref="StayFrom"/>.
-        /// </summary>
-        /// <param name="stayFrom">Timestamp your joined to the instance.</param>
-        public InstanceInfo(DateTime stayFrom)
-        {
-            StayFrom = stayFrom;
-        }
     }
 }

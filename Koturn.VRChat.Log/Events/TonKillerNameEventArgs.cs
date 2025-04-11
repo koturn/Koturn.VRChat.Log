@@ -7,22 +7,17 @@ namespace Koturn.VRChat.Log.Events
     /// Provides data for <see cref="IVRCExLogEvent.TonKillerStunned"/>
     /// and <see cref="IVRCExLogEvent.TonKillerTargetChanged"/> event.
     /// </summary>
-    public class TonKillerNameEventArgs : LogEventArgs
+    /// <remarks>
+    /// Primary ctor: Create instance with timestamp, terror name.
+    /// </remarks>
+    /// <param name="logAt">Log timestamp.</param>
+    /// <param name="terrorName">Terror name.</param>
+    public class TonKillerNameEventArgs(DateTime logAt, string terrorName)
+        : LogEventArgs(logAt)
     {
         /// <summary>
         /// Terror name.
         /// </summary>
-        public string TerrorName { get; }
-
-        /// <summary>
-        /// Create instance with timestamp, terror name.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="terrorName">Terror name.</param>
-        public TonKillerNameEventArgs(DateTime logAt, string terrorName)
-            : base(logAt)
-        {
-            TerrorName = terrorName;
-        }
+        public string TerrorName { get; } = terrorName;
     }
 }
