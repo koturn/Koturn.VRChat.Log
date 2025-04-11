@@ -29,7 +29,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// <see cref="string"/> <see cref="HashSet{T}"/> of terror name.
         /// </summary>
-        public HashSet<string> TerrorNameSet { get; } = new HashSet<string>();
+        public HashSet<string> TerrorNameSet { get; } = [];
 
         /// <summary>
         /// Function pointer to a function that parses the log for a specific world.

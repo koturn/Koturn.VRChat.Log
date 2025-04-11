@@ -18,7 +18,7 @@ namespace System.Diagnostics.CodeAnalysis
         public StringSyntaxAttribute(string syntax)
         {
             Syntax = syntax;
-            Arguments = Array.Empty<object?>();
+            Arguments = [];
         }
 
         /// <summary>
