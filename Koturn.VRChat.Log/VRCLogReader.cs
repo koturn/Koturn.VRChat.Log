@@ -238,6 +238,8 @@ namespace Koturn.VRChat.Log
                         offsetParsed = 0;
                         isContinue = _firstLineMessage == null;
                         _firstLineMessage = null;
+                        logDateTime = _logDateTime;
+                        logLevel = _logLevel;
                         break;
                     }
                     offset += readCount;
