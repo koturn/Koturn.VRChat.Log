@@ -701,7 +701,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsVideoPlaybackLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("[Video Playback] "))
+            if (!firstLine.StartsWith("[Video Playback] ", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -842,7 +842,7 @@ namespace Koturn.VRChat.Log
             for (int i = 1; i < count; i++)
             {
                 var line = logLines[i];
-                if (line.StartsWith("- hasEmail: "))
+                if (line.StartsWith("- hasEmail: ", StringComparison.Ordinal))
                 {
 #if NET7_0_OR_GREATER
                     hasEmail = bool.Parse(line.AsSpan(12));
@@ -850,7 +850,7 @@ namespace Koturn.VRChat.Log
                     hasEmail = bool.Parse(line.Substring(12));
 #endif
                 }
-                else if (line.StartsWith("- hasBirthday: "))
+                else if (line.StartsWith("- hasBirthday: ", StringComparison.Ordinal))
                 {
 #if NET7_0_OR_GREATER
                     hasBirthday = bool.Parse(line.AsSpan(15));
@@ -858,7 +858,7 @@ namespace Koturn.VRChat.Log
                     hasBirthday = bool.Parse(line.Substring(15));
 #endif
                 }
-                else if (line.StartsWith("- tos: "))
+                else if (line.StartsWith("- tos: ", StringComparison.Ordinal))
                 {
 #if NET7_0_OR_GREATER
                     tos = int.Parse(line.AsSpan(7));
@@ -866,7 +866,7 @@ namespace Koturn.VRChat.Log
                     tos = int.Parse(line.Substring(7));
 #endif
                 }
-                // else if (line.StartsWith("- avatar: "))
+                // else if (line.StartsWith("- avatar: ", StringComparison.Ordinal))
                 // {
                 //
                 // }
@@ -933,7 +933,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsInstanceClosedLog(DateTime logAt, string firstLine)
         {
-            if (!firstLine.StartsWith("Instance closed: "))
+            if (!firstLine.StartsWith("Instance closed: ", StringComparison.Ordinal))
             {
                 return false;
             }
