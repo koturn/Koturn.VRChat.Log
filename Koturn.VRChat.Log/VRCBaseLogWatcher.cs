@@ -345,7 +345,7 @@ namespace Koturn.VRChat.Log
         /// <returns>File size of <paramref name="filePath"/>.</returns>
         private static ulong GetFileSize(string filePath)
         {
-            var result = NativeMethods.GetFileAttributesEx(filePath, GetFileExInfoLevels.InfoStandard, out var fileAttrData);
+            var result = SafeNativeMethods.GetFileAttributesEx(filePath, GetFileExInfoLevels.InfoStandard, out var fileAttrData);
             return result ? ((ulong)fileAttrData.FileSizeHigh << 32) | (ulong)fileAttrData.FileSizeLow : 0;
         }
 #endif  // WINDOWS
@@ -368,7 +368,7 @@ namespace Koturn.VRChat.Log
 
 #if WINDOWS
         /// <summary>
-        /// Defines values that are used with the <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
+        /// Defines values that are used with the <see cref="SafeNativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
         /// and <see href="https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-getfileattributestransacteda">GetFileAttributesTransacted</see> functions
         /// to specify the information level of the returned data.
         /// </summary>
@@ -378,7 +378,7 @@ namespace Koturn.VRChat.Log
         private enum GetFileExInfoLevels : int
         {
             /// <summary>
-            /// The <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
+            /// The <see cref="SafeNativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
             /// or GetFileAttributesTransacted function retrieves a standard set of attribute information.
             /// The data is returned in a <see cref="Win32FileAttributeData"/> structure.
             /// </summary>
@@ -434,7 +434,7 @@ namespace Koturn.VRChat.Log
 
         /// <summary>
         /// Contains attribute information for a file or directory.
-        /// The <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/> function
+        /// The <see cref="SafeNativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/> function
         /// uses this structure.
         /// </summary>
         /// <remarks>
@@ -493,9 +493,9 @@ namespace Koturn.VRChat.Log
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
 #if NET7_0_OR_GREATER
-        private static partial class NativeMethods
+        private static partial class SafeNativeMethods
 #else
-        private static class NativeMethods
+        private static class SafeNativeMethods
 #endif
         {
             /// <summary>
