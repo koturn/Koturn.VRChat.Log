@@ -1,12 +1,12 @@
-#define USE_WIN32_API
-
 using System;
+#if !NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
+#endif  // !NET8_0_OR_GREATER
 using System.IO;
-#if USE_WIN32_API
+#if WINDOWS
 using System.Runtime.InteropServices;
 using System.Security;
-#endif  // USE_WIN32_API
+#endif  // WINDOWS
 using System.Threading;
 using Koturn.VRChat.Log.Events;
 
@@ -16,11 +16,11 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-#if NET7_0_OR_GREATER && USE_WIN32_API
+#if NET7_0_OR_GREATER && WINDOWS
     public abstract partial class VRCBaseLogWatcher : IDisposable
 #else
     public abstract class VRCBaseLogWatcher : IDisposable
-#endif  // NET7_0_OR_GREATER && USE_WIN32_API
+#endif  // NET7_0_OR_GREATER && WINDOWS
     {
         /// <summary>
         /// Default watch cycle (milliseconds).
@@ -242,13 +242,13 @@ namespace Koturn.VRChat.Log
                     try
                     {
                         var prevFileSize = fs.Position;
-#if !USE_WIN32_API
+#if !WINDOWS
                         var fi = new FileInfo(filePath);
 #endif
                         for (; ; )
                         {
                             Thread.Sleep(WatchCycle);
-#if USE_WIN32_API
+#if WINDOWS
                             var fileSize = (long)GetFileSize(filePath);
 #else
                             fi.Refresh();
@@ -257,7 +257,7 @@ namespace Koturn.VRChat.Log
                                 continue;
                             }
                             var fileSize = fi.Length;
-#endif  // USE_WIN32_API
+#endif  // WINDOWS
                             if (fileSize == prevFileSize)
                             {
                                 continue;
@@ -345,7 +345,7 @@ namespace Koturn.VRChat.Log
         }
 #endif  // !NET8_0_OR_GREATER
 
-#if USE_WIN32_API
+#if WINDOWS
         /// <summary>
         /// Get specified file size.
         /// </summary>
@@ -356,7 +356,7 @@ namespace Koturn.VRChat.Log
             var result = NativeMethods.GetFileAttributesEx(filePath, GetFileExInfoLevels.InfoStandard, out var fileAttrData);
             return result ? ((ulong)fileAttrData.FileSizeHigh << 32) | (ulong)fileAttrData.FileSizeLow : 0;
         }
-#endif  // USE_WIN32_API
+#endif  // WINDOWS
 
         /// <summary>
         /// Occurs when a file or directory in the specified <see cref='FileSystemWatcher.Path'/> is created.
@@ -374,7 +374,7 @@ namespace Koturn.VRChat.Log
             _thread = StartFileWatchingThread(e.FullPath);
         }
 
-#if USE_WIN32_API
+#if WINDOWS
         /// <summary>
         /// Defines values that are used with the <see cref="NativeMethods.GetFileAttributesEx(string, GetFileExInfoLevels, out Win32FileAttributeData)"/>
         /// and <see href="https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-getfileattributestransacteda">GetFileAttributesTransacted</see> functions
@@ -542,6 +542,6 @@ namespace Koturn.VRChat.Log
             public static extern bool GetFileAttributesEx([In] string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #endif  // NET7_0_OR_GREATER
         }
-#endif  // USE_WIN32_API
+#endif  // WINDOWS
     }
 }
