@@ -1,6 +1,8 @@
 Koturn.VRChat.Log
 =================
 
+[![Build status](https://ci.appveyor.com/api/projects/status/jxk0tr4g5oamyflk/branch/main?svg=true)](https://ci.appveyor.com/project/koturn/koturn-vrchat-log/branch/main)
+
 Simple VRChat Log Parser and Watcher library.
 
 ## Usage (Sample code)

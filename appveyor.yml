@@ -1,0 +1,20 @@
+version: 1.2.0.{build}
+image: Visual Studio 2022
+environment:
+  SOLUTION_NAME: Koturn.VRChat.Log
+init:
+- cmd: '"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"'
+install:
+- cmd: nmake restore
+build_script:
+- cmd: >-
+    nmake
+
+    nmake deploy
+artifacts:
+- path: $(SOLUTION_NAME)-netstandard2.0.zip
+  name: .NET standard 2.0 binary
+- path: $(SOLUTION_NAME)-net8.0.zip
+  name: .NET 8.0 binary
+- path: $(SOLUTION_NAME)-net9.0.zip
+  name: .NET 9.0 binary
