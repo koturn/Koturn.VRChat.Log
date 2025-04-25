@@ -526,11 +526,11 @@ namespace Koturn.VRChat.Log
             /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileattributesexw"/>
             /// </remarks>
 #if NET7_0_OR_GREATER
-            [LibraryImport("kernel32.dll", EntryPoint = "GetFileAttributesExW", StringMarshalling = StringMarshalling.Utf16)]
+            [LibraryImport("kernel32.dll", EntryPoint = nameof(GetFileAttributesEx) + "W", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static partial bool GetFileAttributesEx(string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #else
-            [DllImport("kernel32.dll", EntryPoint = "GetFileAttributesExW", ExactSpelling = true, CharSet = CharSet.Unicode)]
+            [DllImport("kernel32.dll", EntryPoint = nameof(GetFileAttributesEx) + "W", ExactSpelling = true, CharSet = CharSet.Unicode)]
             public static extern bool GetFileAttributesEx([In] string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #endif  // NET7_0_OR_GREATER
         }
