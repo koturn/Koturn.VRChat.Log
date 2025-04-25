@@ -178,7 +178,6 @@ namespace Koturn.VRChat.Log
         /// Fire <see cref="InstanceClosedByReset"/> event.
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
-        /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
         protected override void OnInstanceClosedByReset(DateTime logAt)
         {
             InstanceClosedByReset?.Invoke(this, new LogEventArgs(logAt));

@@ -948,7 +948,8 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse instance string.
         /// </summary>
-        /// <param name="option">Option string.</param>
+        /// <param name="instanceString">Instance string.</param>
+        /// <param name="logAt">Log timestamp.</param>
         /// <returns>Parsed result, tuple of optioh name and arguments.</returns>
         /// <exception cref="InvalidLogException">Thrown when mismatch parent detected.</exception>
         private InstanceInfo ParseInstanceString(string instanceString, DateTime logAt)
