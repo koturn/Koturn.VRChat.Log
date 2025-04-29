@@ -14,20 +14,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <summary>
         /// Combine two delegates with thread-safety guarantees.
         /// </summary>
-        /// <typeparam name="T">Type of <see cref="VRCLogEventHandler{T}"/></typeparam>
+        /// <typeparam name="TDelegate">Type of <see cref="Delegate"/></typeparam>
         /// <param name="targetEventHandler">Target <see cref="VRCLogEventHandler{TEventArgs}"/>.</param>
-        /// <param name="val">An <see cref="VRCLogEventHandler{T}"/> to combine.</param>
+        /// <param name="val">An <typeparamref name="TDelegate"/> to combine.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Add<T>(ref VRCLogEventHandler<T>? targetEventHandler, VRCLogEventHandler<T>? val)
+        public static void Add<TDelegate>(ref TDelegate? targetEventHandler, TDelegate? val)
+            where TDelegate : Delegate
         {
             var eventHandler = targetEventHandler;
-            VRCLogEventHandler<T>? eventHandler2;
+            TDelegate? eventHandler2;
             do
             {
                 eventHandler2 = eventHandler;
                 eventHandler = Interlocked.CompareExchange(
                     ref targetEventHandler,
-                    (VRCLogEventHandler<T>?)Delegate.Combine(eventHandler2, val),
+                    (TDelegate?)Delegate.Combine(eventHandler2, val),
                     eventHandler2);
             }
             while (eventHandler != eventHandler2);
@@ -36,20 +37,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <summary>
         /// Remove a delegate with thread-safety guarantees.
         /// </summary>
-        /// <typeparam name="T">Type of <see cref="VRCLogEventHandler{T}"/></typeparam>
+        /// <typeparam name="TDelegate">Type of <see cref="Delegate"/></typeparam>
         /// <param name="targetEventHandler">Target <see cref="VRCLogEventHandler{TEventArgs}"/>.</param>
-        /// <param name="val">An <see cref="VRCLogEventHandler{T}"/> to remove.</param>
+        /// <param name="val">An <typeparamref name="TDelegate"/> to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Remove<T>(ref VRCLogEventHandler<T>? targetEventHandler, VRCLogEventHandler<T>? val)
+        public static void Remove<TDelegate>(ref TDelegate? targetEventHandler, TDelegate? val)
+            where TDelegate : Delegate
         {
             var eventHandler = targetEventHandler;
-            VRCLogEventHandler<T>? eventHandler2;
+            TDelegate? eventHandler2;
             do
             {
                 eventHandler2 = eventHandler;
                 eventHandler = Interlocked.CompareExchange(
                     ref targetEventHandler,
-                    (VRCLogEventHandler<T>?)Delegate.Remove(eventHandler2, val),
+                    (TDelegate?)Delegate.Remove(eventHandler2, val),
                     eventHandler2);
             }
             while (eventHandler != eventHandler2);
