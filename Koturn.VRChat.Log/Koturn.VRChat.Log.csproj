@@ -4,18 +4,20 @@
     <TargetFrameworks>netstandard2.0;net8.0;net8.0-windows;net9.0;net9.0-windows</TargetFrameworks>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <WarningLevel>8</WarningLevel>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Koturn.VRChat.Log</Title>
+    <Version>1.2.0.0</Version>
+    <Authors>koturn</Authors>
     <Company>koturn</Company>
     <Description>VRChat log parser and watcher.</Description>
     <Copyright>Copyright (C) 2024 koturn All Rights Reserverd.</Copyright>
     <PackageProjectUrl>https://github.com/koturn/Koturn.VRChat.Log</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/koturn/Koturn.VRChat.Log</RepositoryUrl>
-    <Version>1.2.0.0</Version>
+    <PackageTags>VRChat</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-windows'">
