@@ -179,10 +179,10 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Log timestamp.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>Log messages (null if no log item is detected.</returns>
-        public List<string>? ReadLog(out DateTime logDateTime, out VRCLogLevel logLevel)
+        public List<string>? ReadLogEntry(out DateTime logDateTime, out VRCLogLevel logLevel)
         {
             var messages = new List<string>();
-            return ReadLog(messages, out logDateTime, out logLevel) ? messages : null;
+            return ReadLogEntry(messages, out logDateTime, out logLevel) ? messages : null;
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Log timestamp.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>True if one log item detected, otherwise false.</returns>
-        public bool ReadLog(List<string> messages, out DateTime logDateTime, out VRCLogLevel logLevel)
+        public bool ReadLogEntry(List<string> messages, out DateTime logDateTime, out VRCLogLevel logLevel)
         {
             messages.Clear();
             if (_firstLineMessage != null)
