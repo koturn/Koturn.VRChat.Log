@@ -15,13 +15,13 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="level">Log level.</param>
     /// <param name="lines">Log lines.</param>
-    public class ErrorLogEventArgs(DateTime logAt, LogLevel level, List<string> lines)
+    public class ErrorLogEventArgs(DateTime logAt, VRCLogLevel level, List<string> lines)
         : LogEventArgs(logAt)
     {
         /// <summary>
         /// Log level.
         /// </summary>
-        public LogLevel Level { get; } = level;
+        public VRCLogLevel Level { get; } = level;
         /// <summary>
         /// Log lines.
         /// </summary>

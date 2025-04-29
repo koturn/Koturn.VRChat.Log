@@ -3,7 +3,7 @@ namespace Koturn.VRChat.Log.Enums
     /// <summary>
     /// Log levels in VRChat log file.
     /// </summary>
-    public enum LogLevel
+    public enum VRCLogLevel
     {
         /// <summary>
         /// Represents unknown log level.

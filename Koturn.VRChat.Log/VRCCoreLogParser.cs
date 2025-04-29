@@ -128,17 +128,17 @@ namespace Koturn.VRChat.Log
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
-        protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
             switch (level)
             {
-                case LogLevel.Warning:
+                case VRCLogLevel.Warning:
                     OnWarningDetected(logAt, level, logLines);
                     return false;
-                case LogLevel.Error:
+                case VRCLogLevel.Error:
                     OnErrorDetected(logAt, level, logLines);
                     return false;
-                case LogLevel.Exception:
+                case VRCLogLevel.Exception:
                     OnExceptionDetected(logAt, level, logLines);
                     return false;
                 default:
@@ -390,9 +390,9 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="OnLogDetected(DateTime, LogLevel, List{string})"/></para>
+        /// <para><see cref="OnLogDetected(DateTime, VRCLogLevel, List{string})"/></para>
         /// </remarks>
-        protected virtual void OnWarningDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected virtual void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
         }
 
@@ -404,9 +404,9 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="OnLogDetected(DateTime, LogLevel, List{string})"/></para>
+        /// <para><see cref="OnLogDetected(DateTime, VRCLogLevel, List{string})"/></para>
         /// </remarks>
-        protected virtual void OnErrorDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected virtual void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
         }
 
@@ -418,9 +418,9 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="OnLogDetected(DateTime, LogLevel, List{string})"/></para>
+        /// <para><see cref="OnLogDetected(DateTime, VRCLogLevel, List{string})"/></para>
         /// </remarks>
-        protected virtual void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected virtual void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
         }
 

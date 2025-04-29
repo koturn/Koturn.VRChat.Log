@@ -358,7 +358,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnWarningDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected override void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
             WarningDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
         }
@@ -369,7 +369,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnErrorDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected override void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
             ErrorDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
         }
@@ -380,7 +380,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
+        protected override void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
         {
             ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(logAt, level, logLines));
         }

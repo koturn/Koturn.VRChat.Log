@@ -196,7 +196,7 @@ namespace Koturn.VRChat.Log
         /// <remarks>
         /// Return values is not used in <see cref="VRCBaseLogParser"/>, just for inherited classes.
         /// </remarks>
-        protected abstract bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines);
+        protected abstract bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines);
 
         /// <summary>
         /// Release resources.

@@ -116,7 +116,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Log level.
         /// </summary>
-        private LogLevel _logLevel;
+        private VRCLogLevel _logLevel;
         /// <summary>
         /// true to leave the <see cref="BaseStream"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
@@ -179,7 +179,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Log timestamp.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>Log messages (null if no log item is detected.</returns>
-        public List<string>? ReadLog(out DateTime logDateTime, out LogLevel logLevel)
+        public List<string>? ReadLog(out DateTime logDateTime, out VRCLogLevel logLevel)
         {
             var messages = new List<string>();
             return ReadLog(messages, out logDateTime, out logLevel) ? messages : null;
@@ -192,7 +192,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Log timestamp.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>True if one log item detected, otherwise false.</returns>
-        public bool ReadLog(List<string> messages, out DateTime logDateTime, out LogLevel logLevel)
+        public bool ReadLog(List<string> messages, out DateTime logDateTime, out VRCLogLevel logLevel)
         {
             messages.Clear();
             if (_firstLineMessage != null)
@@ -364,7 +364,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logDateTime">Timestamp of the log.</param>
         /// <param name="logLevel">Log level.</param>
         /// <returns>Log message of the first line of log item without timestamp and log level.</returns>
-        private unsafe string? ParseFirstLogLine(byte *pBuffer, int count, out DateTime logDateTime, out LogLevel logLevel)
+        private unsafe string? ParseFirstLogLine(byte *pBuffer, int count, out DateTime logDateTime, out VRCLogLevel logLevel)
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static unsafe bool TryParseIntSimple(byte* pBuffer, int count, out int val)
@@ -407,23 +407,23 @@ namespace Koturn.VRChat.Log
             var pLogLevel = &pBuffer[20];
             if (IsMatchSequence(pLogLevel, LogDebugSequence))
             {
-                logLevel = LogLevel.Debug;
+                logLevel = VRCLogLevel.Debug;
             }
             else if (IsMatchSequence(pLogLevel, LogWarningSequence))
             {
-                logLevel = LogLevel.Warning;
+                logLevel = VRCLogLevel.Warning;
             }
             else if (IsMatchSequence(pLogLevel, LogErrorSequence))
             {
-                logLevel = LogLevel.Error;
+                logLevel = VRCLogLevel.Error;
             }
             else if (IsMatchSequence(pLogLevel, LogExceptionSequence))
             {
-                logLevel = LogLevel.Exception;
+                logLevel = VRCLogLevel.Exception;
             }
             else
             {
-                logLevel = LogLevel.Other;
+                logLevel = VRCLogLevel.Other;
             }
 
             return Encoding.UTF8.GetString(&pBuffer[34], count - 34);

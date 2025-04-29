@@ -96,7 +96,7 @@ namespace Koturn.VRChat.Log
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
             /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
-            protected override bool OnLogDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
                 var logWatcher = _logWatcher;
                 if (logWatcher.CurrentLogFrom == default)
@@ -298,7 +298,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnWarningDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            protected override void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
                 _logWatcher._warningDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
             }
@@ -309,7 +309,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnErrorDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            protected override void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
                 _logWatcher._errorDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
             }
@@ -320,7 +320,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnExceptionDetected(DateTime logAt, LogLevel level, List<string> logLines)
+            protected override void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
                 _logWatcher._exceptionDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
             }
