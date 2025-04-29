@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="itemIndex">Equipped item index.</param>
     /// <param name="lastItemIndex">Last equipped item index.</param>
     public class TonEquipEventArgs(DateTime logAt, int itemIndex, int lastItemIndex)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// New equipped item index.

@@ -14,7 +14,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="placeIndex">Place index.</param>
     /// <param name="roundName">Round name.</param>
     public class TonRoundStartedEventArgs(DateTime logAt, string placeName, int placeIndex, string roundName)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Place name.

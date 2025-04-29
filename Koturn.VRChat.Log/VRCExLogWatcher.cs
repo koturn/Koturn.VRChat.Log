@@ -154,7 +154,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             protected override void OnInstanceClosedByReset(DateTime logAt)
             {
-                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new LogEventArgs(logAt));
+                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(logAt));
             }
 
             /// <summary>

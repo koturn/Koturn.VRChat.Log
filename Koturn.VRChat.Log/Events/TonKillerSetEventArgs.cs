@@ -14,7 +14,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="terrorIndex2">Second terror index.</param>
     /// <param name="terrorIndex3">Third terror index.</param>
     /// <param name="roundName">Round name.</param>
-    public class TonKillerSetEventArgs(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName) : LogEventArgs(logAt)
+    public class TonKillerSetEventArgs(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName) : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// First terror index.

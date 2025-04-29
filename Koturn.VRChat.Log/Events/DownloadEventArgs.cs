@@ -15,7 +15,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="type">Download type.</param>
     /// <param name="instanceInfo">Instance information.</param>
     public class DownloadEventArgs(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Download URL.

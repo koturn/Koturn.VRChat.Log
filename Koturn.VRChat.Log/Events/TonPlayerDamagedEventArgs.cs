@@ -12,7 +12,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="damage">Damage point.</param>
     public class TonPlayerDamagedEventArgs(DateTime logAt, int damage)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Damage point.

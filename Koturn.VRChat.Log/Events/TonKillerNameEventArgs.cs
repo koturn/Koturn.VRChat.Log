@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="terrorName">Terror name.</param>
     public class TonKillerNameEventArgs(DateTime logAt, string terrorName)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Terror name.

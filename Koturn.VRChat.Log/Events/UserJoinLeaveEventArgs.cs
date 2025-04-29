@@ -16,7 +16,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="stayFrom">A timestamp the user joined.</param>
     /// <param name="instanceInfo">Instance information.</param>
     public class UserJoinLeaveEventArgs(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// User name.

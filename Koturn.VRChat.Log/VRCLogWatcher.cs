@@ -56,7 +56,7 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _instanceClosed, value);
         }
         /// <inheritdoc/>
-        public event VRCLogEventHandler<LogEventArgs>? InstanceClosedByReset
+        public event VRCLogEventHandler<VRCLogEventArgs>? InstanceClosedByReset
         {
             add => EventHelper.Add(ref _instanceClosedByReset, value);
             remove => EventHelper.Remove(ref _instanceClosedByReset, value);
@@ -166,7 +166,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// The substance event handler delegate of <see cref="InstanceClosedByReset"/>.
         /// </summary>
-        protected VRCLogEventHandler<LogEventArgs>? _instanceClosedByReset;
+        protected VRCLogEventHandler<VRCLogEventArgs>? _instanceClosedByReset;
         /// <summary>
         /// The substance event handler delegate of <see cref="JoinedToInstance"/>.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             protected override void OnInstanceClosedByReset(DateTime logAt)
             {
-                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new LogEventArgs(logAt));
+                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(logAt));
             }
 
             /// <summary>

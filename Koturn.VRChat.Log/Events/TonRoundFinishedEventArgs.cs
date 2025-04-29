@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="result">Round result.</param>
     public class TonRoundFinishedEventArgs(DateTime logAt, TonRoundResult result)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Round result.

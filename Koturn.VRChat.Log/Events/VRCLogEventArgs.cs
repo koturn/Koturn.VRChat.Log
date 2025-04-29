@@ -10,7 +10,7 @@ namespace Koturn.VRChat.Log.Events
     /// Primary ctor: Create instance with log timestamp.
     /// </remarks>
     /// <param name="logAt">Log timestamp.</param>
-    public class LogEventArgs(DateTime logAt)
+    public class VRCLogEventArgs(DateTime logAt)
         : EventArgs
     {
         /// <summary>

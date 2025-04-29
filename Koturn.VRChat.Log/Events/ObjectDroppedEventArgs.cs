@@ -15,7 +15,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="dropReason">Reason for dropping the object.</param>
     /// <param name="lastInputMethod">Last input method name.</param>
     public class ObjectDroppedEventArgs(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Pickuped object name.

@@ -16,7 +16,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="lastInputMethod">Last input method name.</param>
     /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
     public class ObjectPickedupEventArgs(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Pickedup object name.

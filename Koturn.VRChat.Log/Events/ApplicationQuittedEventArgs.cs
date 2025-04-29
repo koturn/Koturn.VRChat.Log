@@ -12,7 +12,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="activeTime">Active time (in seconds).</param>
     public class ApplicationQuittedEventArgs(DateTime logAt, double activeTime)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Active time (in seconds).

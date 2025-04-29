@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="url">Video URL.</param>
     /// <param name="instanceInfo">Instance information.</param>
     public class VideoUrlResolveEventArgs(DateTime logAt, string url, InstanceInfo instanceInfo)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Video URL.

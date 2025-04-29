@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="filePath">Screenshort file path.</param>
     /// <param name="instanceInfo">Instance information.</param>
     public class ScreenshotTakeEventArgs(DateTime logAt, string filePath, InstanceInfo instanceInfo)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Screenshort file path.

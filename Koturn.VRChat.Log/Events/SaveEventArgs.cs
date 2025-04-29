@@ -21,7 +21,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="saveText">Save data text.</param>
     public class SaveEventArgs(DateTime logAt, string saveText)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Save data text.

@@ -12,7 +12,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="closeMinutes">Time until instance is closed (minutes).</param>
     public class InstanceResetNotifiedEventArgs(DateTime logAt, int closeMinutes)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Time until instance is closed (minutes).

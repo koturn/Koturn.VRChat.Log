@@ -12,7 +12,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="authUserInfo">Authenticated user information.</param>
     public class UserAuthenticatedEventArgs(DateTime logAt, AuthUserInfo authUserInfo)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Instance information.

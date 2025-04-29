@@ -13,7 +13,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="playerName">Player name.</param>
     /// <param name="message">Message.</param>
     public class TonPlayerDeadEventArgs(DateTime logAt, string playerName, string message)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Player name.

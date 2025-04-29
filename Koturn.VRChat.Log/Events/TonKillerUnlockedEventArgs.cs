@@ -14,7 +14,7 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="indexType">Terror index type.</param>
     /// <param name="terrorIndex">Terror (Killer) index.</param>
     public class TonKillerUnlockedEventArgs(DateTime logAt, TonTerrorIndexType indexType, int terrorIndex)
-        : LogEventArgs(logAt)
+        : VRCLogEventArgs(logAt)
     {
         /// <summary>
         /// Terror index type.
