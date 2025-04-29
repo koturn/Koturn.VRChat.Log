@@ -5,12 +5,12 @@ environment:
 init:
 - cmd: '"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"'
 install:
-- cmd: nmake restore
+- cmd: nmake /nologo restore
 build_script:
 - cmd: >-
-    nmake
+    nmake /nologo
 
-    nmake deploy
+    nmake /nologo deploy
 artifacts:
 - path: $(SOLUTION_NAME)-netstandard2.0.zip
   name: .NET standard 2.0 binary
