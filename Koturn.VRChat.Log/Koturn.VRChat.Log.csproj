@@ -8,7 +8,7 @@
     <WarningLevel>8</WarningLevel>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Koturn.VRChat.Log</Title>
-    <Version>1.3.0.0</Version>
+    <Version>1.3.1.0</Version>
     <Authors>koturn</Authors>
     <Company>koturn</Company>
     <Description>VRChat log parser and watcher.</Description>
