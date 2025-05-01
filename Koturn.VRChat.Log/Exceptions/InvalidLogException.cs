@@ -42,7 +42,11 @@ namespace Koturn.VRChat.Log.Exceptions
         /// <param name="lineCount">Log line counter.</param>
         /// <param name="logCount">Log item counter.</param>
         public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount)
+#if NET6_0_OR_GREATER
+            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount} (at log {logCount})")
+#else
             : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})")
+#endif  // NET6_0_OR_GREATER
         {
             FilePath = filePath;
             LineCount = lineCount;
@@ -62,7 +66,11 @@ namespace Koturn.VRChat.Log.Exceptions
         /// If the innerException parameter is not a null reference,
         /// the current exception is raised in a catch block that handles the inner exception.</param>
         public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount, Exception inner)
+#if NET6_0_OR_GREATER
+            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount} (at log {logCount})", inner)
+#else
             : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})", inner)
+#endif  // NET6_0_OR_GREATER
         {
             FilePath = filePath;
             LineCount = lineCount;
