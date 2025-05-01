@@ -44,7 +44,7 @@ namespace Koturn.VRChat.Log.Internals
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Idle Home save log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        internal const string IdleHomeSavePattern = @"^\[(?:<color=#[0-9_a-f_A-F]{6}>)?🦀 Idle Home 🦀(?:</color>)\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$";
+        internal const string IdleHomeSavePattern = @"^\[(?:<color=#[0-9A-Fa-f]{6}>)?🦀 Idle Home 🦀(?:</color>)?\] Saved \d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}: (.+)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect Terros of Nowhere equipping item log.
         /// </summary>
