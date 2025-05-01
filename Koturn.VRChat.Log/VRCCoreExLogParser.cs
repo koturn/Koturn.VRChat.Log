@@ -185,7 +185,7 @@ namespace Koturn.VRChat.Log
                 WorldIds.BulletTimeAgent => &ParseAsBulletTimeAgentLog,
                 WorldIds.IdleCube => &ParseAsIdleCubeLog,
                 WorldIds.IdleDefense => &ParseAsIdleDefenseLog,
-                WorldIds.IdleHome => &ParseAsIdleCubeLog,
+                WorldIds.IdleHome => &ParseAsIdleHomeLog,
                 WorldIds.MagicalCursedLand => &ParseAsMagicalCursedLandLog,
                 WorldIds.RhapsodyEp1 => &ParseAsRhapsodyLog,
                 WorldIds.TerrorsOfNowhere => &ParseAsTonLog,
