@@ -7,6 +7,12 @@ Koturn.VRChat.Log
 
 Simple VRChat Log Parser and Watcher library.
 
+## Supported Frameworks
+
+- .NET Standard 2.0
+- .NET 8.0
+- .NET 9.0
+
 ## Usage (Sample code)
 
 All of the following is sample code that notifies a user of a Join/Leave.
@@ -40,8 +46,8 @@ namespace VRCLogParserSample
             {
                 using (var logParser = new VRCLogParser(filePath))
                 {
-                    logParser.UserJoined += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: {e.UserName}");
-                    logParser.UserLeft += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: {e.UserName}");
+                    logParser.UserJoined += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{e.UserName}][{e.UserId}]");
+                    logParser.UserLeft += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{e.UserName}][{e.UserId}]");
                     logParser.Parse();
                 }
             }
@@ -105,12 +111,13 @@ namespace VRCCoreLogParserSample
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID.</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserJoined(DateTime logAt, string userName, DateTime stayFrom, InstanceInfo instanceInfo)
+        protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserJoined() is empty, there is no need to call it.
-            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: {userName}");
+            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
         }
 
         /// <summary>
@@ -118,12 +125,13 @@ namespace VRCCoreLogParserSample
         /// </summary>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
+        /// <param name="userId">User ID.</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserLeft(DateTime logAt, string userName, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserLeft() is empty, there is no need to call it.
-            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: {userName}");
+            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
         }
     }
 }
@@ -177,16 +185,9 @@ namespace VRCBaseLogParserSample
         /// <para>Regex to extract joined or lefted player's name.</para>
         /// <para><c>\[Behaviour\] OnPlayer(Joined|Left) (.+)$</c></para>
         /// </summary>
-        private static readonly Regex _regexJoinLeave;
-
-        /// <summary>
-        /// Initialize <see cref="_regexJoinLeave"/>.
-        /// </summary>
-        static FullCustomedVRCLogParser()
-        {
-            _regexJoinLeave = new Regex(@"\[Behaviour\] OnPlayer(Joined|Left) (.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        }
-
+        private static readonly Regex _regexJoinLeave = new Regex(
+            @"\[Behaviour\] OnPlayer(Joined|Left) (.+) \((usr_[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})\)$",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         /// <summary>
         /// Create <see cref="VRCLogParser"/> instance.
@@ -216,7 +217,7 @@ namespace VRCBaseLogParserSample
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
+        private static bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
             var match = _regexJoinLeave.Match(firstLine);
             if (!match.Success)
@@ -227,16 +228,84 @@ namespace VRCBaseLogParserSample
             var groups = match.Groups;
             var joinLeaveKind = groups[1].Value;
             var userName = groups[2].Value;
+            var userId = groups[3].Value;
             switch (joinLeaveKind)
             {
                 case "Joined":
-                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: {userName}");
+                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
                     return true;
                 case "Left":
-                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: {userName}");
+                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
                     return true;
                 default:
                     return false;
+            }
+        }
+    }
+}
+```
+
+### Log Parser (using Log Reader)
+
+```cs
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+using Koturn.VRChat.Log.Samples;
+
+
+namespace VRCLogReaderSample
+{
+    /// <summary>
+    /// Sample program for <see cref="VRCLogReader"/>.
+    /// </summary>
+    internal class Program
+    {
+        /// <summary>
+        /// <para>Regex to extract joined or lefted player's name.</para>
+        /// <para><c>\[Behaviour\] OnPlayer(Joined|Left) (.+)$</c></para>
+        /// </summary>
+        private static readonly Regex _regexJoinLeave = new Regex(
+            @"\[Behaviour\] OnPlayer(Joined|Left) (.+) \((usr_[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})\)$",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// The entry point of this program.
+        /// </summary>
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+
+            // Parse all existing VRChat log files.
+            foreach (var filePath in VRCBaseLogParser.GetLogFilePaths())
+            {
+                using (var logReader = new VRCLogReader(filePath))
+                {
+                    var logLines = new List<string>(128);
+                    while ((logLines = logReader.ReadLogEntry(out var logAt, out var logLevel)) != null)
+                    {
+                        var match = _regexJoinLeave.Match(logLines[0]);
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+
+                        var groups = match.Groups;
+                        var joinLeaveKind = groups[1].Value;
+                        var userName = groups[2].Value;
+                        var userId = groups[3].Value;
+                        switch (joinLeaveKind)
+                        {
+                            case "Joined":
+                                Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+                                break;
+                            case "Left":
+                                Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+                                break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -270,12 +339,12 @@ namespace VRCLogWatcherSample
 
             using (var logWatcher = new VRCLogWatcher())
             {
-                logWatcher.FileOpened += (sender, e) => Console.WriteLine($"Start watching: {e.FilePath}");
-                logWatcher.FileClosed += (sender, e) => Console.WriteLine($"End watching: {e.FilePath}");
+                logWatcher.FileOpened += (sender, e) => Console.WriteLine($"Start watching: [{e.FilePath}]");
+                logWatcher.FileClosed += (sender, e) => Console.WriteLine($"End watching: [{e.FilePath}]");
                 logWatcher.Start();  // Start watching and read to end of latest log file.
 
-                logWatcher.UserJoined += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: {e.UserName}");
-                logWatcher.UserLeft += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: {e.UserName}");
+                logWatcher.UserJoined += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{e.UserName}][{e.UserId}]");
+                logWatcher.UserLeft += (sender, e) => Console.WriteLine($@"[{e.LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{e.UserName}][{e.UserId}]");
 
                 string? read;
                 while ((read = Console.ReadLine()) != "exit")
