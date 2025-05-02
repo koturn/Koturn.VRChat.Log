@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Koturn.VRChat.Log", "Koturn.VRChat.Log\Koturn.VRChat.Log.csproj", "{CC14A5CF-0217-4216-A885-E8506AD26425}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Koturn.VRChat.Log.Samples", "Koturn.VRChat.Log.Samples\Koturn.VRChat.Log.Samples.csproj", "{C0D3D675-79F7-426F-A5FB-823672983B49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CC14A5CF-0217-4216-A885-E8506AD26425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC14A5CF-0217-4216-A885-E8506AD26425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC14A5CF-0217-4216-A885-E8506AD26425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0D3D675-79F7-426F-A5FB-823672983B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0D3D675-79F7-426F-A5FB-823672983B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0D3D675-79F7-426F-A5FB-823672983B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0D3D675-79F7-426F-A5FB-823672983B49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
