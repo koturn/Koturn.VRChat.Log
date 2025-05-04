@@ -43,9 +43,9 @@ namespace Koturn.VRChat.Log.Exceptions
         /// <param name="logCount">Log item counter.</param>
         public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount)
 #if NET6_0_OR_GREATER
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount} (at log {logCount})")
+            : base($"{message} at {(filePath == null ? string.Empty : filePath + ", ")}Line {lineCount} (at log {logCount})")
 #else
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})")
+            : base($"{message} at {(filePath == null ? string.Empty : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})")
 #endif  // NET6_0_OR_GREATER
         {
             FilePath = filePath;
@@ -67,9 +67,9 @@ namespace Koturn.VRChat.Log.Exceptions
         /// the current exception is raised in a catch block that handles the inner exception.</param>
         public InvalidLogException(string message, string? filePath, ulong lineCount, ulong logCount, Exception inner)
 #if NET6_0_OR_GREATER
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount} (at log {logCount})", inner)
+            : base($"{message} at {(filePath == null ? string.Empty : filePath + ", ")}Line {lineCount} (at log {logCount})", inner)
 #else
-            : base($"{message} at {(filePath == null ? "" : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})", inner)
+            : base($"{message} at {(filePath == null ? string.Empty : filePath + ", ")}Line {lineCount.ToString()} (at log {logCount.ToString()})", inner)
 #endif  // NET6_0_OR_GREATER
         {
             FilePath = filePath;
