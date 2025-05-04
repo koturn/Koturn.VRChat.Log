@@ -27,11 +27,11 @@ namespace Koturn.VRChat.Log
         /// <inheritdoc/>
         public event VRCLogEventHandler<InstanceEventArgs>? LeftFromInstance;
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        public event VRCLogEventHandler<UserJoinEventArgs>? UserJoined;
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        public event VRCLogEventHandler<UserLeaveEventArgs>? UserLeft;
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        public event VRCLogEventHandler<UserLeaveEventArgs>? UserUnregistering;
         /// <inheritdoc/>
         public event VRCLogEventHandler<ObjectPickedupEventArgs>? ObjectPickedup;
         /// <inheritdoc/>
@@ -213,7 +213,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
-            UserJoined?.Invoke(this, new UserJoinLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, instanceInfo));
+            UserJoined?.Invoke(this, new UserJoinEventArgs(FilePath, logAt, userName, userId, stayFrom, instanceInfo));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserLeft?.Invoke(this, new UserJoinLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserLeft?.Invoke(this, new UserLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserUnregistering?.Invoke(this, new UserJoinLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserUnregistering?.Invoke(this, new UserLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>

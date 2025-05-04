@@ -61,19 +61,19 @@ namespace Koturn.VRChat.Log
             remove => EventHelper.Remove(ref _leftFromInstance, value);
         }
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined
+        public event VRCLogEventHandler<UserJoinEventArgs>? UserJoined
         {
             add => EventHelper.Add(ref _userJoined, value);
             remove => EventHelper.Remove(ref _userJoined, value);
         }
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft
+        public event VRCLogEventHandler<UserLeaveEventArgs>? UserLeft
         {
             add => EventHelper.Add(ref _userLeft, value);
             remove => EventHelper.Remove(ref _userLeft, value);
         }
         /// <inheritdoc/>
-        public event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering
+        public event VRCLogEventHandler<UserLeaveEventArgs>? UserUnregistering
         {
             add => EventHelper.Add(ref _userUnregistering, value);
             remove => EventHelper.Remove(ref _userUnregistering, value);
@@ -165,15 +165,15 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// The substance event handler delegate of <see cref="UserJoined"/>.
         /// </summary>
-        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userJoined;
+        protected VRCLogEventHandler<UserJoinEventArgs>? _userJoined;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserLeft"/>.
         /// </summary>
-        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userLeft;
+        protected VRCLogEventHandler<UserLeaveEventArgs>? _userLeft;
         /// <summary>
         /// The substance event handler delegate of <see cref="UserUnregistering"/>.
         /// </summary>
-        protected VRCLogEventHandler<UserJoinLeaveEventArgs>? _userUnregistering;
+        protected VRCLogEventHandler<UserLeaveEventArgs>? _userUnregistering;
         /// <summary>
         /// The substance event handler delegate of <see cref="ObjectPickedup"/>.
         /// </summary>
@@ -344,7 +344,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             {
-                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
+                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
             }
 
             /// <summary>
@@ -358,7 +358,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userLeft?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userLeft?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
@@ -372,7 +372,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>

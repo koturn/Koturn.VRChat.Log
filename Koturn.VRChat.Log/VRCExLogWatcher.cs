@@ -185,7 +185,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             {
-                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
+                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
             }
 
             /// <summary>
@@ -199,7 +199,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userLeft?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userLeft?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
@@ -213,7 +213,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>

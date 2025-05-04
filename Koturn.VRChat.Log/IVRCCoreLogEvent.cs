@@ -35,15 +35,15 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Occurs when detect a log that any player joined to your instance.
         /// </summary>
-        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserJoined;
+        event VRCLogEventHandler<UserJoinEventArgs>? UserJoined;
         /// <summary>
         /// Occurs when detect a log that any player left from your instance.
         /// </summary>
-        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserLeft;
+        event VRCLogEventHandler<UserLeaveEventArgs>? UserLeft;
         /// <summary>
         /// Occurs when detect a log that any player unregistering from your instance.
         /// </summary>
-        event VRCLogEventHandler<UserJoinLeaveEventArgs>? UserUnregistering;
+        event VRCLogEventHandler<UserLeaveEventArgs>? UserUnregistering;
         /// <summary>
         /// Occurs when detect a log that instance is closed.
         /// </summary>
