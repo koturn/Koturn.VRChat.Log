@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 #if !NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif  // !NET8_0_OR_GREATER
@@ -9,6 +11,10 @@ using System.Security;
 #endif  // WINDOWS
 using System.Threading;
 using Koturn.VRChat.Log.Events;
+
+#if !NET9_0_OR_GREATER
+using Lock = object;
+#endif  // !NET9_0_OR_GREATER
 
 
 namespace Koturn.VRChat.Log
@@ -51,7 +57,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// true if watching thread started, otherwise false.
         /// </summary>
-        public bool IsThreadStarted => _thread != null;
+        public bool IsThreadStarted => _threadList.Count > 0;
         /// <summary>
         /// Current watching log file path.
         /// </summary>
@@ -75,9 +81,13 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private FileSystemWatcher? _watcher;
         /// <summary>
-        /// Flush log file thread.
+        /// <see cref="List{T}"/> of log file watching thread.
         /// </summary>
-        private Thread? _thread;
+        private readonly List<Thread> _threadList = new(4);
+        /// <summary>
+        /// <see cref="Lock"/> object of <see cref="_threadList"/>.
+        /// </summary>
+        private readonly Lock _threadListLock = new();
         /// <summary>
         /// File watch cycle.
         /// </summary>
@@ -119,7 +129,8 @@ namespace Koturn.VRChat.Log
             var filePath = GetLatestLogFile(dirPath);
             if (filePath != null)
             {
-                _thread = StartFileWatchingThread(filePath, true);
+                // Lock is unneccessary here because any other thread stopped.
+                _threadList.Add(StartFileWatchingThread(filePath, true));
             }
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.InternalVRChatLogFileFilter)
             {
@@ -141,16 +152,23 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public void Stop()
         {
-            var thread = _thread;
-            if (thread != null)
-            {
-                StopThread(thread, 1000);
-                _thread = null;
-            }
             if (_watcher != null)
             {
                 _watcher.Dispose();
                 _watcher = null;
+            }
+
+            lock (_threadListLock)
+            {
+                foreach (var thread in _threadList)
+                {
+                    thread.Interrupt();
+                }
+                foreach (var thread in _threadList)
+                {
+                    thread.Join(1000);
+                }
+                _threadList.Clear();
             }
         }
 
@@ -161,6 +179,24 @@ namespace Koturn.VRChat.Log
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+
+        /// <summary>
+        /// Stop specified thread.
+        /// </summary>
+        /// <param name="thread">A <see cref="Thread"/> to stop.</param>
+        protected void Stop(Thread thread)
+        {
+            bool hasThread;
+            lock (_threadListLock)
+            {
+                hasThread = _threadList.Remove(thread);
+            }
+            if (hasThread)
+            {
+                thread.Interrupt();
+            }
         }
 
 
@@ -292,18 +328,6 @@ namespace Koturn.VRChat.Log
             return filePaths[filePaths.Length - 1];
         }
 
-        /// <summary>
-        /// Request to stop thread.
-        /// </summary>
-        /// <param name="thread">Target thread.</param>
-        /// <param name="interruptWait">Wait time for interrupt. (in milliseconds; -1 means infinity)</param>
-        /// <returns>True when interrupt or abort succseeded, otherwise false.</returns>
-        private static bool StopThread(Thread thread, int interruptWait = -1)
-        {
-            thread.Interrupt();
-            return thread.Join(interruptWait);
-        }
-
 #if !NET8_0_OR_GREATER
         /// <summary>
         /// Throws an <see cref="ArgumentOutOfRangeException"/> if <paramref name="value"/> is less than <paramref name="other"/>.
@@ -357,13 +381,20 @@ namespace Koturn.VRChat.Log
         /// <param name="e">The <see cref="FileSystemEventArgs"/> that contains the event data.</param>
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
-            var thread = _thread;
-            if (thread != null)
+            Thread? thread = null;
+            try
             {
-                StopThread(thread, 1000);
-                _thread = null;
+                thread = StartFileWatchingThread(e.FullPath);
+                lock (_threadListLock)
+                {
+                    _threadList.Add(thread);
+                }
+                thread = null;
             }
-            _thread = StartFileWatchingThread(e.FullPath);
+            catch (Exception)
+            {
+                thread?.Interrupt();
+            }
         }
 
 #if WINDOWS

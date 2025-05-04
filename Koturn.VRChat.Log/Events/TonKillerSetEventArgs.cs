@@ -9,12 +9,14 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, terror indices and round name.
     /// </remarks>
+    /// <param name="logFilePath">Log file path.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="terrorIndex1">First terror index.</param>
     /// <param name="terrorIndex2">Second terror index.</param>
     /// <param name="terrorIndex3">Third terror index.</param>
     /// <param name="roundName">Round name.</param>
-    public class TonKillerSetEventArgs(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName) : VRCLogEventArgs(logAt)
+    public class TonKillerSetEventArgs(string? logFilePath, DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
+        : VRCLogEventArgs(logFilePath, logAt)
     {
         /// <summary>
         /// First terror index.

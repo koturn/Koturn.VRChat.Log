@@ -10,13 +10,14 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with user name, Join timestamp and instance information.
     /// </remarks>
+    /// <param name="logFilePath">Log file path.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="userName">User name.</param>
     /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
     /// <param name="stayFrom">A timestamp the user joined.</param>
     /// <param name="instanceInfo">Instance information.</param>
-    public class UserJoinLeaveEventArgs(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
-        : VRCLogEventArgs(logAt)
+    public class UserJoinLeaveEventArgs(string? logFilePath, DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
+        : VRCLogEventArgs(logFilePath, logAt)
     {
         /// <summary>
         /// User name.
@@ -42,14 +43,15 @@ namespace Koturn.VRChat.Log.Events
         /// <summary>
         /// Create instance with user name, Join timestamp, left timestamp and instance information.
         /// </summary>
+        /// <param name="logFilePath">Log file path.</param>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        public UserJoinLeaveEventArgs(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
-            : this(logAt, userName, userId, stayFrom, instanceInfo)
+        public UserJoinLeaveEventArgs(string? logFilePath, DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            : this(logFilePath, logAt, userName, userId, stayFrom, instanceInfo)
         {
             StayUntil = stayUntil;
         }

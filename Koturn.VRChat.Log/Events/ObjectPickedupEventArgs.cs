@@ -9,14 +9,15 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with specified information about pickedup object and timestamps.
     /// </remarks>
+    /// <param name="logFilePath">Log file path.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="objectName">Pickedup object name.</param>
     /// <param name="isEquipped">True if equipped.</param>
     /// <param name="isEquippable">True if the object is equippable.</param>
     /// <param name="lastInputMethod">Last input method name.</param>
     /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
-    public class ObjectPickedupEventArgs(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
-        : VRCLogEventArgs(logAt)
+    public class ObjectPickedupEventArgs(string? logFilePath, DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+        : VRCLogEventArgs(logFilePath, logAt)
     {
         /// <summary>
         /// Pickedup object name.

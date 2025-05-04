@@ -9,11 +9,12 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, screenshort file path and instance information.
     /// </remarks>
+    /// <param name="logFilePath">Log file path.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="filePath">Screenshort file path.</param>
     /// <param name="instanceInfo">Instance information.</param>
-    public class ScreenshotTakeEventArgs(DateTime logAt, string filePath, InstanceInfo instanceInfo)
-        : VRCLogEventArgs(logAt)
+    public class ScreenshotTakeEventArgs(string? logFilePath, DateTime logAt, string filePath, InstanceInfo instanceInfo)
+        : VRCLogEventArgs(logFilePath, logAt)
     {
         /// <summary>
         /// Screenshort file path.

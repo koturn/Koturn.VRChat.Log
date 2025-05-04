@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Events;
 
@@ -67,8 +68,6 @@ namespace Koturn.VRChat.Log
         /// <returns>Created <see cref="VRCWatcherExLogParser"/> instance.</returns>
         protected override VRCBaseLogParser CreateLogParser(string filePath)
         {
-            CurrentLogFrom = default;
-            CurrentLogUntil = default;
             return new VRCWatcherExLogParser(filePath, this);
         }
 
@@ -88,6 +87,10 @@ namespace Koturn.VRChat.Log
             /// Reference to <see cref="VRCExLogWatcher"/> instance.
             /// </summary>
             private readonly VRCExLogWatcher _logWatcher = logWatcher;
+            /// <summary>
+            /// Log file path.
+            /// </summary>
+            private readonly string _logFilePath = filePath;
 
             /// <summary>
             /// Load one line of log file and parse it, and fire each event as needed.
@@ -98,24 +101,17 @@ namespace Koturn.VRChat.Log
             /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
             protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
-                var logWatcher = _logWatcher;
-                if (logWatcher.CurrentLogFrom == default)
-                {
-                    logWatcher.CurrentLogFrom = logAt;
-                }
-                logWatcher.CurrentLogUntil = logAt;
                 return base.OnLogDetected(logAt, level, logLines);
             }
 
             /// <summary>
-            /// Set <see cref="VRCLogWatcher.AuthUserInfo"/>.
+            /// Fire <see cref="VRCLogWatcher.UserAuthenticated"/> event.
             /// </summary>
             /// <param name="logAt">Log timestamp.</param>
             /// <param name="authUserInfo">Authenticated user information.</param>
             protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
             {
-                _logWatcher.AuthUserInfo = authUserInfo;
-                _logWatcher._userAuthenticated?.Invoke(_logWatcher, new UserAuthenticatedEventArgs(logAt, authUserInfo));
+                _logWatcher._userAuthenticated?.Invoke(_logWatcher, new UserAuthenticatedEventArgs(_logFilePath, logAt, authUserInfo));
             }
 
             /// <summary>
@@ -125,7 +121,8 @@ namespace Koturn.VRChat.Log
             /// <param name="activeTime">Active time (in seconds).</param>
             protected override void OnApplicationQuit(DateTime logAt, double activeTime)
             {
-                _logWatcher._applicationQuitted?.Invoke(_logWatcher, new ApplicationQuittedEventArgs(logAt, activeTime));
+                _logWatcher._applicationQuitted?.Invoke(_logWatcher, new ApplicationQuittedEventArgs(_logFilePath, logAt, activeTime));
+                _logWatcher.Stop(Thread.CurrentThread);
             }
 
             /// <summary>
@@ -135,7 +132,7 @@ namespace Koturn.VRChat.Log
             /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
             protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
             {
-                _logWatcher._instanceCloseNotified?.Invoke(_logWatcher, new InstanceResetNotifiedEventArgs(logAt, closeMinutes));
+                _logWatcher._instanceCloseNotified?.Invoke(_logWatcher, new InstanceResetNotifiedEventArgs(_logFilePath, logAt, closeMinutes));
             }
 
             /// <summary>
@@ -145,7 +142,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._instanceClosed?.Invoke(_logWatcher, new InstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._instanceClosed?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
             }
 
             /// <summary>
@@ -154,7 +151,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logAt">Log timestamp.</param>
             protected override void OnInstanceClosedByReset(DateTime logAt)
             {
-                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(logAt));
+                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(_logFilePath, logAt));
             }
 
             /// <summary>
@@ -165,7 +162,7 @@ namespace Koturn.VRChat.Log
             protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
                 base.OnJoinedToInstance(logAt, instanceInfo);
-                _logWatcher._joinedToInstance?.Invoke(_logWatcher, new InstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._joinedToInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
             }
 
             /// <summary>
@@ -175,7 +172,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
             {
-                _logWatcher._leftFromInstance?.Invoke(_logWatcher, new InstanceEventArgs(logAt, instanceInfo));
+                _logWatcher._leftFromInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
             }
 
             /// <summary>
@@ -188,7 +185,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             {
-                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, instanceInfo));
+                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
             }
 
             /// <summary>
@@ -202,7 +199,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userLeft?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userLeft?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
@@ -216,7 +213,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserJoinLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
@@ -230,7 +227,7 @@ namespace Koturn.VRChat.Log
             /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
             protected override void OnPickupObject(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
             {
-                _logWatcher._objectPickedup?.Invoke(_logWatcher, new ObjectPickedupEventArgs(logAt, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
+                _logWatcher._objectPickedup?.Invoke(_logWatcher, new ObjectPickedupEventArgs(_logFilePath, logAt, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
             }
 
             /// <summary>
@@ -243,7 +240,7 @@ namespace Koturn.VRChat.Log
             /// <param name="lastInputMethod">Last input method name.</param>
             protected override void OnDropObject(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
             {
-                _logWatcher._objectDropped?.Invoke(_logWatcher, new ObjectDroppedEventArgs(logAt, objectName, isEquipped, dropReason, lastInputMethod));
+                _logWatcher._objectDropped?.Invoke(_logWatcher, new ObjectDroppedEventArgs(_logFilePath, logAt, objectName, isEquipped, dropReason, lastInputMethod));
             }
 
             /// <summary>
@@ -254,7 +251,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnScreenshotTook(DateTime logAt, string filePath, InstanceInfo instanceInfo)
             {
-                _logWatcher._screenshotTook?.Invoke(_logWatcher, new ScreenshotTakeEventArgs(logAt, filePath, instanceInfo));
+                _logWatcher._screenshotTook?.Invoke(_logWatcher, new ScreenshotTakeEventArgs(_logFilePath, logAt, filePath, instanceInfo));
             }
 
             /// <summary>
@@ -265,7 +262,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnVideoUrlResolving(DateTime logAt, string url, InstanceInfo instanceInfo)
             {
-                _logWatcher._videoUrlResolving?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(logAt, url, instanceInfo));
+                _logWatcher._videoUrlResolving?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, logAt, url, instanceInfo));
             }
 
             /// <summary>
@@ -277,7 +274,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo">Instance information.</param>
             protected override void OnVideoUrlResolved(DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
             {
-                _logWatcher._videoUrlResolved?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(logAt, url, resolvedUrl, instanceInfo));
+                _logWatcher._videoUrlResolved?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, logAt, url, resolvedUrl, instanceInfo));
             }
 
             /// <summary>
@@ -289,7 +286,7 @@ namespace Koturn.VRChat.Log
             /// <param name="instanceInfo"></param>
             protected override void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
             {
-                _logWatcher._downloaded?.Invoke(_logWatcher, new DownloadEventArgs(logAt, url, type, instanceInfo));
+                _logWatcher._downloaded?.Invoke(_logWatcher, new DownloadEventArgs(_logFilePath, logAt, url, type, instanceInfo));
             }
 
             /// <summary>
@@ -300,7 +297,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logLines">Log lines.</param>
             protected override void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._warningDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
+                _logWatcher._warningDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
             }
 
             /// <summary>
@@ -311,7 +308,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logLines">Log lines.</param>
             protected override void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._errorDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
+                _logWatcher._errorDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
             }
 
             /// <summary>
@@ -322,7 +319,7 @@ namespace Koturn.VRChat.Log
             /// <param name="logLines">Log lines.</param>
             protected override void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._exceptionDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(logAt, level, logLines));
+                _logWatcher._exceptionDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
             }
 
             /// <summary>
@@ -332,7 +329,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.BulletTimeAgentSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.BulletTimeAgentSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -342,7 +339,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnIdleCubeSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.IdleCubeSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.IdleCubeSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -352,7 +349,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.IdleDefenseSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.IdleDefenseSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -362,7 +359,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.IdleHomeSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.IdleHomeSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -372,7 +369,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.MagicalCursedLandSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.MagicalCursedLandSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -382,7 +379,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnRhapsodySaved(DateTime logAt, string saveText)
             {
-                _logWatcher.RhapsodySaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.RhapsodySaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -392,7 +389,7 @@ namespace Koturn.VRChat.Log
             /// <param name="saveText">Save data text.</param>
             protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
             {
-                _logWatcher.TerrorsOfNowhereSaved?.Invoke(_logWatcher, new SaveEventArgs(logAt, saveText));
+                _logWatcher.TerrorsOfNowhereSaved?.Invoke(_logWatcher, new SaveEventArgs(_logFilePath, logAt, saveText));
             }
 
             /// <summary>
@@ -402,7 +399,7 @@ namespace Koturn.VRChat.Log
             /// <param name="terrorName">Terror name.</param>
             protected override void OnTonKillerTargetChanged(DateTime logAt, string terrorName)
             {
-                _logWatcher.TonKillerTargetChanged?.Invoke(_logWatcher, new TonKillerNameEventArgs(logAt, terrorName));
+                _logWatcher.TonKillerTargetChanged?.Invoke(_logWatcher, new TonKillerNameEventArgs(_logFilePath, logAt, terrorName));
             }
 
             /// <summary>
@@ -413,7 +410,7 @@ namespace Koturn.VRChat.Log
             /// <param name="message">Message.</param>
             protected override void OnTonPlayerDead(DateTime logAt, string playerName, string message)
             {
-                _logWatcher.TonPlayerDead?.Invoke(_logWatcher, new TonPlayerDeadEventArgs(logAt, playerName, message));
+                _logWatcher.TonPlayerDead?.Invoke(_logWatcher, new TonPlayerDeadEventArgs(_logFilePath, logAt, playerName, message));
             }
 
             /// <summary>
@@ -423,7 +420,7 @@ namespace Koturn.VRChat.Log
             /// <param name="damage">Damage point.</param>
             protected override void OnTonPlayerDamaged(DateTime logAt, int damage)
             {
-                _logWatcher.TonPlayerDamaged?.Invoke(_logWatcher, new TonPlayerDamagedEventArgs(logAt, damage));
+                _logWatcher.TonPlayerDamaged?.Invoke(_logWatcher, new TonPlayerDamagedEventArgs(_logFilePath, logAt, damage));
             }
 
             /// <summary>
@@ -433,7 +430,7 @@ namespace Koturn.VRChat.Log
             /// <param name="terrorName">Terror name.</param>
             protected override void OnTonKillerStunned(DateTime logAt, string terrorName)
             {
-                _logWatcher.TonKillerStunned?.Invoke(_logWatcher, new TonKillerNameEventArgs(logAt, terrorName));
+                _logWatcher.TonKillerStunned?.Invoke(_logWatcher, new TonKillerNameEventArgs(_logFilePath, logAt, terrorName));
             }
 
             /// <summary>
@@ -444,7 +441,7 @@ namespace Koturn.VRChat.Log
             /// <param name="enrageLevel">Enrage level.</param>
             protected override void OnTonKillerEnraged(DateTime logAt, string terrorName, int enrageLevel)
             {
-                _logWatcher.TonKillerEnraged?.Invoke(_logWatcher, new TonKillerEnragedEventArgs(logAt, terrorName, enrageLevel));
+                _logWatcher.TonKillerEnraged?.Invoke(_logWatcher, new TonKillerEnragedEventArgs(_logFilePath, logAt, terrorName, enrageLevel));
             }
 
             /// <summary>
@@ -457,7 +454,7 @@ namespace Koturn.VRChat.Log
             /// <param name="roundName">Round name.</param>
             protected override void OnTonKillerSet(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
             {
-                _logWatcher.TonKillerSet?.Invoke(_logWatcher, new TonKillerSetEventArgs(logAt, terrorIndex1, terrorIndex2, terrorIndex3, roundName));
+                _logWatcher.TonKillerSet?.Invoke(_logWatcher, new TonKillerSetEventArgs(_logFilePath, logAt, terrorIndex1, terrorIndex2, terrorIndex3, roundName));
             }
 
             /// <summary>
@@ -468,7 +465,7 @@ namespace Koturn.VRChat.Log
             /// <param name="terrorIndex">Terror (Killer) index.</param>
             protected override void OnTonKillerUnlocked(DateTime logAt, TonTerrorIndexType indexType, int terrorIndex)
             {
-                _logWatcher.TonKillerUnlocked?.Invoke(_logWatcher, new TonKillerUnlockedEventArgs(logAt, indexType, terrorIndex));
+                _logWatcher.TonKillerUnlocked?.Invoke(_logWatcher, new TonKillerUnlockedEventArgs(_logFilePath, logAt, indexType, terrorIndex));
             }
 
             /// <summary>
@@ -479,7 +476,7 @@ namespace Koturn.VRChat.Log
             /// <param name="lastItemIndex">Last equipped item index.</param>
             protected override void OnTonEquipped(DateTime logAt, int itemIndex, int lastItemIndex)
             {
-                _logWatcher.TonEquipped?.Invoke(_logWatcher, new TonEquipEventArgs(logAt, itemIndex, lastItemIndex));
+                _logWatcher.TonEquipped?.Invoke(_logWatcher, new TonEquipEventArgs(_logFilePath, logAt, itemIndex, lastItemIndex));
             }
 
             /// <summary>
@@ -491,7 +488,7 @@ namespace Koturn.VRChat.Log
             /// <param name="roundName">Round name.</param>
             protected override void OnTonRoundStart(DateTime logAt, string placeName, int placeIndex, string roundName)
             {
-                _logWatcher.TonRoundStarted?.Invoke(_logWatcher, new TonRoundStartedEventArgs(logAt, placeName, placeIndex, roundName));
+                _logWatcher.TonRoundStarted?.Invoke(_logWatcher, new TonRoundStartedEventArgs(_logFilePath, logAt, placeName, placeIndex, roundName));
             }
 
             /// <summary>
@@ -501,7 +498,7 @@ namespace Koturn.VRChat.Log
             /// <param name="result">Round result.</param>
             protected override void OnTonRoundFinished(DateTime logAt, TonRoundResult result)
             {
-                _logWatcher.TonRoundFinished?.Invoke(_logWatcher, new TonRoundFinishedEventArgs(logAt, result));
+                _logWatcher.TonRoundFinished?.Invoke(_logWatcher, new TonRoundFinishedEventArgs(_logFilePath, logAt, result));
             }
         }
     }

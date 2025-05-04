@@ -9,11 +9,12 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, item index and last equiped item index.
     /// </remarks>
+    /// <param name="logFilePath">Log file path.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="itemIndex">Equipped item index.</param>
     /// <param name="lastItemIndex">Last equipped item index.</param>
-    public class TonEquipEventArgs(DateTime logAt, int itemIndex, int lastItemIndex)
-        : VRCLogEventArgs(logAt)
+    public class TonEquipEventArgs(string? logFilePath, DateTime logAt, int itemIndex, int lastItemIndex)
+        : VRCLogEventArgs(logFilePath, logAt)
     {
         /// <summary>
         /// New equipped item index.
