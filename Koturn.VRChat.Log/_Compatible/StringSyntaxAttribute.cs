@@ -8,38 +8,31 @@ namespace System.Diagnostics.CodeAnalysis
     /// <summary>
     /// Specifies the syntax used in a string.
     /// </summary>
+    /// <remarks>
+    /// Primary ctor: Initializes the <see cref="StringSyntaxAttribute"/> with the identifier of the syntax used.
+    /// </remarks>
+    /// <param name="syntax">The syntax identifier.</param>
+    /// <param name="arguments">Optional arguments associated with the specific syntax employed.</param>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    internal sealed class StringSyntaxAttribute : Attribute
+    internal sealed class StringSyntaxAttribute(string syntax, params object?[] arguments) : Attribute
     {
         /// <summary>
         /// Initializes the <see cref="StringSyntaxAttribute"/> with the identifier of the syntax used.
         /// </summary>
         /// <param name="syntax">The syntax identifier.</param>
         public StringSyntaxAttribute(string syntax)
+            : this(syntax, [])
         {
-            Syntax = syntax;
-            Arguments = [];
-        }
-
-        /// <summary>
-        /// Initializes the <see cref="StringSyntaxAttribute"/> with the identifier of the syntax used.
-        /// </summary>
-        /// <param name="syntax">The syntax identifier.</param>
-        /// <param name="arguments">Optional arguments associated with the specific syntax employed.</param>
-        public StringSyntaxAttribute(string syntax, params object?[] arguments)
-        {
-            Syntax = syntax;
-            Arguments = arguments;
         }
 
         /// <summary>
         /// Gets the identifier of the syntax used.
         /// </summary>
-        public string Syntax { get; }
+        public string Syntax { get; } = syntax;
         /// <summary>
         /// Optional arguments associated with the specific syntax employed.
         /// </summary>
-        public object?[] Arguments { get; }
+        public object?[] Arguments { get; } = arguments;
 
         /// <summary>
         /// The syntax identifier for strings containing composite formats for string formatting.
