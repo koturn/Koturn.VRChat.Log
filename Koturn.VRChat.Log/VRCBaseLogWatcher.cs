@@ -126,12 +126,12 @@ namespace Koturn.VRChat.Log
         {
             Stop();
 
-            var filePath = GetLatestLogFile(dirPath);
-            if (filePath != null)
+            foreach (var filePath in GetWriteLockedLogFiles(dirPath))
             {
                 // Lock is unneccessary here because any other thread stopped.
                 _threadList.Add(StartFileWatchingThread(filePath, true));
             }
+
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.InternalVRChatLogFileFilter)
             {
                 InternalBufferSize = 1024 * 64,
@@ -313,19 +313,31 @@ namespace Koturn.VRChat.Log
         }
 
         /// <summary>
-        /// Get latest log file path.
+        /// Get write locked-log file paths.
         /// </summary>
         /// <param name="logDirPath">Log file directory.</param>
         /// <returns>Latest log file path.</returns>
-        private static string? GetLatestLogFile(string logDirPath)
+        private static List<string> GetWriteLockedLogFiles(string logDirPath)
         {
-            var filePaths = VRCBaseLogParser.GetLogFilePaths(logDirPath);
-            if (filePaths.Length == 0)
+            var filePathList = new List<string>();
+
+            foreach (var filePath in VRCBaseLogParser.GetLogFilePaths(logDirPath))
             {
-                return null;
+                // Try to open for write.
+                try
+                {
+                    // .NET: Buffer size must be greater than or equal to 0.
+                    // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
+                    new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, 1).Dispose();
+                }
+                catch (IOException)
+                {
+                    // Assume that VRChat process owns the log file.
+                    filePathList.Add(filePath);
+                }
             }
-            // Assume the array is in lexicographic order of file paths.
-            return filePaths[filePaths.Length - 1];
+
+            return filePathList;
         }
 
 #if !NET8_0_OR_GREATER
