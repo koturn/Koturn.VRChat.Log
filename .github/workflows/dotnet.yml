@@ -27,4 +27,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build -c $BUILD_CONFIG $MAIN_PROJECT_FILE
+      run: dotnet build -c ${{ env.BUILD_CONFIG }} ${{ env.MAIN_PROJECT_FILE }}
