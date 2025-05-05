@@ -147,15 +147,15 @@ namespace Koturn.VRChat.Log
 
             var firstLine = logLines[0];
 
-            return ParseAsBehaviourLog(logAt, firstLine)
-                || ParseAsScreenshotLog(logAt, firstLine)
-                || ParseAsVideoPlaybackLog(logAt, firstLine)
-                || ParseAsStringDownloadLog(logAt, firstLine)
-                || ParseAsImageDownloadLog(logAt, firstLine)
-                || ParseAsUserAuthenticatedLog(logAt, logLines)
-                || ParseAsApplicationQuitLog(logAt, firstLine)
-                || ParseAsInstanceResetNotificationLog(logAt, firstLine)
-                || ParseAsInstanceClosedLog(logAt, firstLine);
+            return ParseAsBehaviourLog(firstLine)
+                || ParseAsScreenshotLog(firstLine)
+                || ParseAsVideoPlaybackLog(firstLine)
+                || ParseAsStringDownloadLog(firstLine)
+                || ParseAsImageDownloadLog(firstLine)
+                || ParseAsUserAuthenticatedLog(logLines)
+                || ParseAsApplicationQuitLog(firstLine)
+                || ParseAsInstanceResetNotificationLog(firstLine)
+                || ParseAsInstanceClosedLog(firstLine);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Koturn.VRChat.Log
         /// <param name="authUserInfo">Authenticated user information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsUserAuthenticatedLog(DateTime, List{string})"/></para>
+        /// <para><see cref="ParseAsUserAuthenticatedLog(List{string})"/></para>
         /// </remarks>
         protected virtual void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
         {
@@ -178,7 +178,7 @@ namespace Koturn.VRChat.Log
         /// <param name="activeTime">Active time (in seconds).</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsApplicationQuitLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsApplicationQuitLog(string)"/></para>
         /// </remarks>
         protected virtual void OnApplicationQuit(DateTime logAt, double activeTime)
         {
@@ -191,7 +191,7 @@ namespace Koturn.VRChat.Log
         /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsInstanceResetNotificationLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsInstanceResetNotificationLog(string)"/></para>
         /// </remarks>
         protected virtual void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
         {
@@ -204,7 +204,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsInstanceClosedLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsInstanceClosedLog(string)"/></para>
         /// </remarks>
         protected virtual void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
         {
@@ -216,7 +216,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logAt">Log timestamp.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsInstanceClosedByResetLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsInstanceClosedByResetLog(string)"/></para>
         /// </remarks>
         protected virtual void OnInstanceClosedByReset(DateTime logAt)
         {
@@ -229,7 +229,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsJoiningLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsJoiningLog(string)"/></para>
         /// </remarks>
         protected virtual void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
@@ -242,7 +242,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsLeftLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsLeftLog(string)"/></para>
         /// </remarks>
         protected virtual void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
@@ -258,7 +258,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsUserJoinLeaveLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsUserJoinLeaveLog(string)"/></para>
         /// </remarks>
         protected virtual void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
@@ -275,7 +275,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsUserJoinLeaveLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsUserJoinLeaveLog(string)"/></para>
         /// </remarks>
         protected virtual void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
@@ -292,7 +292,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsUserUnregisteringLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsUserUnregisteringLog(string)"/></para>
         /// </remarks>
         protected virtual void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
@@ -331,7 +331,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsScreenshotLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsScreenshotLog(string)"/></para>
         /// </remarks>
         protected virtual void OnScreenshotTook(DateTime logAt, string filePath, InstanceInfo instanceInfo)
         {
@@ -345,7 +345,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsVideoPlaybackLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsVideoPlaybackLog(string)"/></para>
         /// </remarks>
         protected virtual void OnVideoUrlResolving(DateTime logAt, string url, InstanceInfo instanceInfo)
         {
@@ -360,7 +360,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsVideoPlaybackLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsVideoPlaybackLog(string)"/></para>
         /// </remarks>
         protected virtual void OnVideoUrlResolved(DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
         {
@@ -375,8 +375,8 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo"></param>
         /// <remarks>
         /// <para>Called from following methods.</para>
-        /// <para><see cref="ParseAsStringDownloadLog(DateTime, string)"/></para>
-        /// <para><see cref="ParseAsImageDownloadLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsStringDownloadLog(string)"/></para>
+        /// <para><see cref="ParseAsImageDownloadLog(string)"/></para>
         /// </remarks>
         protected virtual void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
         {
@@ -450,35 +450,33 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as "[Behaviour]" log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
-        private bool ParseAsBehaviourLog(DateTime logAt, string firstLine)
+        private bool ParseAsBehaviourLog(string firstLine)
         {
             if (!firstLine.StartsWith("[Behaviour] ", StringComparison.Ordinal))
             {
                 return false;
             }
 
-            return ParseAsUserJoinLeaveLog(logAt, firstLine)
-                || ParseAsUserUnregisteringLog(logAt, firstLine)
-                || ParseAsPickupObjectLog(logAt, firstLine)
-                || ParseAsDropObjectLog(logAt, firstLine)
-                || ParseAsJoiningLog(logAt, firstLine)
-                || ParseAsLeftLog(logAt, firstLine)
-                || ParseAsInstanceClosedByResetLog(logAt, firstLine);
+            return ParseAsUserJoinLeaveLog(firstLine)
+                || ParseAsUserUnregisteringLog(firstLine)
+                || ParseAsPickupObjectLog(firstLine)
+                || ParseAsDropObjectLog(firstLine)
+                || ParseAsJoiningLog(firstLine)
+                || ParseAsLeftLog(firstLine)
+                || ParseAsInstanceClosedByResetLog(firstLine);
         }
 
 
         /// <summary>
         /// Parse first log line as user joined or left log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
         /// <exception cref="InvalidDataException">Thrown when duplicate joined timestamp.</exception>
-        private bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
+        private bool ParseAsUserJoinLeaveLog(string firstLine)
         {
             static string ExtractUserNameAndId(string firstLine, int offset, out string? userId)
             {
@@ -505,6 +503,7 @@ namespace Koturn.VRChat.Log
 
             const int JoinLeaveOffset = BehaviourLogOffset + 8;
             var userInfoDict = _userInfoDict;
+            var logAt = LogUntil;
 
             if (IsSubstringAt("Joined ", firstLine, JoinLeaveOffset))
             {
@@ -544,10 +543,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as user unregistering log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsUserUnregisteringLog(DateTime logAt, string firstLine)
+        private bool ParseAsUserUnregisteringLog(string firstLine)
         {
             if (!IsSubstringAt("Unregistering ", firstLine, BehaviourLogOffset))
             {
@@ -558,7 +556,7 @@ namespace Koturn.VRChat.Log
             var userName = firstLine.Substring(BehaviourLogOffset + 14);
             if (userInfoDict.TryGetValue(userName, out var userInfo))
             {
-                OnUserUnregistering(logAt, userName, userInfo.UserId, userInfo.JoinAt, logAt, _instanceInfo);
+                OnUserUnregistering(LogUntil, userName, userInfo.UserId, userInfo.JoinAt, LogUntil, _instanceInfo);
                 userInfoDict.Remove(userName);
             }
 
@@ -568,10 +566,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as pickup object log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsPickupObjectLog(DateTime logAt, string firstLine)
+        private bool ParseAsPickupObjectLog(string firstLine)
         {
             var match = RegexHelper.PickupObjectRegex.Match(firstLine, BehaviourLogOffset);
             if (!match.Success)
@@ -581,7 +578,7 @@ namespace Koturn.VRChat.Log
 
             var groups = match.Groups;
             OnPickupObject(
-                logAt,
+                LogUntil,
                 groups[1].Value,
                 bool.Parse(groups[2].Value),
                 bool.Parse(groups[3].Value),
@@ -594,10 +591,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as drop object log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsDropObjectLog(DateTime logAt, string firstLine)
+        private bool ParseAsDropObjectLog(string firstLine)
         {
             var match = RegexHelper.DropObjectRegex.Match(firstLine, BehaviourLogOffset);
             if (!match.Success)
@@ -607,7 +603,7 @@ namespace Koturn.VRChat.Log
 
             var groups = match.Groups;
             OnDropObject(
-                logAt,
+                LogUntil,
                 groups[1].Value,
                 bool.Parse(groups[2].Value),
                 groups[3].Value,
@@ -619,10 +615,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as joining to instance log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
+        private bool ParseAsJoiningLog(string firstLine)
         {
             if (!IsSubstringAt("Joining ", firstLine, BehaviourLogOffset))
             {
@@ -633,17 +628,17 @@ namespace Koturn.VRChat.Log
             if (IsSubstringAt("or Creating Room: ", firstLine, instanceStringOffset))
             {
                 _instanceInfo.WorldName = firstLine.Substring(BehaviourLogOffset + 26);
-                OnJoinedToInstance(logAt, _instanceInfo);
+                OnJoinedToInstance(LogUntil, _instanceInfo);
                 return true;
             }
             else if (IsSubstringAt("wrld_", firstLine, instanceStringOffset))
             {
-                _instanceInfo = ParseInstanceString(firstLine.Substring(instanceStringOffset), logAt);
+                _instanceInfo = ParseInstanceString(firstLine.Substring(instanceStringOffset), LogUntil);
                 return true;
             }
             else if (IsSubstringAt("local:", firstLine, instanceStringOffset))
             {
-                _instanceInfo = ParseLocalInstanceString(firstLine.Substring(instanceStringOffset), logAt);
+                _instanceInfo = ParseLocalInstanceString(firstLine.Substring(instanceStringOffset), LogUntil);
                 return true;
             }
 
@@ -653,18 +648,17 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as left from instance log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsLeftLog(DateTime logAt, string firstLine)
+        private bool ParseAsLeftLog(string firstLine)
         {
             if (!IsSubstringAt("OnLeftRoom", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
 
-            _instanceInfo.StayUntil = logAt;
-            OnLeftFromInstance(logAt, _instanceInfo);
+            _instanceInfo.StayUntil = LogUntil;
+            OnLeftFromInstance(LogUntil, _instanceInfo);
             _instanceInfo.IsEmitted = true;
 
             return true;
@@ -673,10 +667,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as instance closed by reset log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsInstanceClosedByResetLog(DateTime logAt, string firstLine)
+        private bool ParseAsInstanceClosedByResetLog(string firstLine)
         {
             // 2025.04.02 05:21:25 Debug      -  [Behaviour] Received executive message: Instance closed
             if (!IsSubstringAt("Received executive message: Instance closed", firstLine, BehaviourLogOffset))
@@ -684,7 +677,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnInstanceClosedByReset(logAt);
+            OnInstanceClosedByReset(LogUntil);
 
             return true;
         }
@@ -692,10 +685,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as video playback log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsVideoPlaybackLog(DateTime logAt, string firstLine)
+        private bool ParseAsVideoPlaybackLog(string firstLine)
         {
             if (!firstLine.StartsWith("[Video Playback] ", StringComparison.Ordinal))
             {
@@ -710,14 +702,14 @@ namespace Koturn.VRChat.Log
                     return false;
                 }
 
-                OnVideoUrlResolving(logAt, firstLine.Substring(32, firstLine.Length - 33), _instanceInfo);
+                OnVideoUrlResolving(LogUntil, firstLine.Substring(32, firstLine.Length - 33), _instanceInfo);
 
                 return true;
             }
 
             // if (SubstringEquals(firstLine, 44, "Attempting to resolve URL '"))
             // {
-            //     OnVideoUrlResolving(logAt, firstLine.Substring(44, firstLine.Length - 45), _instanceInfo);
+            //     OnVideoUrlResolving(stayFrom, firstLine.Substring(44, firstLine.Length - 45), _instanceInfo);
             //     return true;
             // }
 
@@ -746,7 +738,7 @@ namespace Koturn.VRChat.Log
 
                 var resolvedUrl = firstLine.Substring(idx, firstLine.Length - idx - 1);
 
-                OnVideoUrlResolved(logAt, url, resolvedUrl, _instanceInfo);
+                OnVideoUrlResolved(LogUntil, url, resolvedUrl, _instanceInfo);
 
                 return true;
             }
@@ -757,17 +749,16 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as screenshot log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsScreenshotLog(DateTime logAt, string firstLine)
+        private bool ParseAsScreenshotLog(string firstLine)
         {
             if (!firstLine.StartsWith("[VRC Camera] Took screenshot to: ", StringComparison.Ordinal))
             {
                 return false;
             }
 
-            OnScreenshotTook(logAt, firstLine.Substring(33), _instanceInfo);
+            OnScreenshotTook(LogUntil, firstLine.Substring(33), _instanceInfo);
 
             return true;
         }
@@ -775,10 +766,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as string download log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsStringDownloadLog(DateTime logAt, string firstLine)
+        private bool ParseAsStringDownloadLog(string firstLine)
         {
             if (!firstLine.StartsWith("[String Download] Attempting to load String from URL '", StringComparison.Ordinal)
                 || firstLine[firstLine.Length - 1] != '\'')
@@ -786,7 +776,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnDownloaded(logAt, firstLine.Substring(54, firstLine.Length - 55), DownloadType.String, _instanceInfo);
+            OnDownloaded(LogUntil, firstLine.Substring(54, firstLine.Length - 55), DownloadType.String, _instanceInfo);
 
             return true;
         }
@@ -794,10 +784,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as image download log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsImageDownloadLog(DateTime logAt, string firstLine)
+        private bool ParseAsImageDownloadLog(string firstLine)
         {
             if (!firstLine.StartsWith("[Image Download] Attempting to load image from URL '", StringComparison.Ordinal)
                 || firstLine[firstLine.Length - 1] != '\'')
@@ -805,7 +794,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnDownloaded(logAt, firstLine.Substring(52, firstLine.Length - 53), DownloadType.Image, _instanceInfo);
+            OnDownloaded(LogUntil, firstLine.Substring(52, firstLine.Length - 53), DownloadType.Image, _instanceInfo);
 
             return true;
         }
@@ -813,10 +802,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as user authenticated log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsUserAuthenticatedLog(DateTime logAt, List<string> logLines)
+        private bool ParseAsUserAuthenticatedLog(List<string> logLines)
         {
             var firstLine = logLines[0];
             if (!firstLine.StartsWith("User Authenticated: ", StringComparison.Ordinal)
@@ -871,7 +859,7 @@ namespace Koturn.VRChat.Log
             var authUserInfo = new AuthUserInfo(userName, userId, hasEmail, hasBirthday, tos);
             AuthUserInfo = authUserInfo;
 
-            OnUserAuthenticated(logAt, authUserInfo);
+            OnUserAuthenticated(LogUntil, authUserInfo);
 
             return true;
         }
@@ -879,10 +867,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as application quit log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsApplicationQuitLog(DateTime logAt, string firstLine)
+        private bool ParseAsApplicationQuitLog(string firstLine)
         {
             if (!firstLine.StartsWith("VRCApplication: HandleApplicationQuit at ", StringComparison.Ordinal))
             {
@@ -895,7 +882,7 @@ namespace Koturn.VRChat.Log
             var activeTime = double.Parse(firstLine.Substring(41));
 #endif  // NET7_0_OR_GREATER
             ClearInfo();
-            OnApplicationQuit(logAt, activeTime);
+            OnApplicationQuit(LogUntil, activeTime);
 
             return true;
         }
@@ -903,10 +890,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as instance reset notification log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsInstanceResetNotificationLog(DateTime logAt, string firstLine)
+        private bool ParseAsInstanceResetNotificationLog(string firstLine)
         {
             var match = RegexHelper.InstanceResetNotificationRegex.Match(firstLine);
             if (!match.Success)
@@ -916,7 +902,7 @@ namespace Koturn.VRChat.Log
 
             var groups = match.Groups;
 
-            OnInstanceResetNotified(logAt, int.Parse(groups[1].Value));
+            OnInstanceResetNotified(LogUntil, int.Parse(groups[1].Value));
 
             return true;
         }
@@ -924,10 +910,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as instance closed log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsInstanceClosedLog(DateTime logAt, string firstLine)
+        private bool ParseAsInstanceClosedLog(string firstLine)
         {
             if (!firstLine.StartsWith("Instance closed: ", StringComparison.Ordinal))
             {
@@ -936,7 +921,7 @@ namespace Koturn.VRChat.Log
 
             var instanceInfo = ParseInstanceString(firstLine.Substring(17), _instanceInfo.StayFrom);
 
-            OnInstanceClosed(logAt, instanceInfo);
+            OnInstanceClosed(LogUntil, instanceInfo);
 
             return true;
         }
@@ -945,15 +930,15 @@ namespace Koturn.VRChat.Log
         /// Parse instance string.
         /// </summary>
         /// <param name="instanceString">Instance string.</param>
-        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="stayFrom">Log timestamp.</param>
         /// <returns>Parsed result.</returns>
         /// <exception cref="InvalidLogException">Thrown when mismatch parent detected.</exception>
-        private InstanceInfo ParseInstanceString(string instanceString, DateTime logAt)
+        private InstanceInfo ParseInstanceString(string instanceString, DateTime stayFrom)
         {
             var tokens = instanceString.Split('~');
             var ids = tokens[0].Split(':');
 
-            var instanceInfo = new InstanceInfo(logAt)
+            var instanceInfo = new InstanceInfo(stayFrom)
             {
                 WorldId = ids[0],
                 InstanceString = instanceString,
@@ -1031,12 +1016,12 @@ namespace Koturn.VRChat.Log
         /// Parse local instance string.
         /// </summary>
         /// <param name="instanceString">Instance string.</param>
-        /// <param name="logAt">Log timestamp.</param>
+        /// <param name="stayFrom">Log timestamp.</param>
         /// <returns>Parsed result.</returns>
-        private InstanceInfo ParseLocalInstanceString(string instanceString, DateTime logAt)
+        private InstanceInfo ParseLocalInstanceString(string instanceString, DateTime stayFrom)
         {
             var ids = instanceString.Split(':');
-            return new InstanceInfo(logAt)
+            return new InstanceInfo(stayFrom)
             {
                 WorldId = ids[0],
                 InstanceString = instanceString,

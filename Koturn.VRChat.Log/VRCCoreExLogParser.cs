@@ -34,7 +34,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Function pointer to a function that parses the log for a specific world.
         /// </summary>
-        private delegate*<VRCCoreExLogParser, DateTime, List<string>, bool> _parseAsSpecificWorldLog;
+        private delegate*<VRCCoreExLogParser, List<string>, bool> _parseAsSpecificWorldLog;
         /// <summary>
         /// Indicate next log line is Rhapsody save data.
         /// </summary>
@@ -166,7 +166,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            return _parseAsSpecificWorldLog(this, logAt, logLines);
+            return _parseAsSpecificWorldLog(this, logLines);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="VRCCoreLogParser.ParseAsJoiningLog(DateTime, string)"/></para>
+        /// <para><see cref="VRCCoreLogParser.ParseAsJoiningLog(string)"/></para>
         /// </remarks>
         protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
@@ -201,7 +201,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsBulletTimeAgentSaveData(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsBulletTimeAgentSaveData(string)"/></para>
         /// </remarks>
         protected virtual void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
         {
@@ -214,7 +214,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleCubeSaveData(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsIdleCubeSaveData(string)"/></para>
         /// </remarks>
         protected virtual void OnIdleCubeSaved(DateTime logAt, string saveText)
         {
@@ -227,7 +227,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleDefenseSaveData(DateTime, List{string})"/></para>
+        /// <para><see cref="ParseAsIdleDefenseSaveData(List{string})"/></para>
         /// </remarks>
         protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
         {
@@ -240,7 +240,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsIdleHomeSaveData(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsIdleHomeSaveData(string)"/></para>
         /// </remarks>
         protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
         {
@@ -253,7 +253,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsMagicalCursedLandSaveData(DateTime, List{string})"/></para>
+        /// <para><see cref="ParseAsMagicalCursedLandSaveData(List{string})"/></para>
         /// </remarks>
         protected virtual void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
         {
@@ -276,7 +276,7 @@ namespace Koturn.VRChat.Log
         /// <param name="message">message.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonPlayerDead(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonPlayerDead(string)"/></para>
         /// </remarks>
         protected virtual void OnTonPlayerDead(DateTime logAt, string playerName, string message)
         {
@@ -289,7 +289,7 @@ namespace Koturn.VRChat.Log
         /// <param name="damage">Damage point.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonPlayerDamaged(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonPlayerDamaged(string)"/></para>
         /// </remarks>
         protected virtual void OnTonPlayerDamaged(DateTime logAt, int damage)
         {
@@ -344,7 +344,7 @@ namespace Koturn.VRChat.Log
         /// <param name="lastItemIndex">Last equipped item index.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonEquipped(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonEquipped(string)"/></para>
         /// </remarks>
         protected virtual void OnTonEquipped(DateTime logAt, int itemIndex, int lastItemIndex)
         {
@@ -359,7 +359,7 @@ namespace Koturn.VRChat.Log
         /// <param name="roundName">Round name.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonPlace(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonPlace(string)"/></para>
         /// </remarks>
         protected virtual void OnTonRoundStart(DateTime logAt, string placeName, int placeIndex, string roundName)
         {
@@ -381,7 +381,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonSaveData(string)"/></para>
         /// </remarks>
         protected virtual void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
         {
@@ -394,7 +394,7 @@ namespace Koturn.VRChat.Log
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsTonSaveData(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsTonSaveData(string)"/></para>
         /// </remarks>
         protected virtual void OnRhapsodySaved(DateTime logAt, string saveText)
         {
@@ -421,10 +421,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Bullett Time Agent save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsBulletTimeAgentSaveData(DateTime logAt, string firstLine)
+        private bool ParseAsBulletTimeAgentSaveData(string firstLine)
         {
             if (!_isBulletTimeAgentSaveData)
             {
@@ -433,7 +432,7 @@ namespace Koturn.VRChat.Log
 
             _isBulletTimeAgentSaveData = false;
 
-            OnBulletTimeAgentSaved(logAt, firstLine);
+            OnBulletTimeAgentSaved(LogUntil, firstLine);
 
             return true;
         }
@@ -441,17 +440,16 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Idle Cube save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsIdleCubeSaveData(DateTime logAt, string firstLine)
+        private bool ParseAsIdleCubeSaveData(string firstLine)
         {
             if (!firstLine.StartsWith("SaveVer"))
             {
                 return false;
             }
 
-            OnIdleCubeSaved(logAt, firstLine);
+            OnIdleCubeSaved(LogUntil, firstLine);
 
             return true;
         }
@@ -459,10 +457,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Idle Home save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsIdleHomeSaveData(DateTime logAt, string firstLine)
+        private bool ParseAsIdleHomeSaveData(string firstLine)
         {
             var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
@@ -470,7 +467,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnIdleHomeSaved(logAt, match.Groups[1].Value);
+            OnIdleHomeSaved(LogUntil, match.Groups[1].Value);
 
             return true;
         }
@@ -478,10 +475,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse log lines as Idle Defense save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsIdleDefenseSaveData(DateTime logAt, List<string> logLines)
+        private bool ParseAsIdleDefenseSaveData(List<string> logLines)
         {
             if (logLines.Count != 2
                 || logLines[0] != "Saving data complete! "
@@ -490,7 +486,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnIdleDefenseSaved(logAt, logLines[1].Substring(0, logLines[1].Length - 12));
+            OnIdleDefenseSaved(LogUntil, logLines[1].Substring(0, logLines[1].Length - 12));
 
             return true;
         }
@@ -498,17 +494,16 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse log lines as Magical Cursed Land save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsMagicalCursedLandSaveData(DateTime logAt, List<string> logLines)
+        private bool ParseAsMagicalCursedLandSaveData(List<string> logLines)
         {
             if (logLines.Count != 2 || logLines[0] != "セーブテキスト生成")
             {
                 return false;
             }
 
-            OnMagicalCursedLandSaved(logAt, logLines[1]);
+            OnMagicalCursedLandSaved(LogUntil, logLines[1]);
 
             return true;
         }
@@ -533,10 +528,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsRhapsodySaveData(DateTime logAt, string firstLine)
+        private bool ParseAsRhapsodySaveData(string firstLine)
         {
             if (!_isRhapsodySaveData)
             {
@@ -545,7 +539,7 @@ namespace Koturn.VRChat.Log
 
             _isRhapsodySaveData = false;
 
-            OnRhapsodySaved(logAt, firstLine);
+            OnRhapsodySaved(LogUntil, firstLine);
 
             return true;
         }
@@ -553,10 +547,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere target of killer changed.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonTargetChanged(DateTime logAt, string firstLine)
+        private bool ParseAsTonTargetChanged(string firstLine)
         {
             // 2024.09.28 23:18:42 Log        -  Detection : New Target : BFF
             // 2024.09.28 23:18:42 Log        -  Detection : Initial Target : BFF
@@ -569,12 +562,12 @@ namespace Koturn.VRChat.Log
             // const int offset = 12;
             // if (SubstringEquals(firstLine, offset, "New Target : "))
             // {
-            //     Console.WriteLine($@"  [{logAt:yyyy-MM-dd HH\:mm\:ss}] New Target [{firstLine.Substring(offset + 13)}]");
+            //     Console.WriteLine($@"  [{LogUntil:yyyy-MM-dd HH\:mm\:ss}] New Target [{firstLine.Substring(offset + 13)}]");
             //     return true;
             // }
             // else if (SubstringEquals(firstLine, offset, "Initial Target : "))
             // {
-            //     Console.WriteLine($@"  [{logAt:yyyy-MM-dd HH\:mm\:ss}] Initial Target [{firstLine.Substring(offset + 17)}]");
+            //     Console.WriteLine($@"  [{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Initial Target [{firstLine.Substring(offset + 17)}]");
             //     return true;
             // }
 
@@ -583,7 +576,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnTonKillerTargetChanged(logAt, firstLine.Substring(25));
+            OnTonKillerTargetChanged(LogUntil, firstLine.Substring(25));
 
             return false;
         }
@@ -591,10 +584,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere player lost.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonPlayerDead(DateTime logAt, string firstLine)
+        private bool ParseAsTonPlayerDead(string firstLine)
         {
             // 2024.10.05 23:30:45 Log - [DEATH][XXXXXXXX] XXXXXXXX zzzzzzzz...
             if (!firstLine.StartsWith("[DEATH][", StringComparison.Ordinal))
@@ -612,7 +604,7 @@ namespace Koturn.VRChat.Log
             var playerName = firstLine.Substring(offset, index - offset);
             var message = firstLine.Substring(index + 2);
 
-            OnTonPlayerDead(logAt, playerName, message);
+            OnTonPlayerDead(LogUntil, playerName, message);
 
             return true;
         }
@@ -620,10 +612,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere player damaged.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonPlayerDamaged(DateTime logAt, string firstLine)
+        private bool ParseAsTonPlayerDamaged(string firstLine)
         {
             const int offset = 6;
 
@@ -641,7 +632,7 @@ namespace Koturn.VRChat.Log
                 }
             }
 
-            OnTonPlayerDamaged(logAt, damage);
+            OnTonPlayerDamaged(LogUntil, damage);
 
             return true;
         }
@@ -649,10 +640,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere killer stunned.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonKillerStunned(DateTime logAt, string firstLine)
+        private bool ParseAsTonKillerStunned(string firstLine)
         {
             // 2024.09.28 23:18:44 Log - BFF was stunned.
             if (!firstLine.EndsWith(" was stunned.", StringComparison.Ordinal))
@@ -666,7 +656,7 @@ namespace Koturn.VRChat.Log
                 TerrorNameSet.Add(killerName);
             }
 
-            OnTonKillerStunned(logAt, killerName);
+            OnTonKillerStunned(LogUntil, killerName);
 
             return true;
         }
@@ -674,10 +664,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere killer's enrage level changing.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonTriggerEnrage(DateTime logAt, string firstLine)
+        private bool ParseAsTonTriggerEnrage(string firstLine)
         {
             // 2024.09.28 23:18:27 Log        -  BFFtriggered an Enrage State!
             var match = RegexHelper.TonKillerEnrageRegex.Match(firstLine);
@@ -701,7 +690,7 @@ namespace Koturn.VRChat.Log
                 TerrorNameSet.Add(terrorName);
             }
 
-            OnTonKillerEnraged(logAt, terrorName, enrageLevel);
+            OnTonKillerEnraged(LogUntil, terrorName, enrageLevel);
 
             return true;
         }
@@ -709,10 +698,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere killer set.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonKillerSet(DateTime logAt, string firstLine)
+        private bool ParseAsTonKillerSet(string firstLine)
         {
             var match = RegexHelper.TonKillerSettingRegex.Match(firstLine);
             if (!match.Success)
@@ -751,7 +739,7 @@ namespace Koturn.VRChat.Log
                 tonRoundInfo.ItemIndex = _tonEquippedItemIndex;
             }
 
-            OnTonKillerSet(logAt, terrorIndex1, terrorIndex2, terrorIndex3, roundName);
+            OnTonKillerSet(LogUntil, terrorIndex1, terrorIndex2, terrorIndex3, roundName);
 
             return true;
         }
@@ -759,10 +747,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere killer unlocked.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonUnlockingEntry(DateTime logAt, string firstLine)
+        private bool ParseAsTonUnlockingEntry(string firstLine)
         {
             if (!firstLine.StartsWith("Unlocking ", StringComparison.Ordinal))
             {
@@ -773,18 +760,18 @@ namespace Koturn.VRChat.Log
             if (IsSubstringAt("Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
-                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
+                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
 #else
-                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Normal, int.Parse(firstLine.Substring(offset + 6)));
+                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Normal, int.Parse(firstLine.Substring(offset + 6)));
 #endif
                 return true;
             }
             if (IsSubstringAt("Alt Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
-                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
+                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
 #else
-                OnTonKillerUnlocked(logAt, TonTerrorIndexType.Alternate, int.Parse(firstLine.Substring(offset + 10)));
+                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Alternate, int.Parse(firstLine.Substring(offset + 10)));
 #endif
                 return true;
             }
@@ -795,10 +782,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere item equipping log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonEquipped(DateTime logAt, string firstLine)
+        private bool ParseAsTonEquipped(string firstLine)
         {
             var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
@@ -812,7 +798,7 @@ namespace Koturn.VRChat.Log
 
             _tonEquippedItemIndex = itemIndex;
 
-            OnTonEquipped(logAt, itemIndex, lastItemIndex);
+            OnTonEquipped(LogUntil, itemIndex, lastItemIndex);
 
             return true;
         }
@@ -842,10 +828,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere place detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonPlace(DateTime logAt, string firstLine)
+        private bool ParseAsTonPlace(string firstLine)
         {
             var match = RegexHelper.TonPlaceRegex.Match(firstLine);
             if (!match.Success)
@@ -858,7 +843,7 @@ namespace Koturn.VRChat.Log
             _tonPlaceName = tonPlaceName;
             _tonPlaceIndex = tonPlaceIndex;
 
-            OnTonRoundStart(logAt, tonPlaceName, tonPlaceIndex, match.Groups[3].Value);
+            OnTonRoundStart(LogUntil, tonPlaceName, tonPlaceIndex, match.Groups[3].Value);
 
             return true;
         }
@@ -866,10 +851,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere player lost.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonPlayerLost(DateTime logAt, string firstLine)
+        private bool ParseAsTonPlayerLost(string firstLine)
         {
             // 2024.09.22 17:10:05 Log        -  Died in round.
             // 2024.09.22 17:10:06 Log        -  You Died iN the Round
@@ -884,7 +868,7 @@ namespace Koturn.VRChat.Log
                 TonRoundInfo.Result = TonRoundResult.Lose;
             }
 
-            OnTonRoundFinished(logAt, TonRoundResult.Lose);
+            OnTonRoundFinished(LogUntil, TonRoundResult.Lose);
             TonRoundInfo = null;
             TerrorNameSet.Clear();
 
@@ -894,12 +878,11 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere player winning log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
         /// <exception cref="NullReferenceException">Thrown when <see cref="TonRoundInfo"/> is null.</exception>
         /// <exception cref="Exception">Thrown when terror index mismatched.</exception>
-        private bool ParseAsTonPlayerWon(DateTime logAt, string firstLine)
+        private bool ParseAsTonPlayerWon(string firstLine)
         {
             // 2024.10.05 22:04:10 Log - WE WON
             if (!firstLine.StartsWith("WE WON", StringComparison.Ordinal))
@@ -914,7 +897,7 @@ namespace Koturn.VRChat.Log
                     TonRoundInfo.Result = TonRoundResult.Win;
                 }
 
-                OnTonRoundFinished(logAt, TonRoundResult.Win);
+                OnTonRoundFinished(LogUntil, TonRoundResult.Win);
 
                 return true;
             }
@@ -1010,10 +993,9 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Parse first log line as Terrors of Nowhere save data log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsTonSaveData(DateTime logAt, string firstLine)
+        private bool ParseAsTonSaveData(string firstLine)
         {
             if (!_isTonSaveData)
             {
@@ -1028,7 +1010,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnTerrorsOfNowhereSaved(logAt, firstLine.Substring(7, firstLine.Length - 12));
+            OnTerrorsOfNowhereSaved(LogUntil, firstLine.Substring(7, firstLine.Length - 12));
 
             return true;
         }
@@ -1038,103 +1020,96 @@ namespace Koturn.VRChat.Log
         /// Parse log lines as Bullet Time Agent log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsBulletTimeAgentLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsBulletTimeAgentLog(VRCCoreExLogParser parser, List<string> logLines)
         {
             var firstLine = logLines[0];
             return parser.ParseAsBulletTimeAgentSaveDataPreamble(firstLine)
-                || parser.ParseAsBulletTimeAgentSaveData(logAt, firstLine);
+                || parser.ParseAsBulletTimeAgentSaveData(firstLine);
         }
 
         /// <summary>
         /// Parse log lines as Idle Cube log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsIdleCubeLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsIdleCubeLog(VRCCoreExLogParser parser, List<string> logLines)
         {
-            return parser.ParseAsIdleCubeSaveData(logAt, logLines[0]);
+            return parser.ParseAsIdleCubeSaveData(logLines[0]);
         }
 
         /// <summary>
         /// Parse log lines as Idle Defense log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsIdleDefenseLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsIdleDefenseLog(VRCCoreExLogParser parser, List<string> logLines)
         {
-            return parser.ParseAsIdleDefenseSaveData(logAt, logLines);
+            return parser.ParseAsIdleDefenseSaveData(logLines);
         }
 
         /// <summary>
         /// Parse log lines as Idle Home log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsIdleHomeLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsIdleHomeLog(VRCCoreExLogParser parser, List<string> logLines)
         {
-            return parser.ParseAsIdleHomeSaveData(logAt, logLines[0]);
+            return parser.ParseAsIdleHomeSaveData(logLines[0]);
         }
 
         /// <summary>
         /// Parse log lines as Magical Cursed Land log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsMagicalCursedLandLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsMagicalCursedLandLog(VRCCoreExLogParser parser, List<string> logLines)
         {
-            return parser.ParseAsMagicalCursedLandSaveData(logAt, logLines);
+            return parser.ParseAsMagicalCursedLandSaveData(logLines);
         }
 
         /// <summary>
         /// Parse log lines as Rhapsody log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsRhapsodyLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsRhapsodyLog(VRCCoreExLogParser parser, List<string> logLines)
         {
             var firstLine = logLines[0];
             return parser.ParseAsRhapsodySaveDataPreamble(firstLine)
-                || parser.ParseAsRhapsodySaveData(logAt, firstLine);
+                || parser.ParseAsRhapsodySaveData(firstLine);
         }
 
         /// <summary>
         /// Parse first log line as Terrors of Nowhere save log.
         /// </summary>
         /// <param name="parser"><see cref="VRCCoreExLogParser"/> instance.</param>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsTonLog(VRCCoreExLogParser parser, DateTime logAt, List<string> logLines)
+        private static bool ParseAsTonLog(VRCCoreExLogParser parser, List<string> logLines)
         {
             var firstLine = logLines[0];
-            return parser.ParseAsTonTargetChanged(logAt, firstLine)
-                || parser.ParseAsTonPlayerDead(logAt, firstLine)
-                || parser.ParseAsTonPlayerDamaged(logAt, firstLine)
-                || parser.ParseAsTonKillerStunned(logAt, firstLine)
-                || parser.ParseAsTonTriggerEnrage(logAt, firstLine)
-                || parser.ParseAsTonKillerSet(logAt, firstLine)
-                || parser.ParseAsTonUnlockingEntry(logAt, firstLine)
-                || parser.ParseAsTonEquipped(logAt, firstLine)
+            return parser.ParseAsTonTargetChanged(firstLine)
+                || parser.ParseAsTonPlayerDead(firstLine)
+                || parser.ParseAsTonPlayerDamaged(firstLine)
+                || parser.ParseAsTonKillerStunned(firstLine)
+                || parser.ParseAsTonTriggerEnrage(firstLine)
+                || parser.ParseAsTonKillerSet(firstLine)
+                || parser.ParseAsTonUnlockingEntry(firstLine)
+                || parser.ParseAsTonEquipped(firstLine)
                 || parser.ParseAsTonRoundStart(firstLine)
-                || parser.ParseAsTonPlace(logAt, firstLine)
-                || parser.ParseAsTonPlayerLost(logAt, firstLine)
-                || parser.ParseAsTonPlayerWon(logAt, firstLine)
+                || parser.ParseAsTonPlace(firstLine)
+                || parser.ParseAsTonPlayerLost(firstLine)
+                || parser.ParseAsTonPlayerWon(firstLine)
                 || parser.ParseAsTonRespawn(firstLine)
                 || parser.ParseAsTonSaveDataPreamble(firstLine)
-                || parser.ParseAsTonSaveData(logAt, firstLine);
+                || parser.ParseAsTonSaveData(firstLine);
         }
     }
 }
