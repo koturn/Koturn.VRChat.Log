@@ -32,6 +32,10 @@ namespace Koturn.VRChat.Log
         /// Default watch cycle (milliseconds).
         /// </summary>
         internal const int InternalDefaultWatchCycle = 1000;
+        /// <summary>
+        /// Initial thread list capacity.
+        /// </summary>
+        private const int InitialThreadListCapacity = 4;
 
         /// <summary>
         /// Default watch cycle (milliseconds).
@@ -83,7 +87,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// <see cref="List{T}"/> of log file watching thread.
         /// </summary>
-        private readonly List<Thread> _threadList = new(4);
+        private readonly List<Thread> _threadList = new(InitialThreadListCapacity);
         /// <summary>
         /// <see cref="Lock"/> object of <see cref="_threadList"/>.
         /// </summary>
@@ -319,7 +323,7 @@ namespace Koturn.VRChat.Log
         /// <returns>Latest log file path.</returns>
         private static List<string> GetWriteLockedLogFiles(string logDirPath)
         {
-            var filePathList = new List<string>();
+            var filePathList = new List<string>(InitialThreadListCapacity);
 
             foreach (var filePath in VRCBaseLogParser.GetLogFilePaths(logDirPath))
             {
