@@ -229,7 +229,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="ParseAsJoinedLog(DateTime, string)"/></para>
+        /// <para><see cref="ParseAsJoiningLog(DateTime, string)"/></para>
         /// </remarks>
         protected virtual void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {
@@ -466,7 +466,6 @@ namespace Koturn.VRChat.Log
                 || ParseAsPickupObjectLog(logAt, firstLine)
                 || ParseAsDropObjectLog(logAt, firstLine)
                 || ParseAsJoiningLog(logAt, firstLine)
-                || ParseAsJoinedLog(logAt, firstLine)
                 || ParseAsLeftLog(logAt, firstLine)
                 || ParseAsInstanceClosedByResetLog(logAt, firstLine);
         }
@@ -625,33 +624,30 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsJoiningLog(DateTime logAt, string firstLine)
         {
-            if (!IsSubstringAt("Joining wrld_", firstLine, BehaviourLogOffset))
+            if (!IsSubstringAt("Joining ", firstLine, BehaviourLogOffset))
             {
                 return false;
             }
 
-            _instanceInfo = ParseInstanceString(firstLine.Substring(BehaviourLogOffset + 8), logAt);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Parse first log line as joined to instance log.
-        /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        /// <param name="firstLine">First log line.</param>
-        /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsJoinedLog(DateTime logAt, string firstLine)
-        {
-            if (!IsSubstringAt("Joining or Creating Room: ", firstLine, BehaviourLogOffset))
+            const int instanceStringOffset = BehaviourLogOffset + 8;
+            if (IsSubstringAt("or Creating Room: ", firstLine, instanceStringOffset))
             {
-                return false;
+                _instanceInfo.WorldName = firstLine.Substring(BehaviourLogOffset + 26);
+                OnJoinedToInstance(logAt, _instanceInfo);
+                return true;
+            }
+            else if (IsSubstringAt("wrld_", firstLine, instanceStringOffset))
+            {
+                _instanceInfo = ParseInstanceString(firstLine.Substring(instanceStringOffset), logAt);
+                return true;
+            }
+            else if (IsSubstringAt("local:", firstLine, instanceStringOffset))
+            {
+                _instanceInfo = ParseLocalInstanceString(firstLine.Substring(instanceStringOffset), logAt);
+                return true;
             }
 
-            _instanceInfo.WorldName = firstLine.Substring(BehaviourLogOffset + 26);
-            OnJoinedToInstance(logAt, _instanceInfo);
-
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -950,7 +946,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="instanceString">Instance string.</param>
         /// <param name="logAt">Log timestamp.</param>
-        /// <returns>Parsed result, tuple of optioh name and arguments.</returns>
+        /// <returns>Parsed result.</returns>
         /// <exception cref="InvalidLogException">Thrown when mismatch parent detected.</exception>
         private InstanceInfo ParseInstanceString(string instanceString, DateTime logAt)
         {
@@ -1029,6 +1025,26 @@ namespace Koturn.VRChat.Log
             }
 
             return instanceInfo;
+        }
+
+        /// <summary>
+        /// Parse local instance string.
+        /// </summary>
+        /// <param name="instanceString">Instance string.</param>
+        /// <param name="logAt">Log timestamp.</param>
+        /// <returns>Parsed result.</returns>
+        private InstanceInfo ParseLocalInstanceString(string instanceString, DateTime logAt)
+        {
+            var ids = instanceString.Split(':');
+            return new InstanceInfo(logAt)
+            {
+                WorldId = ids[0],
+                InstanceString = instanceString,
+                InstanceId = ids[1],
+                InstanceType = InstanceType.Public,  // VRChat says "Public".
+                Region = Region.LocalTest,
+                LogFrom = LogFrom
+            };
         }
 
         /// <summary>

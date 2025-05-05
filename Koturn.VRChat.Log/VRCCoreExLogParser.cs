@@ -176,7 +176,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
-        /// <para><see cref="VRCCoreLogParser.ParseAsJoinedLog(DateTime, string)"/></para>
+        /// <para><see cref="VRCCoreLogParser.ParseAsJoiningLog(DateTime, string)"/></para>
         /// </remarks>
         protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
         {

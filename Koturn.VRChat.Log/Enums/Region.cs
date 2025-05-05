@@ -6,6 +6,10 @@ namespace Koturn.VRChat.Log.Enums
     public enum Region
     {
         /// <summary>
+        /// Unknown.
+        /// </summary>
+        Unknown = -1,
+        /// <summary>
         /// US West.
         /// </summary>
         USW = 0,
@@ -22,8 +26,8 @@ namespace Koturn.VRChat.Log.Enums
         /// </summary>
         JP = 3,
         /// <summary>
-        /// Unknown.
+        /// Local test.
         /// </summary>
-        Unknown = 99
+        LocalTest = 0x7fffffff
     }
 }
