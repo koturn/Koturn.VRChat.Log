@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
+#if !WINDOWS
+using System.Runtime.InteropServices;
+#endif  // !WINDOWS
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
 
@@ -47,15 +50,58 @@ namespace Koturn.VRChat.Log
         /// so 74 or more is recommended for a capacity of the list.</para>
         /// </summary>
         public static int DefaultListCapacity { get; } = InternalDefaultListCapacity;
+#if WINDOWS
         /// <summary>
-        /// Default VRChat log directory (<c>%LOCALAPPDATA%Low\VRChat\VRChat</c>).
+        /// Default VRChat log directory:
+        /// <description><c>%LOCALAPPDATA%Low\VRChat\VRChat</c></description>
         /// </summary>
-        public static string DefaultVRChatLogDirectory { get; } = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
-            "VRChat",
-            "VRChat");
-
-
+        /// <remarks>
+        /// <seealso href="https://help.vrchat.com/hc/en-us/articles/9521522810899-Where-do-I-find-my-Output-Logs"/>
+        /// </remarks>
+        public static string DefaultVRChatLogDirectory { get; } =
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
+                "VRChat",
+                "VRChat");
+#else
+        /// <summary>
+        /// Default VRChat log directory:
+        /// <list type="bullet">
+        ///   <item>
+        ///     <term>Windows</term>
+        ///     <description><c>%LOCALAPPDATA%Low\VRChat\VRChat</c></description>
+        ///   </item>
+        ///   <item>
+        ///     <term>Linux</term>
+        ///     <description><c>~/.local/share/Steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat</c></description>
+        ///   </item>
+        /// </list>
+        /// </summary>
+        /// <remarks>
+        /// <seealso href="https://help.vrchat.com/hc/en-us/articles/9521522810899-Where-do-I-find-my-Output-Logs"/>
+        /// </remarks>
+        public static string DefaultVRChatLogDirectory { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "Low",
+                "VRChat",
+                "VRChat")
+            : Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ".local",
+                "share",
+                "Steam",
+                "steamapps",
+                "compatdata",
+                "438100",
+                "pfx",
+                "drive_c",
+                "users",
+                "steamuser",
+                "AppData",
+                "LocalLow",
+                "VRChat",
+                "VRChat");
+#endif  // WINDOWS
         /// <summary>
         /// VRChat log reader.
         /// </summary>
