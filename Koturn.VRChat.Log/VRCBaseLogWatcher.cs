@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #endif  // !NET8_0_OR_GREATER
 using System.IO;
-#if WINDOWS
 using System.Runtime.InteropServices;
+#if WINDOWS
 using System.Security;
 #endif  // WINDOWS
 using System.Threading;
@@ -321,10 +321,18 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="logDirPath">Log file directory.</param>
         /// <returns>Latest log file path.</returns>
+        /// <remarks>
+        /// <seealso href="https://learn.microsoft.com/en-us/dotnet/standard/io/handling-io-errors"/>
+        /// </remarks>
         private static List<string> GetWriteLockedLogFiles(string logDirPath)
         {
-            var filePathList = new List<string>(InitialThreadListCapacity);
+#if WINDOWS
+            const bool isWindows = true;
+#else
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif  // WINDOWS
 
+            var filePathList = new List<string>(InitialThreadListCapacity);
             foreach (var filePath in VRCBaseLogParser.GetLogFilePaths(logDirPath))
             {
                 // Try to open for write.
@@ -334,10 +342,13 @@ namespace Koturn.VRChat.Log
                     // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
                     new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, 1).Dispose();
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
                     // Assume that VRChat process owns the log file.
-                    filePathList.Add(filePath);
+                    if (!isWindows || (ex.HResult & 0x0000ffff) == 0x00000020)
+                    {
+                        filePathList.Add(filePath);
+                    }
                 }
             }
 
