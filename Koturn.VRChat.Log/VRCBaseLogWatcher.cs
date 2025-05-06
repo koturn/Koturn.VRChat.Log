@@ -39,6 +39,12 @@ namespace Koturn.VRChat.Log
         /// Initial thread list capacity.
         /// </summary>
         private const int InitialThreadListCapacity = 4;
+#if !WINDOWS
+        /// <summary>
+        /// A flag whether current running platform is Windows or not.
+        /// </summary>
+        private static readonly bool _isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif  // !WINDOWS
 
         /// <summary>
         /// Default watch cycle (milliseconds).
@@ -313,38 +319,51 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="logDirPath">Log file directory.</param>
         /// <returns>Latest log file path.</returns>
-        /// <remarks>
-        /// <seealso href="https://learn.microsoft.com/en-us/dotnet/standard/io/handling-io-errors"/>
-        /// </remarks>
         private static List<string> GetWriteLockedLogFiles(string logDirPath)
         {
-#if WINDOWS
-            const bool isWindows = true;
-#else
-            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#endif  // WINDOWS
-
             var filePathList = new List<string>(InitialThreadListCapacity);
             foreach (var filePath in VRCBaseLogParser.GetLogFilePaths(logDirPath))
             {
-                // Try to open for write.
-                try
+                if (IsWriteLocked(filePath))
                 {
-                    // .NET: Buffer size must be greater than or equal to 0.
-                    // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
-                    new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, 1).Dispose();
-                }
-                catch (IOException ex)
-                {
-                    // Assume that VRChat process owns the log file.
-                    if (!isWindows || (ex.HResult & 0x0000ffff) == 0x00000020)
-                    {
-                        filePathList.Add(filePath);
-                    }
+                    filePathList.Add(filePath);
                 }
             }
 
             return filePathList;
+        }
+
+        /// <summary>
+        /// Determine whether specified file is write-locked or not.
+        /// </summary>
+        /// <param name="filePath">File path to determine.</param>
+        /// <returns>true if specified file is write-locked, otherwise false.</returns>
+        /// <remarks>
+        /// <seealso href="https://learn.microsoft.com/en-us/dotnet/standard/io/handling-io-errors"/>
+        /// </remarks>
+        private static bool IsWriteLocked(string filePath)
+        {
+            try
+            {
+                // Try to open for write.
+                // .NET: Buffer size must be greater than or equal to 0.
+                // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
+                new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, 1).Dispose();
+            }
+            catch (IOException ex)
+            {
+                // Assume that VRChat process owns the log file.
+#if WINDOWS
+                if ((ex.HResult & 0x0000ffff) == 0x00000020)
+#else
+                if (!_isWindows || (ex.HResult & 0x0000ffff) == 0x00000020)
+#endif  // WINDOWS
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
 #if !NET8_0_OR_GREATER
