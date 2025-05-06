@@ -134,12 +134,7 @@ namespace Koturn.VRChat.Log
 
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.InternalVRChatLogFileFilter)
             {
-                InternalBufferSize = 1024 * 64,
-                NotifyFilter =
-                    NotifyFilters.LastAccess
-                    | NotifyFilters.LastWrite
-                    | NotifyFilters.FileName
-                    | NotifyFilters.Size
+                NotifyFilter = NotifyFilters.FileName
             };
             watcher.Created += Watcher_Created;
             watcher.EnableRaisingEvents = true;
