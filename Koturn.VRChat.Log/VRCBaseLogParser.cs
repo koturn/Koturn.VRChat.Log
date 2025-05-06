@@ -218,7 +218,7 @@ namespace Koturn.VRChat.Log
                     LogFrom = logDateTime;
                 }
                 LogUntil = logDateTime;
-                OnLogDetected(logDateTime, logLevel, messages);
+                OnLogDetected(logLevel, messages);
             }
         }
 
@@ -235,14 +235,13 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Process detected log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines (First line does not contain timestamp and level part, just message only).</param>
         /// <returns>True if any of log parsing succeeds, otherwise false.</returns>
         /// <remarks>
         /// Return values is not used in <see cref="VRCBaseLogParser"/>, just for inherited classes.
         /// </remarks>
-        protected abstract bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines);
+        protected abstract bool OnLogDetected(VRCLogLevel level, List<string> logLines);
 
         /// <summary>
         /// Release resources.

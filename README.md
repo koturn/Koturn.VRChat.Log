@@ -109,29 +109,27 @@ namespace VRCCoreLogParserSample
         /// <summary>
         /// Output user join log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID.</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
+        protected override void OnUserJoined(string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserJoined() is empty, there is no need to call it.
-            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+            Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
         }
 
         /// <summary>
         /// Output user leave log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID.</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserLeft() is empty, there is no need to call it.
-            Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+            Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
         }
     }
 }
@@ -201,23 +199,21 @@ namespace VRCBaseLogParserSample
         /// <summary>
         /// Process detected log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines (First line does not contain timestamp and level part, just message only).</param>
         /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
-        protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+        protected override bool OnLogDetected(VRCLogLevel level, List<string> logLines)
         {
             var firstLine = logLines[0];
-            return ParseAsUserJoinLeaveLog(logAt, firstLine);
+            return ParseAsUserJoinLeaveLog(firstLine);
         }
 
         /// <summary>
         /// Parse first log line as user joined or left log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private static bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
+        private bool ParseAsUserJoinLeaveLog(string firstLine)
         {
             var match = _regexJoinLeave.Match(firstLine);
             if (!match.Success)
@@ -232,10 +228,10 @@ namespace VRCBaseLogParserSample
             switch (joinLeaveKind)
             {
                 case "Joined":
-                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
                     return true;
                 case "Left":
-                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
                     return true;
                 default:
                     return false;

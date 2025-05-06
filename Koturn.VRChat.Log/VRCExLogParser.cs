@@ -171,397 +171,361 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Fire <see cref="UserAuthenticated"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="authUserInfo">Authenticated user information.</param>
-        protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+        protected override void OnUserAuthenticated(AuthUserInfo authUserInfo)
         {
-            UserAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(FilePath, logAt, authUserInfo));
+            UserAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(FilePath, LogUntil, authUserInfo));
         }
 
         /// <summary>
         /// Fire <see cref="ApplicationQuitted"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="activeTime">Active time (in seconds).</param>
-        protected override void OnApplicationQuit(DateTime logAt, double activeTime)
+        protected override void OnApplicationQuit(double activeTime)
         {
-            ApplicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(FilePath, logAt, activeTime));
+            ApplicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(FilePath, LogUntil, activeTime));
         }
 
         /// <summary>
         /// Fire <see cref="InstanceResetNotified"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
-        protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
+        protected override void OnInstanceResetNotified(int closeMinutes)
         {
-            InstanceResetNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(FilePath, logAt, closeMinutes));
+            InstanceResetNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(FilePath, LogUntil, closeMinutes));
         }
 
         /// <summary>
         /// This method is called when instance closed log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
+        protected override void OnInstanceClosed(InstanceInfo instanceInfo)
         {
-            InstanceClosed?.Invoke(this, new InstanceEventArgs(FilePath, logAt, instanceInfo));
+            InstanceClosed?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="InstanceClosedByReset"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
-        protected override void OnInstanceClosedByReset(DateTime logAt)
+        protected override void OnInstanceClosedByReset()
         {
-            InstanceClosedByReset?.Invoke(this, new VRCLogEventArgs(FilePath, logAt));
+            InstanceClosedByReset?.Invoke(this, new VRCLogEventArgs(FilePath, LogUntil));
         }
 
         /// <summary>
         /// Fire <see cref="JoinedToInstance"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
+        protected override void OnJoinedToInstance(InstanceInfo instanceInfo)
         {
-            base.OnJoinedToInstance(logAt, instanceInfo);
-            JoinedToInstance?.Invoke(this, new InstanceEventArgs(FilePath, logAt, instanceInfo));
+            base.OnJoinedToInstance(instanceInfo);
+            JoinedToInstance?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="LeftFromInstance"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
+        protected override void OnLeftFromInstance(InstanceInfo instanceInfo)
         {
-            LeftFromInstance?.Invoke(this, new InstanceEventArgs(FilePath, logAt, instanceInfo));
+            LeftFromInstance?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="UserJoined"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
+        protected override void OnUserJoined(string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
-            UserJoined?.Invoke(this, new UserJoinEventArgs(FilePath, logAt, userName, userId, stayFrom, instanceInfo));
+            UserJoined?.Invoke(this, new UserJoinEventArgs(FilePath, LogUntil, userName, userId, stayFrom, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="UserLeft"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserLeft?.Invoke(this, new UserLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserLeft?.Invoke(this, new UserLeaveEventArgs(FilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="UserUnregistering"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
         /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+        protected override void OnUserUnregistering(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserUnregistering?.Invoke(this, new UserLeaveEventArgs(FilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserUnregistering?.Invoke(this, new UserLeaveEventArgs(FilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="ObjectPickedup"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="objectName">Pickedup object name.</param>
         /// <param name="isEquipped">True if equipped.</param>
         /// <param name="isEquippable">True if the object is equippable.</param>
         /// <param name="lastInputMethod">Last input method name.</param>
         /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
-        protected override void OnPickupObject(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+        protected override void OnPickupObject(string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
         {
-            ObjectPickedup?.Invoke(this, new ObjectPickedupEventArgs(FilePath, logAt, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
+            ObjectPickedup?.Invoke(this, new ObjectPickedupEventArgs(FilePath, LogUntil, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
         }
 
         /// <summary>
         /// Fire <see cref="ObjectDropped"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="objectName">Pickedup object name.</param>
         /// <param name="isEquipped">True if the object was equipped.</param>
         /// <param name="dropReason">Reason for dropping the object.</param>
         /// <param name="lastInputMethod">Last input method name.</param>
-        protected override void OnDropObject(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
+        protected override void OnDropObject(string objectName, bool isEquipped, string dropReason, string lastInputMethod)
         {
-            ObjectDropped?.Invoke(this, new ObjectDroppedEventArgs(FilePath, logAt, objectName, isEquipped, dropReason, lastInputMethod));
+            ObjectDropped?.Invoke(this, new ObjectDroppedEventArgs(FilePath, LogUntil, objectName, isEquipped, dropReason, lastInputMethod));
         }
 
         /// <summary>
         /// Fire <see cref="ScreenshotTook"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="filePath">Screenshort file path.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnScreenshotTook(DateTime logAt, string filePath, InstanceInfo instanceInfo)
+        protected override void OnScreenshotTook(string filePath, InstanceInfo instanceInfo)
         {
-            ScreenshotTook?.Invoke(this, new ScreenshotTakeEventArgs(FilePath, logAt, filePath, instanceInfo));
+            ScreenshotTook?.Invoke(this, new ScreenshotTakeEventArgs(FilePath, LogUntil, filePath, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="VideoUrlResolving"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="url">Video URL.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnVideoUrlResolving(DateTime logAt, string url, InstanceInfo instanceInfo)
+        protected override void OnVideoUrlResolving(string url, InstanceInfo instanceInfo)
         {
-            VideoUrlResolving?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, logAt, url, instanceInfo));
+            VideoUrlResolving?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, LogUntil, url, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="VideoUrlResolved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="url">Video URL.</param>
         /// <param name="resolvedUrl">Resolved Video URL.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        protected override void OnVideoUrlResolved(DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
+        protected override void OnVideoUrlResolved(string url, string resolvedUrl, InstanceInfo instanceInfo)
         {
-            VideoUrlResolved?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, logAt, url, resolvedUrl, instanceInfo));
+            VideoUrlResolved?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, LogUntil, url, resolvedUrl, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="Downloaded"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="url">Download URL.</param>
         /// <param name="type"></param>
         /// <param name="instanceInfo"></param>
-        protected override void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
+        protected override void OnDownloaded(string url, DownloadType type, InstanceInfo instanceInfo)
         {
-            Downloaded?.Invoke(this, new DownloadEventArgs(FilePath, logAt, url, type, instanceInfo));
+            Downloaded?.Invoke(this, new DownloadEventArgs(FilePath, LogUntil, url, type, instanceInfo));
         }
 
         /// <summary>
         /// Fire <see cref="WarningDetected"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+        protected override void OnWarningDetected(VRCLogLevel level, List<string> logLines)
         {
-            WarningDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, logAt, level, logLines));
+            WarningDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
         }
 
         /// <summary>
         /// Fire <see cref="ErrorDetected"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+        protected override void OnErrorDetected(VRCLogLevel level, List<string> logLines)
         {
-            ErrorDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, logAt, level, logLines));
+            ErrorDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
         }
 
         /// <summary>
         /// Fire <see cref="ExceptionDetected"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
-        protected override void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+        protected override void OnExceptionDetected(VRCLogLevel level, List<string> logLines)
         {
-            ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, logAt, level, logLines));
+            ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
         }
 
         /// <summary>
         /// Fire <see cref="BulletTimeAgentSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
+        protected override void OnBulletTimeAgentSaved(string saveText)
         {
-            BulletTimeAgentSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            BulletTimeAgentSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="IdleCubeSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnIdleCubeSaved(DateTime logAt, string saveText)
+        protected override void OnIdleCubeSaved(string saveText)
         {
-            IdleCubeSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            IdleCubeSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="IdleDefenseSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        protected override void OnIdleDefenseSaved(string saveText)
         {
-            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            IdleDefenseSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="IdleHomeSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnIdleHomeSaved(DateTime logAt, string saveText)
+        protected override void OnIdleHomeSaved(string saveText)
         {
-            IdleHomeSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            IdleHomeSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="MagicalCursedLandSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
+        protected override void OnMagicalCursedLandSaved(string saveText)
         {
-            MagicalCursedLandSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            MagicalCursedLandSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="RhapsodySaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnRhapsodySaved(DateTime logAt, string saveText)
+        protected override void OnRhapsodySaved(string saveText)
         {
-            RhapsodySaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            RhapsodySaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="TerrorsOfNowhereSaved"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
-        protected override void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+        protected override void OnTerrorsOfNowhereSaved(string saveText)
         {
-            TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(FilePath, logAt, saveText));
+            TerrorsOfNowhereSaved?.Invoke(this, new SaveEventArgs(FilePath, LogUntil, saveText));
         }
 
         /// <summary>
         /// Fire <see cref="TonKillerTargetChanged"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
-        protected override void OnTonKillerTargetChanged(DateTime logAt, string terrorName)
+        protected override void OnTonKillerTargetChanged(string terrorName)
         {
-            TonKillerTargetChanged?.Invoke(this, new TonKillerNameEventArgs(FilePath, logAt, terrorName));
+            TonKillerTargetChanged?.Invoke(this, new TonKillerNameEventArgs(FilePath, LogUntil, terrorName));
         }
 
         /// <summary>
         /// Fire <see cref="TonPlayerDead"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="playerName">Player name.</param>
         /// <param name="message">Message.</param>
-        protected override void OnTonPlayerDead(DateTime logAt, string playerName, string message)
+        protected override void OnTonPlayerDead(string playerName, string message)
         {
-            TonPlayerDead?.Invoke(this, new TonPlayerDeadEventArgs(FilePath, logAt, playerName, message));
+            TonPlayerDead?.Invoke(this, new TonPlayerDeadEventArgs(FilePath, LogUntil, playerName, message));
         }
 
         /// <summary>
         /// Fire <see cref="TonPlayerDamaged"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="damage">Damage point.</param>
-        protected override void OnTonPlayerDamaged(DateTime logAt, int damage)
+        protected override void OnTonPlayerDamaged(int damage)
         {
-            TonPlayerDamaged?.Invoke(this, new TonPlayerDamagedEventArgs(FilePath, logAt, damage));
+            TonPlayerDamaged?.Invoke(this, new TonPlayerDamagedEventArgs(FilePath, LogUntil, damage));
         }
 
         /// <summary>
         /// Fire <see cref="TonKillerStunned"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
-        protected override void OnTonKillerStunned(DateTime logAt, string terrorName)
+        protected override void OnTonKillerStunned(string terrorName)
         {
-            TonKillerStunned?.Invoke(this, new TonKillerNameEventArgs(FilePath, logAt, terrorName));
+            TonKillerStunned?.Invoke(this, new TonKillerNameEventArgs(FilePath, LogUntil, terrorName));
         }
 
         /// <summary>
         /// Fire <see cref="TonKillerEnraged"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
         /// <param name="enrageLevel">Enrage level.</param>
-        protected override void OnTonKillerEnraged(DateTime logAt, string terrorName, int enrageLevel)
+        protected override void OnTonKillerEnraged(string terrorName, int enrageLevel)
         {
-            TonKillerEnraged?.Invoke(this, new TonKillerEnragedEventArgs(FilePath, logAt, terrorName, enrageLevel));
+            TonKillerEnraged?.Invoke(this, new TonKillerEnragedEventArgs(FilePath, LogUntil, terrorName, enrageLevel));
         }
 
         /// <summary>
         /// Fire <see cref="TonKillerSet"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorIndex1">First terror index.</param>
         /// <param name="terrorIndex2">Second terror index.</param>
         /// <param name="terrorIndex3">Third terror index.</param>
         /// <param name="roundName">Round name.</param>
-        protected override void OnTonKillerSet(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
+        protected override void OnTonKillerSet(int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
         {
-            TonKillerSet?.Invoke(this, new TonKillerSetEventArgs(FilePath, logAt, terrorIndex1, terrorIndex2, terrorIndex3, roundName));
+            TonKillerSet?.Invoke(this, new TonKillerSetEventArgs(FilePath, LogUntil, terrorIndex1, terrorIndex2, terrorIndex3, roundName));
         }
 
         /// <summary>
         /// Fire <see cref="TonKillerUnlocked"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="indexType">Terror index type.</param>
         /// <param name="terrorIndex">Terror (Killer) index.</param>
-        protected override void OnTonKillerUnlocked(DateTime logAt, TonTerrorIndexType indexType, int terrorIndex)
+        protected override void OnTonKillerUnlocked(TonTerrorIndexType indexType, int terrorIndex)
         {
-            TonKillerUnlocked?.Invoke(this, new TonKillerUnlockedEventArgs(FilePath, logAt, indexType, terrorIndex));
+            TonKillerUnlocked?.Invoke(this, new TonKillerUnlockedEventArgs(FilePath, LogUntil, indexType, terrorIndex));
         }
 
         /// <summary>
         /// Fire <see cref="TonEquipped"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="itemIndex">Equipped item index.</param>
         /// <param name="lastItemIndex">Last equipped item index.</param>
-        protected override void OnTonEquipped(DateTime logAt, int itemIndex, int lastItemIndex)
+        protected override void OnTonEquipped(int itemIndex, int lastItemIndex)
         {
-            TonEquipped?.Invoke(this, new TonEquipEventArgs(FilePath, logAt, itemIndex, lastItemIndex));
+            TonEquipped?.Invoke(this, new TonEquipEventArgs(FilePath, LogUntil, itemIndex, lastItemIndex));
         }
 
         /// <summary>
         /// Fire <see cref="TonRoundStarted"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="placeName">Place name.</param>
         /// <param name="placeIndex">Place index.</param>
         /// <param name="roundName">Round name.</param>
-        protected override void OnTonRoundStart(DateTime logAt, string placeName, int placeIndex, string roundName)
+        protected override void OnTonRoundStart(string placeName, int placeIndex, string roundName)
         {
-            TonRoundStarted?.Invoke(this, new TonRoundStartedEventArgs(FilePath, logAt, placeName, placeIndex, roundName));
+            TonRoundStarted?.Invoke(this, new TonRoundStartedEventArgs(FilePath, LogUntil, placeName, placeIndex, roundName));
         }
 
         /// <summary>
         /// Fire <see cref="TonRoundFinished"/> event.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="result">Round result.</param>
-        protected override void OnTonRoundFinished(DateTime logAt, TonRoundResult result)
+        protected override void OnTonRoundFinished(TonRoundResult result)
         {
-            TonRoundFinished?.Invoke(this, new TonRoundFinishedEventArgs(FilePath, logAt, result));
+            TonRoundFinished?.Invoke(this, new TonRoundFinishedEventArgs(FilePath, LogUntil, result));
         }
     }
 }

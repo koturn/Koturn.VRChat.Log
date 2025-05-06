@@ -253,232 +253,201 @@ namespace Koturn.VRChat.Log
             private readonly string _logFilePath = filePath;
 
             /// <summary>
-            /// Load one line of log file and parse it, and fire each event as needed.
-            /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
-            /// <param name="level">Log level.</param>
-            /// <param name="logLines">Log lines.</param>
-            /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
-            protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
-            {
-                return base.OnLogDetected(logAt, level, logLines);
-            }
-
-            /// <summary>
             /// Fire <see cref="UserAuthenticated"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="authUserInfo">Authenticated user information.</param>
-            protected override void OnUserAuthenticated(DateTime logAt, AuthUserInfo authUserInfo)
+            protected override void OnUserAuthenticated(AuthUserInfo authUserInfo)
             {
-                _logWatcher._userAuthenticated?.Invoke(_logWatcher, new UserAuthenticatedEventArgs(_logFilePath, logAt, authUserInfo));
+                _logWatcher._userAuthenticated?.Invoke(_logWatcher, new UserAuthenticatedEventArgs(_logFilePath, LogUntil, authUserInfo));
             }
 
             /// <summary>
             /// Fire <see cref="ApplicationQuitted"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="activeTime">Active time (in seconds).</param>
-            protected override void OnApplicationQuit(DateTime logAt, double activeTime)
+            protected override void OnApplicationQuit(double activeTime)
             {
-                _logWatcher._applicationQuitted?.Invoke(_logWatcher, new ApplicationQuittedEventArgs(_logFilePath, logAt, activeTime));
+                _logWatcher._applicationQuitted?.Invoke(_logWatcher, new ApplicationQuittedEventArgs(_logFilePath, LogUntil, activeTime));
                 _logWatcher.Stop(Thread.CurrentThread);
             }
 
             /// <summary>
             /// Fire <see cref="InstanceResetNotified"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
-            protected override void OnInstanceResetNotified(DateTime logAt, int closeMinutes)
+            protected override void OnInstanceResetNotified(int closeMinutes)
             {
-                _logWatcher._instanceCloseNotified?.Invoke(_logWatcher, new InstanceResetNotifiedEventArgs(_logFilePath, logAt, closeMinutes));
+                _logWatcher._instanceCloseNotified?.Invoke(_logWatcher, new InstanceResetNotifiedEventArgs(_logFilePath, LogUntil, closeMinutes));
             }
 
             /// <summary>
             /// Fire <see cref="InstanceClosed"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnInstanceClosed(DateTime logAt, InstanceInfo instanceInfo)
+            protected override void OnInstanceClosed(InstanceInfo instanceInfo)
             {
-                _logWatcher._instanceClosed?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
+                _logWatcher._instanceClosed?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, LogUntil, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="InstanceClosedByReset"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
-            protected override void OnInstanceClosedByReset(DateTime logAt)
+            protected override void OnInstanceClosedByReset()
             {
-                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(_logFilePath, logAt));
+                _logWatcher._instanceClosedByReset?.Invoke(_logWatcher, new VRCLogEventArgs(_logFilePath, LogUntil));
             }
 
             /// <summary>
             /// Fire <see cref="JoinedToInstance"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
+            protected override void OnJoinedToInstance(InstanceInfo instanceInfo)
             {
-                _logWatcher._joinedToInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
+                _logWatcher._joinedToInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, LogUntil, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="LeftFromInstance"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnLeftFromInstance(DateTime logAt, InstanceInfo instanceInfo)
+            protected override void OnLeftFromInstance(InstanceInfo instanceInfo)
             {
-                _logWatcher._leftFromInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, logAt, instanceInfo));
+                _logWatcher._leftFromInstance?.Invoke(_logWatcher, new InstanceEventArgs(_logFilePath, LogUntil, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="UserJoined"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
             /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserJoined(DateTime logAt, string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
+            protected override void OnUserJoined(string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
             {
-                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinEventArgs(_logFilePath, logAt, userName, userId, stayFrom, instanceInfo));
+                _logWatcher._userJoined?.Invoke(_logWatcher, new UserJoinEventArgs(_logFilePath, LogUntil, userName, userId, stayFrom, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="UserLeft"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
             /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="stayUntil">A timestamp the user left.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserLeft(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userLeft?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userLeft?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="UserUnregistering"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="userName">User name.</param>
             /// <param name="userId">User ID (This value may null on the logs before 2024-10-31).</param>
             /// <param name="stayFrom">A timestamp the user joined.</param>
             /// <param name="stayUntil">A timestamp the user left.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnUserUnregistering(DateTime logAt, string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
+            protected override void OnUserUnregistering(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
             {
-                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, logAt, userName, userId, stayFrom, stayUntil, instanceInfo));
+                _logWatcher._userUnregistering?.Invoke(_logWatcher, new UserLeaveEventArgs(_logFilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="ObjectPickedup"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="objectName">Pickedup object name.</param>
             /// <param name="isEquipped">True if equipped.</param>
             /// <param name="isEquippable">True if the object is equippable.</param>
             /// <param name="lastInputMethod">Last input method name.</param>
             /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
-            protected override void OnPickupObject(DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+            protected override void OnPickupObject(string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
             {
-                _logWatcher._objectPickedup?.Invoke(_logWatcher, new ObjectPickedupEventArgs(_logFilePath, logAt, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
+                _logWatcher._objectPickedup?.Invoke(_logWatcher, new ObjectPickedupEventArgs(_logFilePath, LogUntil, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
             }
 
             /// <summary>
             /// Fire <see cref="ObjectDropped"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="objectName">Pickedup object name.</param>
             /// <param name="isEquipped">True if the object was equipped.</param>
             /// <param name="dropReason">Reason for dropping the object.</param>
             /// <param name="lastInputMethod">Last input method name.</param>
-            protected override void OnDropObject(DateTime logAt, string objectName, bool isEquipped, string dropReason, string lastInputMethod)
+            protected override void OnDropObject(string objectName, bool isEquipped, string dropReason, string lastInputMethod)
             {
-                _logWatcher._objectDropped?.Invoke(_logWatcher, new ObjectDroppedEventArgs(_logFilePath, logAt, objectName, isEquipped, dropReason, lastInputMethod));
+                _logWatcher._objectDropped?.Invoke(_logWatcher, new ObjectDroppedEventArgs(_logFilePath, LogUntil, objectName, isEquipped, dropReason, lastInputMethod));
             }
 
             /// <summary>
             /// Fire <see cref="ScreenshotTook"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="filePath">Screenshort file path.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnScreenshotTook(DateTime logAt, string filePath, InstanceInfo instanceInfo)
+            protected override void OnScreenshotTook(string filePath, InstanceInfo instanceInfo)
             {
-                _logWatcher._screenshotTook?.Invoke(_logWatcher, new ScreenshotTakeEventArgs(_logFilePath, logAt, filePath, instanceInfo));
+                _logWatcher._screenshotTook?.Invoke(_logWatcher, new ScreenshotTakeEventArgs(_logFilePath, LogUntil, filePath, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="VideoUrlResolving"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Video URL.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnVideoUrlResolving(DateTime logAt, string url, InstanceInfo instanceInfo)
+            protected override void OnVideoUrlResolving(string url, InstanceInfo instanceInfo)
             {
-                _logWatcher._videoUrlResolving?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, logAt, url, instanceInfo));
+                _logWatcher._videoUrlResolving?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, LogUntil, url, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="VideoUrlResolved"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Video URL.</param>
             /// <param name="resolvedUrl">Resolved Video URL.</param>
             /// <param name="instanceInfo">Instance information.</param>
-            protected override void OnVideoUrlResolved(DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
+            protected override void OnVideoUrlResolved(string url, string resolvedUrl, InstanceInfo instanceInfo)
             {
-                _logWatcher._videoUrlResolved?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, logAt, url, resolvedUrl, instanceInfo));
+                _logWatcher._videoUrlResolved?.Invoke(_logWatcher, new VideoUrlResolveEventArgs(_logFilePath, LogUntil, url, resolvedUrl, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="Downloaded"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="url">Download URL.</param>
             /// <param name="type"></param>
             /// <param name="instanceInfo"></param>
-            protected override void OnDownloaded(DateTime logAt, string url, DownloadType type, InstanceInfo instanceInfo)
+            protected override void OnDownloaded(string url, DownloadType type, InstanceInfo instanceInfo)
             {
-                _logWatcher._downloaded?.Invoke(_logWatcher, new DownloadEventArgs(_logFilePath, logAt, url, type, instanceInfo));
+                _logWatcher._downloaded?.Invoke(_logWatcher, new DownloadEventArgs(_logFilePath, LogUntil, url, type, instanceInfo));
             }
 
             /// <summary>
             /// Fire <see cref="WarningDetected"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnWarningDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+            protected override void OnWarningDetected(VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._warningDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
+                _logWatcher._warningDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, LogUntil, level, logLines));
             }
 
             /// <summary>
             /// Fire <see cref="ErrorDetected"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnErrorDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+            protected override void OnErrorDetected(VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._errorDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
+                _logWatcher._errorDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, LogUntil, level, logLines));
             }
 
             /// <summary>
             /// Fire <see cref="ExceptionDetected"/> event.
             /// </summary>
-            /// <param name="logAt">Log timestamp.</param>
             /// <param name="level">Log level.</param>
             /// <param name="logLines">Log lines.</param>
-            protected override void OnExceptionDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+            protected override void OnExceptionDetected(VRCLogLevel level, List<string> logLines)
             {
-                _logWatcher._exceptionDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, logAt, level, logLines));
+                _logWatcher._exceptionDetected?.Invoke(_logWatcher, new ErrorLogEventArgs(_logFilePath, LogUntil, level, logLines));
             }
         }
     }

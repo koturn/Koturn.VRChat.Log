@@ -150,13 +150,12 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Load one line of log file and parse it, and fire each event as needed.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="level">Log level.</param>
         /// <param name="logLines">Log lines.</param>
         /// <returns>True if any of the log parsing defined in this class succeeds, otherwise false.</returns>
-        protected override bool OnLogDetected(DateTime logAt, VRCLogLevel level, List<string> logLines)
+        protected override bool OnLogDetected(VRCLogLevel level, List<string> logLines)
         {
-            if (base.OnLogDetected(logAt, level, logLines))
+            if (base.OnLogDetected(level, logLines))
             {
                 return true;
             }
@@ -172,13 +171,12 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// This method is called when join log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="instanceInfo">Instance information.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="VRCCoreLogParser.ParseAsJoiningLog(string)"/></para>
         /// </remarks>
-        protected override void OnJoinedToInstance(DateTime logAt, InstanceInfo instanceInfo)
+        protected override void OnJoinedToInstance(InstanceInfo instanceInfo)
         {
             _parseAsSpecificWorldLog = instanceInfo.WorldId switch
             {
@@ -197,163 +195,149 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// This method is called when Bullet Time Agent save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsBulletTimeAgentSaveData(string)"/></para>
         /// </remarks>
-        protected virtual void OnBulletTimeAgentSaved(DateTime logAt, string saveText)
+        protected virtual void OnBulletTimeAgentSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Idle Cube save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsIdleCubeSaveData(string)"/></para>
         /// </remarks>
-        protected virtual void OnIdleCubeSaved(DateTime logAt, string saveText)
+        protected virtual void OnIdleCubeSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Idle Defense save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsIdleDefenseSaveData(List{string})"/></para>
         /// </remarks>
-        protected virtual void OnIdleDefenseSaved(DateTime logAt, string saveText)
+        protected virtual void OnIdleDefenseSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Idle Home save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsIdleHomeSaveData(string)"/></para>
         /// </remarks>
-        protected virtual void OnIdleHomeSaved(DateTime logAt, string saveText)
+        protected virtual void OnIdleHomeSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Magical Cursed Land save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsMagicalCursedLandSaveData(List{string})"/></para>
         /// </remarks>
-        protected virtual void OnMagicalCursedLandSaved(DateTime logAt, string saveText)
+        protected virtual void OnMagicalCursedLandSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere target of killer changed.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
-        protected virtual void OnTonKillerTargetChanged(DateTime logAt, string terrorName)
+        protected virtual void OnTonKillerTargetChanged(string terrorName)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere any player dead.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="playerName">Player name.</param>
         /// <param name="message">message.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonPlayerDead(string)"/></para>
         /// </remarks>
-        protected virtual void OnTonPlayerDead(DateTime logAt, string playerName, string message)
+        protected virtual void OnTonPlayerDead(string playerName, string message)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere player damaged.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="damage">Damage point.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonPlayerDamaged(string)"/></para>
         /// </remarks>
-        protected virtual void OnTonPlayerDamaged(DateTime logAt, int damage)
+        protected virtual void OnTonPlayerDamaged(int damage)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere killer stunned.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
-        protected virtual void OnTonKillerStunned(DateTime logAt, string terrorName)
+        protected virtual void OnTonKillerStunned(string terrorName)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere killer's enrage level changed.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorName">Terror name.</param>
         /// <param name="enragteLevel">Enrage level.</param>
-        protected virtual void OnTonKillerEnraged(DateTime logAt, string terrorName, int enragteLevel)
+        protected virtual void OnTonKillerEnraged(string terrorName, int enragteLevel)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere killer set.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="terrorIndex1">First terror index.</param>
         /// <param name="terrorIndex2">Second terror index.</param>
         /// <param name="terrorIndex3">Third terror index.</param>
         /// <param name="roundName">Round name.</param>
-        protected virtual void OnTonKillerSet(DateTime logAt, int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
+        protected virtual void OnTonKillerSet(int terrorIndex1, int terrorIndex2, int terrorIndex3, string roundName)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere killer unlocked.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="indexType">Terror index type.</param>
         /// <param name="terrorIndex">Terror (Killer) index.</param>
-        protected virtual void OnTonKillerUnlocked(DateTime logAt, TonTerrorIndexType indexType, int terrorIndex)
+        protected virtual void OnTonKillerUnlocked(TonTerrorIndexType indexType, int terrorIndex)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere item equipping log.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="itemIndex">Equipped item index.</param>
         /// <param name="lastItemIndex">Last equipped item index.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonEquipped(string)"/></para>
         /// </remarks>
-        protected virtual void OnTonEquipped(DateTime logAt, int itemIndex, int lastItemIndex)
+        protected virtual void OnTonEquipped(int itemIndex, int lastItemIndex)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere round started.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="placeName">Place name.</param>
         /// <param name="placeIndex">Place index.</param>
         /// <param name="roundName">Round name.</param>
@@ -361,42 +345,39 @@ namespace Koturn.VRChat.Log
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonPlace(string)"/></para>
         /// </remarks>
-        protected virtual void OnTonRoundStart(DateTime logAt, string placeName, int placeIndex, string roundName)
+        protected virtual void OnTonRoundStart(string placeName, int placeIndex, string roundName)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of Nowhere round finished.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="result">Round result.</param>
-        protected virtual void OnTonRoundFinished(DateTime logAt, TonRoundResult result)
+        protected virtual void OnTonRoundFinished(TonRoundResult result)
         {
         }
 
         /// <summary>
         /// This method is called when Terrors of nowhere save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonSaveData(string)"/></para>
         /// </remarks>
-        protected virtual void OnTerrorsOfNowhereSaved(DateTime logAt, string saveText)
+        protected virtual void OnTerrorsOfNowhereSaved(string saveText)
         {
         }
 
         /// <summary>
         /// This method is called when Rhapsody save data log is detected.
         /// </summary>
-        /// <param name="logAt">Log timestamp.</param>
         /// <param name="saveText">Save data text.</param>
         /// <remarks>
         /// <para>Called from following method.</para>
         /// <para><see cref="ParseAsTonSaveData(string)"/></para>
         /// </remarks>
-        protected virtual void OnRhapsodySaved(DateTime logAt, string saveText)
+        protected virtual void OnRhapsodySaved(string saveText)
         {
         }
 
@@ -432,7 +413,7 @@ namespace Koturn.VRChat.Log
 
             _isBulletTimeAgentSaveData = false;
 
-            OnBulletTimeAgentSaved(LogUntil, firstLine);
+            OnBulletTimeAgentSaved(firstLine);
 
             return true;
         }
@@ -449,7 +430,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnIdleCubeSaved(LogUntil, firstLine);
+            OnIdleCubeSaved(firstLine);
 
             return true;
         }
@@ -467,7 +448,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnIdleHomeSaved(LogUntil, match.Groups[1].Value);
+            OnIdleHomeSaved(match.Groups[1].Value);
 
             return true;
         }
@@ -486,7 +467,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnIdleDefenseSaved(LogUntil, logLines[1].Substring(0, logLines[1].Length - 12));
+            OnIdleDefenseSaved(logLines[1].Substring(0, logLines[1].Length - 12));
 
             return true;
         }
@@ -503,7 +484,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnMagicalCursedLandSaved(LogUntil, logLines[1]);
+            OnMagicalCursedLandSaved(logLines[1]);
 
             return true;
         }
@@ -539,7 +520,7 @@ namespace Koturn.VRChat.Log
 
             _isRhapsodySaveData = false;
 
-            OnRhapsodySaved(LogUntil, firstLine);
+            OnRhapsodySaved(firstLine);
 
             return true;
         }
@@ -576,7 +557,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnTonKillerTargetChanged(LogUntil, firstLine.Substring(25));
+            OnTonKillerTargetChanged(firstLine.Substring(25));
 
             return false;
         }
@@ -604,7 +585,7 @@ namespace Koturn.VRChat.Log
             var playerName = firstLine.Substring(offset, index - offset);
             var message = firstLine.Substring(index + 2);
 
-            OnTonPlayerDead(LogUntil, playerName, message);
+            OnTonPlayerDead(playerName, message);
 
             return true;
         }
@@ -632,7 +613,7 @@ namespace Koturn.VRChat.Log
                 }
             }
 
-            OnTonPlayerDamaged(LogUntil, damage);
+            OnTonPlayerDamaged(damage);
 
             return true;
         }
@@ -656,7 +637,7 @@ namespace Koturn.VRChat.Log
                 TerrorNameSet.Add(killerName);
             }
 
-            OnTonKillerStunned(LogUntil, killerName);
+            OnTonKillerStunned(killerName);
 
             return true;
         }
@@ -690,7 +671,7 @@ namespace Koturn.VRChat.Log
                 TerrorNameSet.Add(terrorName);
             }
 
-            OnTonKillerEnraged(LogUntil, terrorName, enrageLevel);
+            OnTonKillerEnraged(terrorName, enrageLevel);
 
             return true;
         }
@@ -739,7 +720,7 @@ namespace Koturn.VRChat.Log
                 tonRoundInfo.ItemIndex = _tonEquippedItemIndex;
             }
 
-            OnTonKillerSet(LogUntil, terrorIndex1, terrorIndex2, terrorIndex3, roundName);
+            OnTonKillerSet(terrorIndex1, terrorIndex2, terrorIndex3, roundName);
 
             return true;
         }
@@ -760,18 +741,18 @@ namespace Koturn.VRChat.Log
             if (IsSubstringAt("Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
-                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
+                OnTonKillerUnlocked(TonTerrorIndexType.Normal, int.Parse(firstLine.AsSpan(offset + 6)));
 #else
-                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Normal, int.Parse(firstLine.Substring(offset + 6)));
+                OnTonKillerUnlocked(TonTerrorIndexType.Normal, int.Parse(firstLine.Substring(offset + 6)));
 #endif
                 return true;
             }
             if (IsSubstringAt("Alt Entry ", firstLine, offset))
             {
 #if NET7_0_OR_GREATER
-                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
+                OnTonKillerUnlocked(TonTerrorIndexType.Alternate, int.Parse(firstLine.AsSpan(offset + 10)));
 #else
-                OnTonKillerUnlocked(LogUntil, TonTerrorIndexType.Alternate, int.Parse(firstLine.Substring(offset + 10)));
+                OnTonKillerUnlocked(TonTerrorIndexType.Alternate, int.Parse(firstLine.Substring(offset + 10)));
 #endif
                 return true;
             }
@@ -798,7 +779,7 @@ namespace Koturn.VRChat.Log
 
             _tonEquippedItemIndex = itemIndex;
 
-            OnTonEquipped(LogUntil, itemIndex, lastItemIndex);
+            OnTonEquipped(itemIndex, lastItemIndex);
 
             return true;
         }
@@ -843,7 +824,7 @@ namespace Koturn.VRChat.Log
             _tonPlaceName = tonPlaceName;
             _tonPlaceIndex = tonPlaceIndex;
 
-            OnTonRoundStart(LogUntil, tonPlaceName, tonPlaceIndex, match.Groups[3].Value);
+            OnTonRoundStart(tonPlaceName, tonPlaceIndex, match.Groups[3].Value);
 
             return true;
         }
@@ -868,7 +849,7 @@ namespace Koturn.VRChat.Log
                 TonRoundInfo.Result = TonRoundResult.Lose;
             }
 
-            OnTonRoundFinished(LogUntil, TonRoundResult.Lose);
+            OnTonRoundFinished(TonRoundResult.Lose);
             TonRoundInfo = null;
             TerrorNameSet.Clear();
 
@@ -897,7 +878,7 @@ namespace Koturn.VRChat.Log
                     TonRoundInfo.Result = TonRoundResult.Win;
                 }
 
-                OnTonRoundFinished(LogUntil, TonRoundResult.Win);
+                OnTonRoundFinished(TonRoundResult.Win);
 
                 return true;
             }
@@ -1010,7 +991,7 @@ namespace Koturn.VRChat.Log
                 return false;
             }
 
-            OnTerrorsOfNowhereSaved(LogUntil, firstLine.Substring(7, firstLine.Length - 12));
+            OnTerrorsOfNowhereSaved(firstLine.Substring(7, firstLine.Length - 12));
 
             return true;
         }
