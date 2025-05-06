@@ -11,15 +11,7 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// VRChat Log Reader.
     /// </summary>
-    /// <remarks>
-    /// primary ctor: Initialize instance with specified <see cref="FileStream"/> and buffer size.
-    /// </remarks>
-    /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
-    /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
-    /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
-    /// after the <see cref="VRCLogReader"/> object is disposed; otherwise, false.</param>
-    public class VRCLogReader(Stream stream, int bufferSize, bool leaveOpen)
-        : IDisposable
+    public class VRCLogReader : IDisposable
     {
         /// <summary>
         /// Default buffer size.
@@ -75,7 +67,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Input <see cref="Stream"/>.
         /// </summary>
-        public Stream BaseStream { get; } = stream;
+        public Stream BaseStream { get; }
         /// <summary>
         /// Log line counter.
         /// </summary>
@@ -85,9 +77,13 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public ulong LogCount { get; private set; }
         /// <summary>
-        /// Get underlying file path from <see cref="BaseStream"/>.
+        /// Underlying file path of <see cref="BaseStream"/>.
         /// </summary>
-        public string? FilePath => GetFilePath(BaseStream);
+        public string? FilePath { get; }
+        /// <summary>
+        /// Underlying file name of <see cref="BaseStream"/>.
+        /// </summary>
+        public string? FileName { get; }
         /// <summary>
         /// A flag property which indicates this instance is disposed or not.
         /// </summary>
@@ -96,7 +92,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Read buffer.
         /// </summary>
-        private byte[] _buffer = new byte[bufferSize];
+        private byte[] _buffer;
         /// <summary>
         /// Read byte offset.
         /// </summary>
@@ -120,7 +116,7 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// true to leave the <see cref="BaseStream"/> open after the <see cref="VRCBaseLogParser"/> object is disposed; otherwise, false.
         /// </summary>
-        private readonly bool _leaveOpen = leaveOpen;
+        private readonly bool _leaveOpen;
 
 
         /// <summary>
@@ -170,6 +166,23 @@ namespace Koturn.VRChat.Log
         public VRCLogReader(Stream stream, bool leaveOpen)
             : this(stream, InternalDefaultBufferSize, leaveOpen)
         {
+        }
+
+        /// <summary>
+        /// Initialize instance with specified <see cref="FileStream"/> and buffer size.
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> of VRChat log file.</param>
+        /// <param name="bufferSize">Buffer size for <see cref="StreamReader"/>.</param>
+        /// <param name="leaveOpen">true to leave the <paramref name="stream"/> open
+        /// after the <see cref="VRCLogReader"/> object is disposed; otherwise, false.</param>
+        public VRCLogReader(Stream stream, int bufferSize, bool leaveOpen)
+        {
+            BaseStream = stream;
+            var filePath = GetFilePath(stream);
+            FilePath = filePath;
+            FileName = filePath == null ? null : Path.GetFileName(filePath);
+            _buffer = new byte[bufferSize];
+            _leaveOpen = leaveOpen;
         }
 
 
