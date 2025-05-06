@@ -1,6 +1,9 @@
+#if NET7_0_OR_GREATER
+#    define SUPPORT_LIBRARY_IMPORT
+#endif  // NET7_0_OR_GREATER
+
 using System;
 using System.Collections.Generic;
-
 #if !NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif  // !NET8_0_OR_GREATER
@@ -22,11 +25,11 @@ namespace Koturn.VRChat.Log
     /// <summary>
     /// Log Watcher class.
     /// </summary>
-#if NET7_0_OR_GREATER && WINDOWS
+#if SUPPORT_LIBRARY_IMPORT && WINDOWS
     public abstract partial class VRCBaseLogWatcher : IDisposable
 #else
     public abstract class VRCBaseLogWatcher : IDisposable
-#endif  // NET7_0_OR_GREATER && WINDOWS
+#endif  // SUPPORT_LIBRARY_IMPORT && WINDOWS
     {
         /// <summary>
         /// Default watch cycle (milliseconds).
@@ -539,11 +542,11 @@ namespace Koturn.VRChat.Log
         /// Provides native methods.
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-#if NET7_0_OR_GREATER
+#if SUPPORT_LIBRARY_IMPORT
         private static partial class SafeNativeMethods
 #else
         private static class SafeNativeMethods
-#endif
+#endif  // SUPPORT_LIBRARY_IMPORT
         {
             /// <summary>
             /// <para>Retrieves attributes for a specified file or directory.</para>
@@ -572,14 +575,14 @@ namespace Koturn.VRChat.Log
             /// <remarks>
             /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileattributesexw"/>
             /// </remarks>
-#if NET7_0_OR_GREATER
+#if SUPPORT_LIBRARY_IMPORT
             [LibraryImport("kernel32.dll", EntryPoint = nameof(GetFileAttributesEx) + "W", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static partial bool GetFileAttributesEx(string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
 #else
             [DllImport("kernel32.dll", EntryPoint = nameof(GetFileAttributesEx) + "W", ExactSpelling = true, CharSet = CharSet.Unicode)]
             public static extern bool GetFileAttributesEx([In] string fileName, GetFileExInfoLevels infoLevelId, out Win32FileAttributeData fileAttrData);
-#endif  // NET7_0_OR_GREATER
+#endif  // SUPPORT_LIBRARY_IMPORT
         }
 #endif  // WINDOWS
     }
