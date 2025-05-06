@@ -132,6 +132,12 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private readonly bool _leaveOpen = leaveOpen;
 
+        /// <summary>
+        /// <para>Log timestamp.</para>
+        /// <para>Alias of <see cref="LogUntil"/>, provided for the convenience of inherited classes.</para>
+        /// </summary>
+        protected DateTime LogAt => LogUntil;
+
 
         /// <summary>
         /// Create <see cref="VRCLogReader"/> with specified file path, then initialize instance with it.

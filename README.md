@@ -116,7 +116,7 @@ namespace VRCCoreLogParserSample
         protected override void OnUserJoined(string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserJoined() is empty, there is no need to call it.
-            Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+            Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace VRCCoreLogParserSample
         protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
             // Since the base.OnUserLeft() is empty, there is no need to call it.
-            Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+            Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
         }
     }
 }
@@ -228,10 +228,10 @@ namespace VRCBaseLogParserSample
             switch (joinLeaveKind)
             {
                 case "Joined":
-                    Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
                     return true;
                 case "Left":
-                    Console.WriteLine($@"[{LogUntil:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
                     return true;
                 default:
                     return false;
