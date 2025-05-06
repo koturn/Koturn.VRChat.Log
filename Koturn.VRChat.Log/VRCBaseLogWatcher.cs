@@ -63,10 +63,6 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public bool IsThreadStarted => _threadList.Count > 0;
         /// <summary>
-        /// Current watching log file path.
-        /// </summary>
-        public string? CurrentFilePath { get; protected set; }
-        /// <summary>
         /// True if disposed, otherwise false.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -244,7 +240,6 @@ namespace Koturn.VRChat.Log
                 logParser = CreateLogParser(filePath);
                 if (isParseToEnd)
                 {
-                    CurrentFilePath = logParser.FilePath;
                     logParser.Parse();
                 }
                 return StartFileWatchingThread(logParser);
@@ -268,7 +263,6 @@ namespace Koturn.VRChat.Log
                 {
                     var fs = (FileStream)logParser.LogReader.BaseStream;
                     var filePath = fs.Name;
-                    CurrentFilePath = filePath;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
                     try
