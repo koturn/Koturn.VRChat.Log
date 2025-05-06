@@ -1,9 +1,9 @@
-#if NET7_0_OR_GREATER
-#    define SUPPORT_GENERATED_REGEX
-#endif
 #if NET9_0_OR_GREATER
 #    define SUPPORT_GENERATED_REGEX_PROPERTY
-#endif
+#endif  // NET9_0_OR_GREATER
+#if NET7_0_OR_GREATER
+#    define SUPPORT_GENERATED_REGEX
+#endif  // NET7_0_OR_GREATER
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
@@ -18,7 +18,7 @@ namespace Koturn.VRChat.Log.Internals
     internal static partial class RegexHelper
 #else
     internal static class RegexHelper
-#endif
+#endif  // SUPPORT_GENERATED_REGEX
     {
         /// <summary>
         /// Options for <see cref="Regex"/> instances.
@@ -75,16 +75,10 @@ namespace Koturn.VRChat.Log.Internals
         /// <summary>
         /// <see cref="Regex"/> instance to detect pickup object log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex InstanceResetNotificationRegex => _instanceResetNotificationRegex ??= new Regex(InstanceResetNotificationPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="InstanceResetNotificationRegex"/>.
-        /// </summary>
-        private static Regex? _instanceResetNotificationRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(InstanceResetNotificationPattern, Options)]
         public static partial Regex InstanceResetNotificationRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex InstanceResetNotificationRegex => GetInstanceResetNotificationRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect pickup object log.
@@ -92,21 +86,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect pickup object log.</returns>
         [GeneratedRegex(InstanceResetNotificationPattern, Options)]
         private static partial Regex GetInstanceResetNotificationRegex();
-#endif
+#else
+        public static Regex InstanceResetNotificationRegex => _instanceResetNotificationRegex ??= new Regex(InstanceResetNotificationPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="InstanceResetNotificationRegex"/>.
+        /// </summary>
+        private static Regex? _instanceResetNotificationRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect pickup object log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex PickupObjectRegex => _pickupObjectRegex ??= new Regex(PickupObjectPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="PickupObjectRegex"/>.
-        /// </summary>
-        private static Regex? _pickupObjectRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(PickupObjectPattern, Options)]
         public static partial Regex PickupObjectRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex PickupObjectRegex => GetPickupObjectRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect pickup object log.
@@ -114,21 +108,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect pickup object log.</returns>
         [GeneratedRegex(PickupObjectPattern, Options)]
         private static partial Regex GetPickupObjectRegex();
-#endif
+#else
+        public static Regex PickupObjectRegex => _pickupObjectRegex ??= new Regex(PickupObjectPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="PickupObjectRegex"/>.
+        /// </summary>
+        private static Regex? _pickupObjectRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect drop object log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex DropObjectRegex => _dropObjectRegex ??= new Regex(DropObjectPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="DropObjectRegex"/>.
-        /// </summary>
-        private static Regex? _dropObjectRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(DropObjectPattern, Options)]
         public static partial Regex DropObjectRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex DropObjectRegex => GetDropObjectRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect drop object log.
@@ -136,21 +130,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect drop object log.</returns>
         [GeneratedRegex(DropObjectPattern, Options)]
         private static partial Regex GetDropObjectRegex();
-#endif
+#else
+        public static Regex DropObjectRegex => _dropObjectRegex ??= new Regex(DropObjectPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="DropObjectRegex"/>.
+        /// </summary>
+        private static Regex? _dropObjectRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect Idle Home save log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex IdleHomeSaveRegex => _idleHomeSaveRegex ??= new Regex(IdleHomeSavePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="IdleHomeSaveRegex"/>.
-        /// </summary>
-        private static Regex? _idleHomeSaveRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(IdleHomeSavePattern, Options)]
         public static partial Regex IdleHomeSaveRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex IdleHomeSaveRegex => GetIdleHomeSaveRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect Idle Home save log.
@@ -158,21 +152,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Idle Home save log.</returns>
         [GeneratedRegex(IdleHomeSavePattern, Options)]
         private static partial Regex GetIdleHomeSaveRegex();
-#endif
+#else
+        public static Regex IdleHomeSaveRegex => _idleHomeSaveRegex ??= new Regex(IdleHomeSavePattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="IdleHomeSaveRegex"/>.
+        /// </summary>
+        private static Regex? _idleHomeSaveRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect Terros of Nowhere equipping item log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex TonEquipRegex => _tonEquipRegex ??= new Regex(TonEquipPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonEquipRegex"/>.
-        /// </summary>
-        private static Regex? _tonEquipRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(TonEquipPattern, Options)]
         public static partial Regex TonEquipRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex TonEquipRegex => GetTonEquipRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect Terros of Nowhere equipping item log.
@@ -180,21 +174,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Terros of Nowhere equipping item log.</returns>
         [GeneratedRegex(TonEquipPattern, Options)]
         private static partial Regex GetTonEquipRegex();
-#endif
+#else
+        public static Regex TonEquipRegex => _tonEquipRegex ??= new Regex(TonEquipPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="TonEquipRegex"/>.
+        /// </summary>
+        private static Regex? _tonEquipRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect ToN place log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex TonPlaceRegex => _tonPlaceRegex ??= new Regex(TonPlacePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonPlaceRegex"/>.
-        /// </summary>
-        private static Regex? _tonPlaceRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(TonPlacePattern, Options)]
         public static partial Regex TonPlaceRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex TonPlaceRegex => GetTonPlaceRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect ToN place log.
@@ -202,21 +196,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Killer setting log.</returns>
         [GeneratedRegex(TonPlacePattern, Options)]
         private static partial Regex GetTonPlaceRegex();
-#endif
+#else
+        public static Regex TonPlaceRegex => _tonPlaceRegex ??= new Regex(TonPlacePattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="TonPlaceRegex"/>.
+        /// </summary>
+        private static Regex? _tonPlaceRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect Killer setting log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex TonKillerSettingRegex => _tonKillerSettingRegex ??= new Regex(TonWinPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonKillerSettingRegex"/>.
-        /// </summary>
-        private static Regex? _tonKillerSettingRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(TonKillerSettingPattern, Options)]
         public static partial Regex TonKillerSettingRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex TonKillerSettingRegex => GetTonKillerSettingRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect Killer setting log.
@@ -224,21 +218,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Killer setting log.</returns>
         [GeneratedRegex(TonKillerSettingPattern, Options)]
         private static partial Regex GetTonKillerSettingRegex();
-#endif
+#else
+        public static Regex TonKillerSettingRegex => _tonKillerSettingRegex ??= new Regex(TonWinPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="TonKillerSettingRegex"/>.
+        /// </summary>
+        private static Regex? _tonKillerSettingRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect Killer enrage level changed log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex TonKillerEnrageRegex => _tonKillerEnrageRegex ??= new Regex(TonKillerEnragePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonKillerEnrageRegex"/>.
-        /// </summary>
-        private static Regex? _tonKillerEnrageRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(TonKillerEnragePattern, Options)]
         public static partial Regex TonKillerEnrageRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex TonKillerEnrageRegex => GetTonKillerEnrageRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect Killer enrage level changed log.
@@ -246,21 +240,21 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Killer enrage level changed log.</returns>
         [GeneratedRegex(TonKillerEnragePattern, Options)]
         private static partial Regex GetTonKillerEnrageRegex();
-#endif
+#else
+        public static Regex TonKillerEnrageRegex => _tonKillerEnrageRegex ??= new Regex(TonKillerEnragePattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="TonKillerEnrageRegex"/>.
+        /// </summary>
+        private static Regex? _tonKillerEnrageRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
         /// <see cref="Regex"/> instance to detect Terros of Nowhere winning log.
         /// </summary>
-#if !SUPPORT_GENERATED_REGEX
-        public static Regex TonWinRegex => _tonWinRegex ??= new Regex(TonWinPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonWinRegex"/>.
-        /// </summary>
-        private static Regex? _tonWinRegex;
-#elif SUPPORT_GENERATED_REGEX_PROPERTY
+#if SUPPORT_GENERATED_REGEX_PROPERTY
         [GeneratedRegex(TonWinPattern, Options)]
         public static partial Regex TonWinRegex { get; }
-#else
+#elif SUPPORT_GENERATED_REGEX
         public static Regex TonWinRegex => GetTonWinRegex();
         /// <summary>
         /// Get <see cref="Regex"/> instance to detect Terros of Nowhere winning log.
@@ -268,6 +262,12 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns><see cref="Regex"/> instance to detect Idle Home save log.</returns>
         [GeneratedRegex(TonWinPattern, Options)]
         private static partial Regex GetTonWinRegex();
-#endif
+#else
+        public static Regex TonWinRegex => _tonWinRegex ??= new Regex(TonWinPattern, Options);
+        /// <summary>
+        /// Cache field of <see cref="TonWinRegex"/>.
+        /// </summary>
+        private static Regex? _tonWinRegex;
+#endif  // SUPPORT_GENERATED_REGEX_PROPERTY
     }
 }
