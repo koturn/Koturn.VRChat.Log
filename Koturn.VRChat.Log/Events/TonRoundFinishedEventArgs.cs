@@ -10,11 +10,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, place name and its idex and round name.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="result">Round result.</param>
-    public class TonRoundFinishedEventArgs(string? logFilePath, DateTime logAt, TonRoundResult result)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class TonRoundFinishedEventArgs(string? logFileName, DateTime logAt, TonRoundResult result)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Round result.

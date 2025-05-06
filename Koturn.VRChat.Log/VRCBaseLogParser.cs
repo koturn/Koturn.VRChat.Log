@@ -119,6 +119,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public string? FilePath => LogReader.FilePath;
         /// <summary>
+        /// Get underlying file name from specified <see cref="LogReader"/>.
+        /// </summary>
+        public string? FileName => LogReader.FileName;
+        /// <summary>
         /// A flag property which indicates this instance is disposed or not.
         /// </summary>
         public bool IsDisposed { get; private set; }

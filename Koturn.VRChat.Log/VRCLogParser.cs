@@ -140,7 +140,7 @@ namespace Koturn.VRChat.Log
         /// <param name="authUserInfo">Authenticated user information.</param>
         protected override void OnUserAuthenticated(AuthUserInfo authUserInfo)
         {
-            UserAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(FilePath, LogUntil, authUserInfo));
+            UserAuthenticated?.Invoke(this, new UserAuthenticatedEventArgs(FileName, LogUntil, authUserInfo));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Koturn.VRChat.Log
         /// <param name="activeTime">Active time (in seconds).</param>
         protected override void OnApplicationQuit(double activeTime)
         {
-            ApplicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(FilePath, LogUntil, activeTime));
+            ApplicationQuitted?.Invoke(this, new ApplicationQuittedEventArgs(FileName, LogUntil, activeTime));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Koturn.VRChat.Log
         /// <param name="closeMinutes">Time until instance is reset (minutes).</param>
         protected override void OnInstanceResetNotified(int closeMinutes)
         {
-            InstanceResetNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(FilePath, LogUntil, closeMinutes));
+            InstanceResetNotified?.Invoke(this, new InstanceResetNotifiedEventArgs(FileName, LogUntil, closeMinutes));
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnInstanceClosed(InstanceInfo instanceInfo)
         {
-            InstanceClosed?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
+            InstanceClosed?.Invoke(this, new InstanceEventArgs(FileName, LogUntil, instanceInfo));
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         protected override void OnInstanceClosedByReset()
         {
-            InstanceClosedByReset?.Invoke(this, new VRCLogEventArgs(FilePath, LogUntil));
+            InstanceClosedByReset?.Invoke(this, new VRCLogEventArgs(FileName, LogUntil));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnJoinedToInstance(InstanceInfo instanceInfo)
         {
-            JoinedToInstance?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
+            JoinedToInstance?.Invoke(this, new InstanceEventArgs(FileName, LogUntil, instanceInfo));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnLeftFromInstance(InstanceInfo instanceInfo)
         {
-            LeftFromInstance?.Invoke(this, new InstanceEventArgs(FilePath, LogUntil, instanceInfo));
+            LeftFromInstance?.Invoke(this, new InstanceEventArgs(FileName, LogUntil, instanceInfo));
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserJoined(string userName, string? userId, DateTime stayFrom, InstanceInfo instanceInfo)
         {
-            UserJoined?.Invoke(this, new UserJoinEventArgs(FilePath, LogUntil, userName, userId, stayFrom, instanceInfo));
+            UserJoined?.Invoke(this, new UserJoinEventArgs(FileName, LogUntil, userName, userId, stayFrom, instanceInfo));
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserLeft?.Invoke(this, new UserLeaveEventArgs(FilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserLeft?.Invoke(this, new UserLeaveEventArgs(FileName, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserUnregistering(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
-            UserUnregistering?.Invoke(this, new UserLeaveEventArgs(FilePath, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
+            UserUnregistering?.Invoke(this, new UserLeaveEventArgs(FileName, LogUntil, userName, userId, stayFrom, stayUntil, instanceInfo));
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace Koturn.VRChat.Log
         /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
         protected override void OnPickupObject(string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
         {
-            ObjectPickedup?.Invoke(this, new ObjectPickedupEventArgs(FilePath, LogUntil, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
+            ObjectPickedup?.Invoke(this, new ObjectPickedupEventArgs(FileName, LogUntil, objectName, isEquipped, isEquippable, lastInputMethod, isAutoEquipController));
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace Koturn.VRChat.Log
         /// <param name="lastInputMethod">Last input method name.</param>
         protected override void OnDropObject(string objectName, bool isEquipped, string dropReason, string lastInputMethod)
         {
-            ObjectDropped?.Invoke(this, new ObjectDroppedEventArgs(FilePath, LogUntil, objectName, isEquipped, dropReason, lastInputMethod));
+            ObjectDropped?.Invoke(this, new ObjectDroppedEventArgs(FileName, LogUntil, objectName, isEquipped, dropReason, lastInputMethod));
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnScreenshotTook(string filePath, InstanceInfo instanceInfo)
         {
-            ScreenshotTook?.Invoke(this, new ScreenshotTakeEventArgs(FilePath, LogUntil, filePath, instanceInfo));
+            ScreenshotTook?.Invoke(this, new ScreenshotTakeEventArgs(FileName, LogUntil, filePath, instanceInfo));
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnVideoUrlResolving(string url, InstanceInfo instanceInfo)
         {
-            VideoUrlResolving?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, LogUntil, url, instanceInfo));
+            VideoUrlResolving?.Invoke(this, new VideoUrlResolveEventArgs(FileName, LogUntil, url, instanceInfo));
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnVideoUrlResolved(string url, string resolvedUrl, InstanceInfo instanceInfo)
         {
-            VideoUrlResolved?.Invoke(this, new VideoUrlResolveEventArgs(FilePath, LogUntil, url, resolvedUrl, instanceInfo));
+            VideoUrlResolved?.Invoke(this, new VideoUrlResolveEventArgs(FileName, LogUntil, url, resolvedUrl, instanceInfo));
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace Koturn.VRChat.Log
         /// <param name="instanceInfo"></param>
         protected override void OnDownloaded(string url, DownloadType type, InstanceInfo instanceInfo)
         {
-            Downloaded?.Invoke(this, new DownloadEventArgs(FilePath, LogUntil, url, type, instanceInfo));
+            Downloaded?.Invoke(this, new DownloadEventArgs(FileName, LogUntil, url, type, instanceInfo));
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         protected override void OnWarningDetected(VRCLogLevel level, List<string> logLines)
         {
-            WarningDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
+            WarningDetected?.Invoke(this, new ErrorLogEventArgs(FileName, LogUntil, level, logLines));
         }
 
         /// <summary>
@@ -318,7 +318,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         protected override void OnErrorDetected(VRCLogLevel level, List<string> logLines)
         {
-            ErrorDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
+            ErrorDetected?.Invoke(this, new ErrorLogEventArgs(FileName, LogUntil, level, logLines));
         }
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace Koturn.VRChat.Log
         /// <param name="logLines">Log lines.</param>
         protected override void OnExceptionDetected(VRCLogLevel level, List<string> logLines)
         {
-            ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(FilePath, LogUntil, level, logLines));
+            ExceptionDetected?.Invoke(this, new ErrorLogEventArgs(FileName, LogUntil, level, logLines));
         }
     }
 }

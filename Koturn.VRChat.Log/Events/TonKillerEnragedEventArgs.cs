@@ -9,12 +9,12 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, terror name and enrage level.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="terrorName">Terror name.</param>
     /// <param name="enrageLevel">Enrage level.</param>
-    public class TonKillerEnragedEventArgs(string? logFilePath, DateTime logAt, string terrorName, int enrageLevel)
-        : TonKillerNameEventArgs(logFilePath, logAt, terrorName)
+    public class TonKillerEnragedEventArgs(string? logFileName, DateTime logAt, string terrorName, int enrageLevel)
+        : TonKillerNameEventArgs(logFileName, logAt, terrorName)
     {
         /// <summary>
         /// Enrage level.

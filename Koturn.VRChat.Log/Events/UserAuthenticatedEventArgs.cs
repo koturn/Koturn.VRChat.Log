@@ -9,11 +9,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with log timestamp and authenticated user information.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="authUserInfo">Authenticated user information.</param>
-    public class UserAuthenticatedEventArgs(string? logFilePath, DateTime logAt, AuthUserInfo authUserInfo)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class UserAuthenticatedEventArgs(string? logFileName, DateTime logAt, AuthUserInfo authUserInfo)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Instance information.

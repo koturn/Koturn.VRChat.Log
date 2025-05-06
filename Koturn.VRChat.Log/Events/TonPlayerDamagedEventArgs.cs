@@ -9,11 +9,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp and damage point.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="damage">Damage point.</param>
-    public class TonPlayerDamagedEventArgs(string? logFilePath, DateTime logAt, int damage)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class TonPlayerDamagedEventArgs(string? logFileName, DateTime logAt, int damage)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Damage point.

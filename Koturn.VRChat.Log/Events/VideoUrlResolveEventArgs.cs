@@ -9,12 +9,12 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with log timestamp, Video URL and instance information.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="url">Video URL.</param>
     /// <param name="instanceInfo">Instance information.</param>
-    public class VideoUrlResolveEventArgs(string? logFilePath, DateTime logAt, string url, InstanceInfo instanceInfo)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class VideoUrlResolveEventArgs(string? logFileName, DateTime logAt, string url, InstanceInfo instanceInfo)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Video URL.
@@ -32,13 +32,13 @@ namespace Koturn.VRChat.Log.Events
         /// <summary>
         /// Create instance with log timestamp, Video URL, Resolved Video URL and instance information.
         /// </summary>
-        /// <param name="logFilePath">Log file path.</param>
+        /// <param name="logFileName">Log file name.</param>
         /// <param name="logAt">Log timestamp.</param>
         /// <param name="url">Video URL.</param>
         /// <param name="resolvedUrl">Resolved Video URL.</param>
         /// <param name="instanceInfo">Instance information.</param>
-        public VideoUrlResolveEventArgs(string? logFilePath, DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
-            : this(logFilePath, logAt, url, instanceInfo)
+        public VideoUrlResolveEventArgs(string? logFileName, DateTime logAt, string url, string resolvedUrl, InstanceInfo instanceInfo)
+            : this(logFileName, logAt, url, instanceInfo)
         {
             ResolvedUrl = resolvedUrl;
         }

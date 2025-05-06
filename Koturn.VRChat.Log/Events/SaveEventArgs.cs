@@ -18,11 +18,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with log timestamp and save data text.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="saveText">Save data text.</param>
-    public class SaveEventArgs(string? logFilePath, DateTime logAt, string saveText)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class SaveEventArgs(string? logFileName, DateTime logAt, string saveText)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Save data text.

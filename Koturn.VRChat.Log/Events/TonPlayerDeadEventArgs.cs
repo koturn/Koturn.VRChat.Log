@@ -9,12 +9,12 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, player name and message.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="playerName">Player name.</param>
     /// <param name="message">Message.</param>
-    public class TonPlayerDeadEventArgs(string? logFilePath, DateTime logAt, string playerName, string message)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class TonPlayerDeadEventArgs(string? logFileName, DateTime logAt, string playerName, string message)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Player name.

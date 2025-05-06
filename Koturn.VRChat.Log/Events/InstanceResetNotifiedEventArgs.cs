@@ -9,11 +9,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with specified log timestamp and time until instance is closed.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="closeMinutes">Time until instance is closed (minutes).</param>
-    public class InstanceResetNotifiedEventArgs(string? logFilePath, DateTime logAt, int closeMinutes)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class InstanceResetNotifiedEventArgs(string? logFileName, DateTime logAt, int closeMinutes)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Time until instance is closed (minutes).

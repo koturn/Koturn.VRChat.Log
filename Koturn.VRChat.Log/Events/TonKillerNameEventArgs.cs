@@ -10,11 +10,11 @@ namespace Koturn.VRChat.Log.Events
     /// <remarks>
     /// Primary ctor: Create instance with timestamp, terror name.
     /// </remarks>
-    /// <param name="logFilePath">Log file path.</param>
+    /// <param name="logFileName">Log file name.</param>
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="terrorName">Terror name.</param>
-    public class TonKillerNameEventArgs(string? logFilePath, DateTime logAt, string terrorName)
-        : VRCLogEventArgs(logFilePath, logAt)
+    public class TonKillerNameEventArgs(string? logFileName, DateTime logAt, string terrorName)
+        : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
         /// Terror name.
