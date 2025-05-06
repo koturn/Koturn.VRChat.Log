@@ -899,12 +899,7 @@ namespace Koturn.VRChat.Log
             var terrorIndex3 = int.Parse(groups[4].Value);
             var itemIndex = int.Parse(groups[5].Value);
 
-            var roundInfo = TonRoundInfo;
-            if (roundInfo == null)
-            {
-                throw new NullReferenceException("Round info is null");
-            }
-
+            var roundInfo = TonRoundInfo ?? throw new NullReferenceException("Round info is null");
             if (roundInfo.RoundIndex != roundIndex)
             {
                 // throw new Exception($"Round index different; expected=[{roundIndex}] actual=[{roundInfo.RoundIndex}]");
