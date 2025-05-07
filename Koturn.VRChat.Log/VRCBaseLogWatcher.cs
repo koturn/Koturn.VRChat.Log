@@ -360,12 +360,17 @@ namespace Koturn.VRChat.Log
                 return hFile.DangerousGetHandle() == invalidHandleValue && Marshal.GetLastWin32Error() == ErrorSharingViolation;
             }
 #else
+#if NETCOREAPP1_0_OR_GREATER
+            // .NET: Buffer size must be greater than or equal to 0.
+            const int bufferSize = 0;
+#else
+            // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
+            const int bufferSize = 1;
+#endif  // NETCOREAPP1_0_OR_GREATER
             try
             {
                 // Try to open for write.
-                // .NET: Buffer size must be greater than or equal to 0.
-                // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
-                new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, 1).Dispose();
+                new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, bufferSize).Dispose();
             }
             catch (IOException ex)
             {
