@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
 using Koturn.VRChat.Log.Internals;
