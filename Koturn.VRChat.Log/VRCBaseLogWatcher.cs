@@ -179,6 +179,10 @@ namespace Koturn.VRChat.Log
             Thread[] threads;
             lock (_threadListLock)
             {
+                if (_threadList.Count == 0)
+                {
+                    return;
+                }
                 threads = _threadList.ToArray();
                 _threadList.Clear();
             }
