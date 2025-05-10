@@ -104,7 +104,6 @@ namespace Koturn.VRChat.Log
             protected override void OnApplicationQuit(double activeTime)
             {
                 _logWatcher._applicationQuitted?.Invoke(_logWatcher, new ApplicationQuittedEventArgs(FileName, LogUntil, activeTime));
-                _logWatcher.Stop(Thread.CurrentThread);
             }
 
             /// <summary>

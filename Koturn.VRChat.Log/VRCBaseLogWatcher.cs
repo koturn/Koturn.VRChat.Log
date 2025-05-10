@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 #if !NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif  // !NET8_0_OR_GREATER
@@ -165,17 +167,20 @@ namespace Koturn.VRChat.Log
                 _watcher = null;
             }
 
+            Thread[] threads;
             lock (_threadListLock)
             {
-                foreach (var thread in _threadList)
-                {
-                    thread.Interrupt();
-                }
-                foreach (var thread in _threadList)
-                {
-                    thread.Join(1000);
-                }
+                threads = _threadList.ToArray();
                 _threadList.Clear();
+            }
+
+            foreach (var thread in threads)
+            {
+                thread.Interrupt();
+            }
+            foreach (var thread in threads)
+            {
+                thread.Join(1000);
             }
         }
 
@@ -186,24 +191,6 @@ namespace Koturn.VRChat.Log
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-
-        /// <summary>
-        /// Stop specified thread.
-        /// </summary>
-        /// <param name="thread">A <see cref="Thread"/> to stop.</param>
-        protected void Stop(Thread thread)
-        {
-            bool hasThread;
-            lock (_threadListLock)
-            {
-                hasThread = _threadList.Remove(thread);
-            }
-            if (hasThread)
-            {
-                thread.Interrupt();
-            }
         }
 
 
@@ -272,6 +259,7 @@ namespace Koturn.VRChat.Log
                     var filePath = fs.Name;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
+                    var sw = Stopwatch.StartNew();
                     try
                     {
                         var prevFileSize = fs.Position;
@@ -287,14 +275,23 @@ namespace Koturn.VRChat.Log
                             fi.Refresh();
                             if (!fi.Exists)
                             {
-                                continue;
+                                break;
                             }
                             var fileSize = fi.Length;
 #endif  // WINDOWS
                             if (fileSize == prevFileSize)
                             {
+                                // VRChat outputs PoolManager logs every 30 seconds,
+                                // so if the file size does not change for more than 60 seconds,
+                                // VRChat is suspected to have terminated.
+                                if (sw.ElapsedMilliseconds > 60 * 1000 && !IsWriteLocked(filePath))
+                                {
+                                    break;
+                                }
                                 continue;
                             }
+                            sw.Restart();
+
                             logParser.Parse();
                             prevFileSize = fs.Position;
                         }
@@ -307,6 +304,11 @@ namespace Koturn.VRChat.Log
                     {
                         logParser.Dispose();
                         FileClosed?.Invoke(this, new FileCloseEventArgs(filePath, logParser.LogFrom, logParser.LogUntil));
+
+                        lock (_threadListLock)
+                        {
+                            _threadList.Remove(Thread.CurrentThread);
+                        }
                     }
                 }
             })
