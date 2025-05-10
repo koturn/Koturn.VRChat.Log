@@ -161,6 +161,15 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public void Stop()
         {
+            Stop(Timeout.Infinite);
+        }
+
+        /// <summary>
+        /// Stop watching.
+        /// </summary>
+        /// <param name="millisecondsTimeout">Join timeout for each thread in milliseconds.</param>
+        public void Stop(int millisecondsTimeout)
+        {
             if (_watcher != null)
             {
                 _watcher.Dispose();
@@ -180,7 +189,7 @@ namespace Koturn.VRChat.Log
             }
             foreach (var thread in threads)
             {
-                thread.Join(1000);
+                thread.Join(millisecondsTimeout);
             }
         }
 
