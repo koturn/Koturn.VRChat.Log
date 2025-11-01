@@ -87,11 +87,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(InstanceResetNotificationPattern, Options)]
         private static partial Regex GetInstanceResetNotificationRegex();
 #else
-        public static Regex InstanceResetNotificationRegex => _instanceResetNotificationRegex ??= new Regex(InstanceResetNotificationPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="InstanceResetNotificationRegex"/>.
-        /// </summary>
-        private static Regex? _instanceResetNotificationRegex;
+        public static Regex InstanceResetNotificationRegex => field ??= new Regex(InstanceResetNotificationPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -109,11 +105,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(PickupObjectPattern, Options)]
         private static partial Regex GetPickupObjectRegex();
 #else
-        public static Regex PickupObjectRegex => _pickupObjectRegex ??= new Regex(PickupObjectPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="PickupObjectRegex"/>.
-        /// </summary>
-        private static Regex? _pickupObjectRegex;
+        public static Regex PickupObjectRegex => field ??= new Regex(PickupObjectPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -131,11 +123,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(DropObjectPattern, Options)]
         private static partial Regex GetDropObjectRegex();
 #else
-        public static Regex DropObjectRegex => _dropObjectRegex ??= new Regex(DropObjectPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="DropObjectRegex"/>.
-        /// </summary>
-        private static Regex? _dropObjectRegex;
+        public static Regex DropObjectRegex => field ??= new Regex(DropObjectPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -153,11 +141,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(IdleHomeSavePattern, Options)]
         private static partial Regex GetIdleHomeSaveRegex();
 #else
-        public static Regex IdleHomeSaveRegex => _idleHomeSaveRegex ??= new Regex(IdleHomeSavePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="IdleHomeSaveRegex"/>.
-        /// </summary>
-        private static Regex? _idleHomeSaveRegex;
+        public static Regex IdleHomeSaveRegex => field ??= new Regex(IdleHomeSavePattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -175,11 +159,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(TonEquipPattern, Options)]
         private static partial Regex GetTonEquipRegex();
 #else
-        public static Regex TonEquipRegex => _tonEquipRegex ??= new Regex(TonEquipPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonEquipRegex"/>.
-        /// </summary>
-        private static Regex? _tonEquipRegex;
+        public static Regex TonEquipRegex => field ??= new Regex(TonEquipPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -197,11 +177,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(TonPlacePattern, Options)]
         private static partial Regex GetTonPlaceRegex();
 #else
-        public static Regex TonPlaceRegex => _tonPlaceRegex ??= new Regex(TonPlacePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonPlaceRegex"/>.
-        /// </summary>
-        private static Regex? _tonPlaceRegex;
+        public static Regex TonPlaceRegex => field ??= new Regex(TonPlacePattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -219,11 +195,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(TonKillerSettingPattern, Options)]
         private static partial Regex GetTonKillerSettingRegex();
 #else
-        public static Regex TonKillerSettingRegex => _tonKillerSettingRegex ??= new Regex(TonWinPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonKillerSettingRegex"/>.
-        /// </summary>
-        private static Regex? _tonKillerSettingRegex;
+        public static Regex TonKillerSettingRegex => field ??= new Regex(TonWinPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -241,11 +213,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(TonKillerEnragePattern, Options)]
         private static partial Regex GetTonKillerEnrageRegex();
 #else
-        public static Regex TonKillerEnrageRegex => _tonKillerEnrageRegex ??= new Regex(TonKillerEnragePattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonKillerEnrageRegex"/>.
-        /// </summary>
-        private static Regex? _tonKillerEnrageRegex;
+        public static Regex TonKillerEnrageRegex => field ??= new Regex(TonKillerEnragePattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
 
         /// <summary>
@@ -263,11 +231,7 @@ namespace Koturn.VRChat.Log.Internals
         [GeneratedRegex(TonWinPattern, Options)]
         private static partial Regex GetTonWinRegex();
 #else
-        public static Regex TonWinRegex => _tonWinRegex ??= new Regex(TonWinPattern, Options);
-        /// <summary>
-        /// Cache field of <see cref="TonWinRegex"/>.
-        /// </summary>
-        private static Regex? _tonWinRegex;
+        public static Regex TonWinRegex => field ??= new Regex(TonWinPattern, Options);
 #endif  // SUPPORT_GENERATED_REGEX_PROPERTY
     }
 }

@@ -61,7 +61,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public int WatchCycle
         {
-            get => _watchCycle;
+            get => field;
             set
             {
 #if NET8_0_OR_GREATER
@@ -69,7 +69,7 @@ namespace Koturn.VRChat.Log
 #else
                 ThrowIfLessThan(value, Timeout.Infinite, nameof(WatchCycle));
 #endif  // NET8_0_OR_GREATER
-                _watchCycle = value;
+                field = value;
             }
         }
         /// <summary>
@@ -106,10 +106,6 @@ namespace Koturn.VRChat.Log
         /// <see cref="Lock"/> object of <see cref="_threadList"/> and <see cref="_threadResetEventDict"/>.
         /// </summary>
         private readonly Lock _threadListLock = new();
-        /// <summary>
-        /// File watch cycle.
-        /// </summary>
-        private int _watchCycle;
 
         /// <summary>
         /// Create <see cref="VRCBaseLogWatcher"/> instance.
