@@ -6,10 +6,6 @@ namespace Koturn.VRChat.Log.Enums
     public enum VRCLogLevel
     {
         /// <summary>
-        /// Represents unknown log level.
-        /// </summary>
-        Other,
-        /// <summary>
         /// Represents log level: "Debug".
         /// </summary>
         Debug,
@@ -24,6 +20,10 @@ namespace Koturn.VRChat.Log.Enums
         /// <summary>
         /// Represents log level: "Exception".
         /// </summary>
-        Exception
+        Exception,
+        /// <summary>
+        /// Represents unknown log level.
+        /// </summary>
+        Other
     }
 }
