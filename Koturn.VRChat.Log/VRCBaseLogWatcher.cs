@@ -99,7 +99,11 @@ namespace Koturn.VRChat.Log
         /// </summary>
         private readonly List<Thread> _threadList = new(InitialThreadListCapacity);
         /// <summary>
-        /// <see cref="Lock"/> object of <see cref="_threadList"/>.
+        /// <see cref="Dictionary{TKey, TValue}"/> of <see cref="Thread.ManagedThreadId"/> and instance of <see cref="ManualResetEvent"/>.
+        /// </summary>
+        private readonly Dictionary<int, ManualResetEvent> _threadResetEventDict = new();
+        /// <summary>
+        /// <see cref="Lock"/> object of <see cref="_threadList"/> and <see cref="_threadResetEventDict"/>.
         /// </summary>
         private readonly Lock _threadListLock = new();
         /// <summary>
@@ -143,7 +147,10 @@ namespace Koturn.VRChat.Log
             foreach (var filePath in GetWriteLockedLogFiles(dirPath))
             {
                 // Lock is unneccessary here because any other thread stopped.
-                _threadList.Add(StartFileWatchingThread(filePath, true));
+                var mre = new ManualResetEvent(false);
+                var thread = StartFileWatchingThread(filePath, mre, true);
+                _threadList.Add(thread);
+                _threadResetEventDict.Add(thread.ManagedThreadId, mre);
             }
 
             var watcher = new FileSystemWatcher(dirPath, VRCBaseLogParser.InternalVRChatLogFileFilter)
@@ -177,6 +184,7 @@ namespace Koturn.VRChat.Log
             }
 
             Thread[] threads;
+            ManualResetEvent[] mres;
             lock (_threadListLock)
             {
                 if (_threadList.Count == 0)
@@ -185,11 +193,15 @@ namespace Koturn.VRChat.Log
                 }
                 threads = _threadList.ToArray();
                 _threadList.Clear();
+
+                mres = new ManualResetEvent[_threadResetEventDict.Count];
+                _threadResetEventDict.Values.CopyTo(mres, 0);
+                _threadResetEventDict.Clear();
             }
 
-            foreach (var thread in threads)
+            foreach (var mre in mres)
             {
-                thread.Interrupt();
+                mre.Set();
             }
             foreach (var thread in threads)
             {
@@ -237,9 +249,10 @@ namespace Koturn.VRChat.Log
         /// Start flush log file thread.
         /// </summary>
         /// <param name="filePath">Target file path.</param>
+        /// <param name="mre"><see cref="ManualResetEvent"/> instance to stop thread.</param>
         /// <param name="isParseToEnd">True to parse to end.</param>
         /// <returns>Started thread.</returns>
-        private Thread StartFileWatchingThread(string filePath, bool isParseToEnd = false)
+        private Thread StartFileWatchingThread(string filePath, ManualResetEvent mre, bool isParseToEnd = false)
         {
             VRCBaseLogParser? logParser = null;
             try
@@ -249,7 +262,7 @@ namespace Koturn.VRChat.Log
                 {
                     logParser.Parse();
                 }
-                return StartFileWatchingThread(logParser);
+                return StartFileWatchingThread(logParser, mre);
             }
             catch
             {
@@ -261,13 +274,25 @@ namespace Koturn.VRChat.Log
         /// <summary>
         /// Start flush log file thread.
         /// </summary>
+        /// <param name="logParser"><see cref="VRCBaseLogParser"/> instance.</param>
+        /// <param name="mre"><see cref="ManualResetEvent"/> instance to stop thread.</param>
         /// <returns>Started thread.</returns>
-        private Thread StartFileWatchingThread(VRCBaseLogParser logParser)
+        private Thread StartFileWatchingThread(VRCBaseLogParser logParser, ManualResetEvent mre)
         {
             var thread = new Thread(param =>
             {
-                using (var logParser = (VRCBaseLogParser)param!)
+#if NET7_0_OR_GREATER
+                ArgumentNullException.ThrowIfNull(param);
+#else
+                if (param == null)
                 {
+                    throw new ArgumentNullException(nameof(param));
+                }
+#endif  // NET7_0_OR_GREATER
+                var paramArray = (object[])param;
+                using (var logParser = (VRCBaseLogParser)paramArray[0])
+                {
+                    var mre = (ManualResetEvent)paramArray[1];
                     var fs = (FileStream)logParser.LogReader.BaseStream;
                     var filePath = fs.Name;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
@@ -279,9 +304,8 @@ namespace Koturn.VRChat.Log
 #if !WINDOWS
                         var fi = new FileInfo(filePath);
 #endif
-                        for (; ; )
+                        while (!mre.WaitOne(WatchCycle))
                         {
-                            Thread.Sleep(WatchCycle);
 #if WINDOWS
                             var fileSize = (long)GetFileSize(filePath);
 #else
@@ -294,9 +318,6 @@ namespace Koturn.VRChat.Log
 #endif  // WINDOWS
                             if (fileSize == prevFileSize)
                             {
-                                // VRChat outputs PoolManager logs every 30 seconds,
-                                // so if the file size does not change for more than 60 seconds,
-                                // VRChat is suspected to have terminated.
                                 if (sw.ElapsedMilliseconds > 60 * 1000 && !IsWriteLocked(filePath))
                                 {
                                     break;
@@ -309,10 +330,6 @@ namespace Koturn.VRChat.Log
                             prevFileSize = fs.Position;
                         }
                     }
-                    catch (ThreadInterruptedException)
-                    {
-                        // Do nothing
-                    }
                     finally
                     {
                         logParser.Dispose();
@@ -320,6 +337,12 @@ namespace Koturn.VRChat.Log
 
                         lock (_threadListLock)
                         {
+                            mre.Dispose();
+#if NET6_0_OR_GREATER
+                            _threadResetEventDict.Remove(Environment.CurrentManagedThreadId);
+#else
+                            _threadResetEventDict.Remove(Thread.CurrentThread.ManagedThreadId);
+#endif  // NET6_0_OR_GREATER
                             _threadList.Remove(Thread.CurrentThread);
                         }
                     }
@@ -328,7 +351,7 @@ namespace Koturn.VRChat.Log
             {
                 IsBackground = true
             };
-            thread.Start(logParser);
+            thread.Start(new object[] {logParser, mre});
             return thread;
         }
 
@@ -453,18 +476,22 @@ namespace Koturn.VRChat.Log
         /// <param name="e">The <see cref="FileSystemEventArgs"/> that contains the event data.</param>
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
+            ManualResetEvent? mre = null;
             Thread? thread = null;
             try
             {
-                thread = StartFileWatchingThread(e.FullPath);
+                mre = new ManualResetEvent(false);
+                thread = StartFileWatchingThread(e.FullPath, mre);
                 lock (_threadListLock)
                 {
                     _threadList.Add(thread);
+                    _threadResetEventDict.Add(thread.ManagedThreadId, mre);
                 }
                 thread = null;
             }
             catch (Exception)
             {
+                mre?.Dispose();
                 thread?.Interrupt();
             }
         }
