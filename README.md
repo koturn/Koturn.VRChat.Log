@@ -12,6 +12,7 @@ Simple VRChat Log Parser and Watcher library.
 - .NET Standard 2.0
 - .NET 8.0
 - .NET 9.0
+- .NET 10.0
 
 ## Usage (Sample code)
 

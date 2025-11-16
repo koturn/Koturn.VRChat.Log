@@ -9,6 +9,7 @@ BUILD_CONFIG = Release
 TARGET_NETSTD20 = netstandard2.0
 TARGET_NET8 = net8.0
 TARGET_NET9 = net9.0
+TARGET_NET10 = net10.0
 RM = del /F /Q
 RMDIR = rmdir /S /Q
 
@@ -21,7 +22,7 @@ build:
 restore:
 	dotnet restore $(SOLUTION_FILE)
 
-deploy: deploy-$(TARGET_NETSTD20) deploy-$(TARGET_NET8) deploy-$(TARGET_NET9)
+deploy: deploy-$(TARGET_NETSTD20) deploy-$(TARGET_NET8) deploy-$(TARGET_NET9) deploy-$(TARGET_NET10)
 
 deploy-$(TARGET_NETSTD20):
 	-dotnet publish -c $(BUILD_CONFIG) -f $(TARGET_NETSTD20) \
@@ -51,6 +52,16 @@ deploy-$(TARGET_NET9):
 		$(ARTIFACTS_BASENAME)-$(TARGET_NET9).zip 2>NUL
 	cd $(ARTIFACTS_BASEDIR)
 	powershell Compress-Archive -Path $(ARTIFACTS_SUBDIR_BASENAME)-$(TARGET_NET9) -DestinationPath ..\$(ARTIFACTS_BASENAME)-$(TARGET_NET9).zip
+	cd $(MAKEDIR)
+
+deploy-$(TARGET_NET10):
+	-dotnet publish -c $(BUILD_CONFIG) -f $(TARGET_NET10) \
+		-p:PublishDir=..\$(ARTIFACTS_BASEDIR)\$(ARTIFACTS_SUBDIR_BASENAME)-$(TARGET_NET10) \
+		$(MAIN_PROJECT_FILE)
+	-$(RM) $(ARTIFACTS_BASEDIR)\$(ARTIFACTS_SUBDIR_BASENAME)-$(TARGET_NET10)\*.pdb \
+		$(ARTIFACTS_BASENAME)-$(TARGET_NET10).zip 2>NUL
+	cd $(ARTIFACTS_BASEDIR)
+	powershell Compress-Archive -Path $(ARTIFACTS_SUBDIR_BASENAME)-$(TARGET_NET10) -DestinationPath ..\$(ARTIFACTS_BASENAME)-$(TARGET_NET10).zip
 	cd $(MAKEDIR)
 
 clean:
