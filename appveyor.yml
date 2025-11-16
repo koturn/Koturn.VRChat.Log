@@ -1,9 +1,9 @@
-version: 1.5.1.{build}
-image: Visual Studio 2022
+version: 1.6.0.{build}
+image: Visual Studio 2026
 environment:
   SOLUTION_NAME: Koturn.VRChat.Log
 init:
-- cmd: '"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"'
+- cmd: '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevCmd.bat"'
 install:
 - cmd: nmake /nologo restore
 build_script:
