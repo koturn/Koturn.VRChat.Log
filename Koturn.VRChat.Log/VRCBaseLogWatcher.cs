@@ -290,61 +290,60 @@ namespace Koturn.VRChat.Log
                 }
 #endif  // NET7_0_OR_GREATER
                 var paramArray = (object[])param;
-                using (var logParser = (VRCBaseLogParser)paramArray[0])
+                var logParser = (VRCBaseLogParser)paramArray[0];
+                var mre = (ManualResetEvent)paramArray[1];
+                paramArray = null;
+                var fs = (FileStream)logParser.LogReader.BaseStream;
+                var filePath = fs.Name;
+                try
                 {
-                    var mre = (ManualResetEvent)paramArray[1];
-                    var fs = (FileStream)logParser.LogReader.BaseStream;
-                    var filePath = fs.Name;
                     FileOpened?.Invoke(this, new FileOpenEventArgs(filePath));
 
                     var sw = Stopwatch.StartNew();
-                    try
-                    {
-                        var prevFileSize = fs.Position;
+                    var prevFileSize = fs.Position;
 #if !WINDOWS
-                        var fi = new FileInfo(filePath);
+                    var fi = new FileInfo(filePath);
 #endif
-                        while (!mre.WaitOne(WatchCycle))
-                        {
+                    while (!mre.WaitOne(WatchCycle))
+                    {
 #if WINDOWS
-                            var fileSize = (long)GetFileSize(filePath);
+                        var fileSize = (long)GetFileSize(filePath);
 #else
-                            fi.Refresh();
-                            if (!fi.Exists)
+                        fi.Refresh();
+                        if (!fi.Exists)
+                        {
+                            break;
+                        }
+                        var fileSize = fi.Length;
+#endif  // WINDOWS
+                        if (fileSize == prevFileSize)
+                        {
+                            if (sw.ElapsedMilliseconds > 60 * 1000 && !IsWriteLocked(filePath))
                             {
                                 break;
                             }
-                            var fileSize = fi.Length;
-#endif  // WINDOWS
-                            if (fileSize == prevFileSize)
-                            {
-                                if (sw.ElapsedMilliseconds > 60 * 1000 && !IsWriteLocked(filePath))
-                                {
-                                    break;
-                                }
-                                continue;
-                            }
-                            sw.Restart();
-
-                            logParser.Parse();
-                            prevFileSize = fs.Position;
+                            continue;
                         }
+                        sw.Restart();
+
+                        logParser.Parse();
+                        prevFileSize = fs.Position;
                     }
-                    finally
-                    {
-                        logParser.Dispose();
-                        FileClosed?.Invoke(this, new FileCloseEventArgs(filePath, logParser.LogFrom, logParser.LogUntil));
+                }
+                finally
+                {
+                    logParser.Dispose();
+                    FileClosed?.Invoke(this, new FileCloseEventArgs(filePath, logParser.LogFrom, logParser.LogUntil));
 
-                        lock (_threadListLock)
-                        {
-                            mre.Dispose();
+                    lock (_threadListLock)
+                    {
+                        mre.Dispose();
 #if NET6_0_OR_GREATER
-                            _threadResetEventDict.Remove(Environment.CurrentManagedThreadId);
+                        _threadResetEventDict.Remove(Environment.CurrentManagedThreadId);
 #else
-                            _threadResetEventDict.Remove(Thread.CurrentThread.ManagedThreadId);
+                        _threadResetEventDict.Remove(Thread.CurrentThread.ManagedThreadId);
 #endif  // NET6_0_OR_GREATER
-                            _threadList.Remove(Thread.CurrentThread);
-                        }
+                        _threadList.Remove(Thread.CurrentThread);
                     }
                 }
             })
