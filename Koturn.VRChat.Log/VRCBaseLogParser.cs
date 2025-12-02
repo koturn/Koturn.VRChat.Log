@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 #endif  // !WINDOWS
 using Koturn.VRChat.Log.Enums;
 using Koturn.VRChat.Log.Exceptions;
+using Koturn.VRChat.Log.Internals;
 
 
 namespace Koturn.VRChat.Log
@@ -330,6 +331,32 @@ namespace Koturn.VRChat.Log
             return Directory.GetFiles(logDirPath, InternalVRChatLogFileFilter);
         }
 
+        /// <summary>
+        /// Get write-locked log file paths from <see cref="DefaultVRChatLogDirectory"/>.
+        /// </summary>
+        /// <returns>Write-locked log file paths.</returns>
+        public static string[] GetActiveLogFilePaths()
+        {
+            return GetActiveLogFilePaths(DefaultVRChatLogDirectory);
+        }
+
+        /// <summary>
+        /// Get write-locked log file paths from <paramref name="logDirPath"/>.
+        /// </summary>
+        /// <param name="logDirPath">Log file directory.</param>
+        /// <returns>Write-locked log file paths.</returns>
+        public static string[] GetActiveLogFilePaths(string logDirPath)
+        {
+            var filePathList = new List<string>();
+            foreach (var filePath in GetLogFilePaths(logDirPath))
+            {
+                if (FileHelper.IsWriteLocked(filePath))
+                {
+                    filePathList.Add(filePath);
+                }
+            }
+            return filePathList.ToArray();
+        }
 
         /// <summary>
         /// Determine if one string is a substring at the specified position of the other string.
