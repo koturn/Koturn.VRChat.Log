@@ -442,7 +442,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsIdleHomeSaveData(string firstLine)
         {
-            var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
+            var match = RegexProvider.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -650,7 +650,7 @@ namespace Koturn.VRChat.Log
         private bool ParseAsTonTriggerEnrage(string firstLine)
         {
             // 2024.09.28 23:18:27 Log        -  BFFtriggered an Enrage State!
-            var match = RegexHelper.TonKillerEnrageRegex.Match(firstLine);
+            var match = RegexProvider.TonKillerEnrageRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -683,7 +683,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonKillerSet(string firstLine)
         {
-            var match = RegexHelper.TonKillerSettingRegex.Match(firstLine);
+            var match = RegexProvider.TonKillerSettingRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -767,7 +767,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonEquipped(string firstLine)
         {
-            var match = RegexHelper.IdleHomeSaveRegex.Match(firstLine);
+            var match = RegexProvider.IdleHomeSaveRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -813,7 +813,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsTonPlace(string firstLine)
         {
-            var match = RegexHelper.TonPlaceRegex.Match(firstLine);
+            var match = RegexProvider.TonPlaceRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;
@@ -886,7 +886,7 @@ namespace Koturn.VRChat.Log
             //
             // for legacy win log.
             //
-            var match = RegexHelper.TonWinRegex.Match(firstLine);
+            var match = RegexProvider.TonWinRegex.Match(firstLine);
             if (!match.Success)
             {
                 return false;

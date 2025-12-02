@@ -15,9 +15,9 @@ namespace Koturn.VRChat.Log.Internals
     /// Provides some <see cref="Regex"/> instances.
     /// </summary>
 #if SUPPORT_GENERATED_REGEX
-    internal static partial class RegexHelper
+    internal static partial class RegexProvider
 #else
-    internal static class RegexHelper
+    internal static class RegexProvider
 #endif  // SUPPORT_GENERATED_REGEX
     {
         /// <summary>
