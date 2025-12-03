@@ -2,18 +2,16 @@
 #    define SUPPORT_LIBRARY_IMPORT
 #endif  // NET7_0_OR_GREATER
 
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
-#if WINDOWS
-using System;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
-#endif  // WINDOWS
 
 
 namespace Koturn.VRChat.Log.Internals
 {
-#if SUPPORT_LIBRARY_IMPORT && WINDOWS
+#if SUPPORT_LIBRARY_IMPORT
     internal static partial class FileHelper
 #else
     internal static class FileHelper
@@ -31,15 +29,36 @@ namespace Koturn.VRChat.Log.Internals
         /// </summary>
         /// <param name="filePath">File path to determine.</param>
         /// <returns>true if specified file is write-locked, otherwise false.</returns>
+        public static bool IsWriteLocked(string filePath)
+        {
+#if WINDOWS
+            return IsWriteLockedWindows(filePath);
+#else
+            if (_isWindows)
+            {
+                return IsWriteLockedWindows(filePath);
+            }
+            else
+            {
+                return IsWriteLockedOther(filePath);
+            }
+#endif  // WINDOWS
+        }
+
+        /// <summary>
+        /// Determine whether specified file is write-locked or not by Windows specific method.
+        /// </summary>
+        /// <param name="filePath">File path to determine.</param>
+        /// <returns>true if specified file is write-locked, otherwise false.</returns>
         /// <remarks>
         /// <seealso href="https://learn.microsoft.com/en-us/dotnet/standard/io/handling-io-errors"/>
         /// </remarks>
-        public static bool IsWriteLocked(string filePath)
+        private static bool IsWriteLockedWindows(string filePath)
         {
             const int ErrorSharingViolation = 0x00000020;
-#if WINDOWS
-            // Try to open for write.
             const nint invalidHandleValue = -1;
+
+            // Try to open for write.
             using (var hFile = SafeNativeMethods.CreateFile(
                 filePath,
                 GenericAccessRights.Write,
@@ -49,7 +68,18 @@ namespace Koturn.VRChat.Log.Internals
             {
                 return hFile.DangerousGetHandle() == invalidHandleValue && Marshal.GetLastWin32Error() == ErrorSharingViolation;
             }
-#else
+        }
+
+        /// <summary>
+        /// Determine whether specified file is write-locked or not by general method.
+        /// </summary>
+        /// <param name="filePath">File path to determine.</param>
+        /// <returns>true if specified file is write-locked, otherwise false.</returns>
+        /// <remarks>
+        /// <seealso href="https://learn.microsoft.com/en-us/dotnet/standard/io/handling-io-errors"/>
+        /// </remarks>
+        private static bool IsWriteLockedOther(string filePath)
+        {
 #if NETCOREAPP1_0_OR_GREATER
             // .NET: Buffer size must be greater than or equal to 0.
             const int bufferSize = 0;
@@ -61,21 +91,15 @@ namespace Koturn.VRChat.Log.Internals
             {
                 // Try to open for write.
                 new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, bufferSize).Dispose();
+                return false;
             }
-            catch (IOException ex)
+            catch (IOException)
             {
                 // Assume that VRChat process owns the log file.
-                if (!_isWindows || (ex.HResult & 0x0000ffff) == ErrorSharingViolation)
-                {
-                    return true;
-                }
+                return true;
             }
-
-            return false;
-#endif  // WINDOWS
         }
 
-#if WINDOWS
         /// <summary>
         /// <para>Securable objects use an access mask format in which the four high-order bits specify generic access rights.
         /// Each type of securable object maps these bits to a set of its standard and object-specific access rights.
@@ -432,6 +456,5 @@ namespace Koturn.VRChat.Log.Internals
                 IntPtr hTemplateFile = default);
 #endif  // SUPPORT_LIBRARY_IMPORT
         }
-#endif  // WINDOWS
     }
 }

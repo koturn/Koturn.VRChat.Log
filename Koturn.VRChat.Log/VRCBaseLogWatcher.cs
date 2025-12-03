@@ -394,6 +394,11 @@ namespace Koturn.VRChat.Log
         /// <param name="e">The <see cref="FileSystemEventArgs"/> that contains the event data.</param>
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
+            if (!FileHelper.IsWriteLocked(e.FullPath))
+            {
+                return;
+            }
+
             ManualResetEvent? mre = null;
             Thread? thread = null;
             try
