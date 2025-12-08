@@ -94,7 +94,7 @@ namespace VRCCoreLogParserSample
     }
 
     /// <summary>
-    /// VRChat log parser for inherit style.
+    /// VRChat log parser for inheritance style.
     /// </summary>
     internal class MyVRCLogParser : VRCCoreLogParser
     {
@@ -126,6 +126,7 @@ namespace VRCCoreLogParserSample
         /// <param name="userName">User name.</param>
         /// <param name="userId">User ID.</param>
         /// <param name="stayFrom">A timestamp the user joined.</param>
+        /// <param name="stayUntil">A timestamp the user left.</param>
         /// <param name="instanceInfo">Instance information.</param>
         protected override void OnUserLeft(string userName, string? userId, DateTime stayFrom, DateTime? stayUntil, InstanceInfo instanceInfo)
         {
@@ -153,7 +154,7 @@ using Koturn.VRChat.Log.Enums;
 namespace VRCBaseLogParserSample
 {
     /// <summary>
-    /// Sample program for <see cref="VRCCoreLogParser"/>, which is inheritance style.
+    /// Sample program for <see cref="VRCBaseLogParser"/>, which is inheritance style.
     /// </summary>
     internal class Program
     {
@@ -206,15 +207,16 @@ namespace VRCBaseLogParserSample
         protected override bool OnLogDetected(VRCLogLevel level, List<string> logLines)
         {
             var firstLine = logLines[0];
-            return ParseAsUserJoinLeaveLog(firstLine);
+            return ParseAsUserJoinLeaveLog(LogAt, firstLine);
         }
 
         /// <summary>
         /// Parse first log line as user joined or left log.
         /// </summary>
+        /// <param name="logAt">Log timestamp.</param>
         /// <param name="firstLine">First log line.</param>
         /// <returns>True if parsed successfully, false otherwise.</returns>
-        private bool ParseAsUserJoinLeaveLog(string firstLine)
+        private static bool ParseAsUserJoinLeaveLog(DateTime logAt, string firstLine)
         {
             var match = _regexJoinLeave.Match(firstLine);
             if (!match.Success)
@@ -229,10 +231,10 @@ namespace VRCBaseLogParserSample
             switch (joinLeaveKind)
             {
                 case "Joined":
-                    Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Joined user: [{userName}][{userId}]");
                     return true;
                 case "Left":
-                    Console.WriteLine($@"[{LogAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
+                    Console.WriteLine($@"[{logAt:yyyy-MM-dd HH\:mm\:ss}] Left user: [{userName}][{userId}]");
                     return true;
                 default:
                     return false;
