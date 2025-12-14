@@ -3,10 +3,16 @@
 #endif  // NET7_0_OR_GREATER
 
 using System;
+#if !NET5_0_OR_GREATER
+using System.Diagnostics;
+#endif  // !NET5_0_OR_GREATER
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
+#if !WINDOWS
+using Mono.Unix;
+#endif  // !WINDOWS
 
 
 namespace Koturn.VRChat.Log.Internals
@@ -70,6 +76,7 @@ namespace Koturn.VRChat.Log.Internals
             }
         }
 
+#if !WINDOWS
         /// <summary>
         /// Determine whether specified file is write-locked or not by general method.
         /// </summary>
@@ -80,25 +87,63 @@ namespace Koturn.VRChat.Log.Internals
         /// </remarks>
         private static bool IsWriteLockedOther(string filePath)
         {
-#if NETCOREAPP1_0_OR_GREATER
-            // .NET: Buffer size must be greater than or equal to 0.
-            const int bufferSize = 0;
+            var targetInode = new UnixFileInfo(filePath).Inode;
+#if NET5_0_OR_GREATER
+            var currentPid = Environment.ProcessId;
 #else
-            // .NET Standard: Buffer size must be greater than 0; 0 is not allowed.
-            const int bufferSize = 1;
-#endif  // NETCOREAPP1_0_OR_GREATER
-            try
+            var currentPid = Process.GetCurrentProcess().Id;
+#endif  // NET5_0_OR_GREATER
+            foreach (var procDir in Directory.EnumerateDirectories("/proc"))
             {
-                // Try to open for write.
-                new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read, bufferSize).Dispose();
-                return false;
+                if (!int.TryParse(Path.GetFileName(procDir), out var pid))
+                {
+                    continue;
+                }
+
+                if (pid == currentPid)
+                {
+                    continue;
+                }
+
+                var fdDir = Path.Combine(procDir, "fd");
+                if (!Directory.Exists(fdDir))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    foreach (var fd in Directory.EnumerateFiles(fdDir))
+                    {
+                        try
+                        {
+                            var link = new UnixSymbolicLinkInfo(fd);
+                            if (!link.HasContents)
+                            {
+                                continue;
+                            }
+
+                            var stat = new UnixFileInfo(link.ContentsPath);
+                            if (stat.Inode == targetInode)
+                            {
+                                return true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // Do nothing.
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // Do nothing.
+                }
             }
-            catch (IOException)
-            {
-                // Assume that VRChat process owns the log file.
-                return true;
-            }
+
+            return false;
         }
+#endif  // !WINDOWS
 
         /// <summary>
         /// <para>Securable objects use an access mask format in which the four high-order bits specify generic access rights.
