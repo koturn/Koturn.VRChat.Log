@@ -10,9 +10,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
-#if !WINDOWS
+#if !WINDOWS && !NETFRAMEWORK
 using Mono.Unix;
-#endif  // !WINDOWS
+#endif  // !WINDOWS && !NETFRAMEWORK
 
 
 namespace Koturn.VRChat.Log.Internals
@@ -21,14 +21,14 @@ namespace Koturn.VRChat.Log.Internals
     internal static partial class FileHelper
 #else
     internal static class FileHelper
-#endif  // SUPPORT_LIBRARY_IMPORT && WINDOWS
+#endif  // SUPPORT_LIBRARY_IMPORT
     {
-#if !WINDOWS
+#if !WINDOWS && !NETFRAMEWORK
         /// <summary>
         /// A flag whether current running platform is Windows or not.
         /// </summary>
         private static readonly bool _isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#endif  // !WINDOWS
+#endif  // !WINDOWS && !NETFRAMEWORK
 
         /// <summary>
         /// Determine whether specified file is write-locked or not.
@@ -37,7 +37,7 @@ namespace Koturn.VRChat.Log.Internals
         /// <returns>true if specified file is write-locked, otherwise false.</returns>
         public static bool IsWriteLocked(string filePath)
         {
-#if WINDOWS
+#if WINDOWS || NETFRAMEWORK
             return IsWriteLockedWindows(filePath);
 #else
             if (_isWindows)
@@ -48,7 +48,7 @@ namespace Koturn.VRChat.Log.Internals
             {
                 return IsWriteLockedOther(filePath);
             }
-#endif  // WINDOWS
+#endif  // WINDOWS || NETFRAMEWORK
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Koturn.VRChat.Log.Internals
             }
         }
 
-#if !WINDOWS
+#if !WINDOWS && !NETFRAMEWORK
         /// <summary>
         /// Determine whether specified file is write-locked or not by general method.
         /// </summary>
@@ -143,7 +143,7 @@ namespace Koturn.VRChat.Log.Internals
 
             return false;
         }
-#endif  // !WINDOWS
+#endif  // !WINDOWS && !NETFRAMEWORK
 
         /// <summary>
         /// <para>Securable objects use an access mask format in which the four high-order bits specify generic access rights.
