@@ -52,7 +52,7 @@ namespace Koturn.VRChat.Log
         /// </summary>
         public int WatchCycle
         {
-            get => field;
+            get;
             set
             {
 #if NET8_0_OR_GREATER
