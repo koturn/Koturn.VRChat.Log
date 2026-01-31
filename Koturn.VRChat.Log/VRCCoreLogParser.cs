@@ -291,10 +291,10 @@ namespace Koturn.VRChat.Log
         /// </summary>
         /// <param name="objectName">Pickedup object name.</param>
         /// <param name="isEquipped">True if equipped.</param>
-        /// <param name="isEquippable">True if the object is equippable.</param>
+        /// <param name="isAutoEquipType">True if the object is auto equip type.</param>
         /// <param name="lastInputMethod">Last input method name.</param>
-        /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
-        protected virtual void OnPickupObject(string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+        /// <param name="isAutoHoldEnabled">True if auto hold is enabled for the controller.</param>
+        protected virtual void OnPickupObject(string objectName, bool isEquipped, bool isAutoEquipType, string lastInputMethod, bool isAutoHoldEnabled)
         {
         }
 

@@ -13,10 +13,10 @@ namespace Koturn.VRChat.Log.Events
     /// <param name="logAt">Log timestamp.</param>
     /// <param name="objectName">Pickedup object name.</param>
     /// <param name="isEquipped">True if equipped.</param>
-    /// <param name="isEquippable">True if the object is equippable.</param>
+    /// <param name="isAutoEquipType">True if the object is auto equip type.</param>
     /// <param name="lastInputMethod">Last input method name.</param>
-    /// <param name="isAutoEquipController">True if the object is auto equip controller.</param>
-    public class ObjectPickedupEventArgs(string? logFileName, DateTime logAt, string objectName, bool isEquipped, bool isEquippable, string lastInputMethod, bool isAutoEquipController)
+    /// <param name="isAutoHoldEnabled">True if auto hold is enabled for the controller.</param>
+    public class ObjectPickedupEventArgs(string? logFileName, DateTime logAt, string objectName, bool isEquipped, bool isAutoEquipType, string lastInputMethod, bool isAutoHoldEnabled)
         : VRCLogEventArgs(logFileName, logAt)
     {
         /// <summary>
@@ -30,7 +30,7 @@ namespace Koturn.VRChat.Log.Events
         /// <summary>
         /// True if the object is equippable.
         /// </summary>
-        public bool IsEquippable { get; } = isEquippable;
+        public bool IsAutoEquipType { get; } = isAutoEquipType;
         /// <summary>
         /// Last input method name.
         /// </summary>
@@ -38,6 +38,6 @@ namespace Koturn.VRChat.Log.Events
         /// <summary>
         /// True if the object is auto equip controller.
         /// </summary>
-        public bool IsAutoEquipController { get; } = isAutoEquipController;
+        public bool IsAutoHoldEnabled { get; } = isAutoHoldEnabled;
     }
 }
