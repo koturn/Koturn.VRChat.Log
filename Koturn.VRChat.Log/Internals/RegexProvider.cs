@@ -34,7 +34,7 @@ namespace Koturn.VRChat.Log.Internals
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect pickup object log.
         /// </summary>
         [StringSyntax(StringSyntaxAttribute.Regex)]
-        internal const string PickupObjectPattern = @"^Pickup object: '([^']+)' equipped = (True|False), is equippable = (True|False), last input method = (.+), is auto equip controller = (True|False)$";
+        internal const string PickupObjectPattern = @"^Pickup object: '([^']+)' equipped = (True|False), is AutoEquipType Pickup = (True|False), last input method = (.+), is AutoHold is enabled for this controller type = (True|False)$";
         /// <summary>
         /// <see cref="Regex"/> pattern <see cref="string"/> to detect drop object log.
         /// </summary>

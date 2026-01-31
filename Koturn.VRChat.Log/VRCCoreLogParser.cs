@@ -549,7 +549,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsPickupObjectLog(string firstLine)
         {
-            var match = RegexProvider.PickupObjectRegex.Match(firstLine, BehaviourLogOffset);
+            var match = RegexProvider.PickupObjectRegex.Match(firstLine, BehaviourLogOffset, firstLine.Length - BehaviourLogOffset);
             if (!match.Success)
             {
                 return false;
@@ -573,7 +573,7 @@ namespace Koturn.VRChat.Log
         /// <returns>True if parsed successfully, false otherwise.</returns>
         private bool ParseAsDropObjectLog(string firstLine)
         {
-            var match = RegexProvider.DropObjectRegex.Match(firstLine, BehaviourLogOffset);
+            var match = RegexProvider.DropObjectRegex.Match(firstLine, BehaviourLogOffset, firstLine.Length - BehaviourLogOffset);
             if (!match.Success)
             {
                 return false;
